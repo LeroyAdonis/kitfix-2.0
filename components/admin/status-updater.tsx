@@ -82,7 +82,7 @@ export function StatusUpdater({
         <span className="text-sm font-medium">Move to:</span>
         <Select
           value={selectedStatus}
-          onValueChange={(v) => setSelectedStatus(v as RepairStatus)}
+          onValueChange={(v: string) => setSelectedStatus(v as RepairStatus)}
         >
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Select status" />

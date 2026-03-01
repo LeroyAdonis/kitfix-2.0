@@ -3,6 +3,9 @@ import { AdminSidebar } from "@/components/layout/admin-sidebar";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { Separator } from "@/components/ui/separator";
 
+/** Admin pages require auth + live DB data — never statically prerender. */
+export const dynamic = "force-dynamic";
+
 export default async function AdminLayout({
   children,
 }: {

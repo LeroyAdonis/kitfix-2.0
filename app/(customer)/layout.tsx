@@ -3,6 +3,9 @@ import { Header } from "@/components/layout/header";
 import { CustomerNav } from "@/components/layout/customer-nav";
 import { Footer } from "@/components/layout/footer";
 
+/** Customer pages require auth + live DB data — never statically prerender. */
+export const dynamic = "force-dynamic";
+
 export default async function CustomerLayout({
   children,
 }: {

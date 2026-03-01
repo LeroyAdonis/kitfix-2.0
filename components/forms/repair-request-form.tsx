@@ -257,7 +257,7 @@ export function RepairRequestForm() {
             </Label>
             <Select
               value={formData.jerseySize}
-              onValueChange={(val) => updateField("jerseySize", val)}
+              onValueChange={(val: string) => updateField("jerseySize", val)}
             >
               <SelectTrigger id="jerseySize">
                 <SelectValue placeholder="Select size" />
@@ -290,7 +290,7 @@ export function RepairRequestForm() {
             </Label>
             <Select
               value={formData.damageType}
-              onValueChange={(val) => updateField("damageType", val)}
+              onValueChange={(val: string) => updateField("damageType", val)}
             >
               <SelectTrigger id="damageType">
                 <SelectValue placeholder="Select damage type" />
@@ -404,7 +404,7 @@ export function RepairRequestForm() {
               </Label>
               <Select
                 value={formData.province}
-                onValueChange={(val) => updateField("province", val)}
+                onValueChange={(val: string) => updateField("province", val)}
               >
                 <SelectTrigger id="province">
                   <SelectValue placeholder="Select province" />
