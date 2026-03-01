@@ -1,8 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // PWA configuration will be added in WP10
-  // Image optimization domains can be added here as needed
+  // PWA is configured via a manual service worker (public/sw.js) and
+  // manifest.json rather than next-pwa, which is incompatible with
+  // Next.js 16 / Turbopack. The ServiceWorkerRegistrar client component
+  // handles registration in production.
 };
 
 export default nextConfig;
