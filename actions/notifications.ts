@@ -20,6 +20,7 @@ export async function markNotificationReadAction(
   try {
     await markAsRead(notificationId);
     revalidatePath("/admin");
+    revalidatePath("/notifications");
     return { success: true, data: { notificationId } };
   } catch {
     return { success: false, error: "Failed to mark notification as read" };
@@ -35,6 +36,7 @@ export async function markAllNotificationsReadAction(): Promise<
   try {
     await markAllAsRead(session.user.id);
     revalidatePath("/admin");
+    revalidatePath("/notifications");
     return { success: true, data: { success: true } };
   } catch {
     return {
