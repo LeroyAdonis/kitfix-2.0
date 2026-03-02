@@ -14,13 +14,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { DamageAnalyzer } from "@/components/ai/damage-analyzer";
+import { CostEstimator } from "@/components/ai/cost-estimator";
 import { createRepairAction } from "@/actions/repairs";
-import { Loader2, ChevronLeft, ChevronRight, Send } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight, Send, SkipForward } from "lucide-react";
 import type { DamageType, UrgencyLevel } from "@/types";
+import type { AIDamageAssessment } from "@/types/ai";
 
 const STEPS = [
   "Jersey Details",
   "Damage Info",
+  "AI Assessment",
   "Shipping Address",
   "Review & Submit",
 ] as const;
@@ -66,6 +71,7 @@ interface RepairFormData {
   damageType: string;
   damageDescription: string;
   urgencyLevel: string;
+  photoUrls: string[];
   street: string;
   city: string;
   province: string;
@@ -79,6 +85,7 @@ const initialFormData: RepairFormData = {
   damageType: "",
   damageDescription: "",
   urgencyLevel: "standard",
+  photoUrls: [],
   street: "",
   city: "",
   province: "",
@@ -89,6 +96,7 @@ export function RepairRequestForm() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<RepairFormData>(initialFormData);
+  const [aiAssessment, setAiAssessment] = useState<AIDamageAssessment | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [isPending, startTransition] = useTransition();
@@ -119,7 +127,7 @@ export function RepairRequestForm() {
       if (!formData.damageDescription.trim()) {
         errors.damageDescription = ["Please describe the damage"];
       }
-    } else if (stepIndex === 2) {
+    } else if (stepIndex === 3) {
       if (!formData.street.trim()) {
         errors.street = ["Street address is required"];
       }
@@ -164,6 +172,10 @@ export function RepairRequestForm() {
       fd.set("province", formData.province);
       fd.set("postalCode", formData.postalCode);
       fd.set("country", "South Africa");
+
+      if (aiAssessment) {
+        fd.set("aiDamageAssessment", JSON.stringify(aiAssessment));
+      }
 
       const result = await createRepairAction(fd);
 
@@ -355,8 +367,30 @@ export function RepairRequestForm() {
         </div>
       )}
 
-      {/* Step 3: Shipping Address */}
+      {/* Step 3: AI Assessment (optional) */}
       {step === 2 && (
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-lg font-semibold">AI Assessment</h2>
+            <p className="text-sm text-muted-foreground">
+              Optional — get an AI estimate of damage severity and repair cost.
+            </p>
+          </div>
+
+          <DamageAnalyzer
+            photoUrls={formData.photoUrls}
+            onAnalysisComplete={setAiAssessment}
+          />
+
+          <CostEstimator
+            assessment={aiAssessment}
+            urgencyLevel={formData.urgencyLevel}
+          />
+        </div>
+      )}
+
+      {/* Step 4: Shipping Address */}
+      {step === 3 && (
         <div className="space-y-4">
           <h2 className="text-lg font-semibold">Shipping Address</h2>
           <p className="text-sm text-muted-foreground">
@@ -445,8 +479,8 @@ export function RepairRequestForm() {
         </div>
       )}
 
-      {/* Step 4: Review & Submit */}
-      {step === 3 && (
+      {/* Step 5: Review & Submit */}
+      {step === 4 && (
         <div className="space-y-6">
           <h2 className="text-lg font-semibold">Review & Submit</h2>
 
@@ -481,6 +515,25 @@ export function RepairRequestForm() {
               </p>
             </div>
 
+            {aiAssessment && (
+              <div className="border-t pt-4">
+                <h3 className="text-sm font-medium text-muted-foreground">
+                  AI Assessment
+                </h3>
+                <div className="mt-1 flex flex-wrap gap-2">
+                  <Badge variant="outline" className="capitalize">
+                    {aiAssessment.severity}
+                  </Badge>
+                  <Badge variant="outline" className="capitalize">
+                    {aiAssessment.repairability} repair
+                  </Badge>
+                  <Badge variant="outline" className="capitalize">
+                    {aiAssessment.affectedArea}
+                  </Badge>
+                </div>
+              </div>
+            )}
+
             <div className="border-t pt-4">
               <h3 className="text-sm font-medium text-muted-foreground">
                 Shipping Address
@@ -511,26 +564,36 @@ export function RepairRequestForm() {
           <div />
         )}
 
-        {step < STEPS.length - 1 ? (
-          <Button type="button" onClick={handleNext}>
-            Next
-            <ChevronRight className="ml-1 h-4 w-4" />
-          </Button>
-        ) : (
-          <Button type="button" onClick={handleSubmit} disabled={isPending}>
-            {isPending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Submitting…
-              </>
-            ) : (
-              <>
-                <Send className="mr-1 h-4 w-4" />
-                Submit Request
-              </>
-            )}
-          </Button>
-        )}
+        <div className="flex gap-2">
+          {/* AI step gets a Skip button */}
+          {step === 2 && (
+            <Button type="button" variant="ghost" onClick={handleNext}>
+              <SkipForward className="mr-1 h-4 w-4" />
+              Skip
+            </Button>
+          )}
+
+          {step < STEPS.length - 1 ? (
+            <Button type="button" onClick={handleNext}>
+              Next
+              <ChevronRight className="ml-1 h-4 w-4" />
+            </Button>
+          ) : (
+            <Button type="button" onClick={handleSubmit} disabled={isPending}>
+              {isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Submitting…
+                </>
+              ) : (
+                <>
+                  <Send className="mr-1 h-4 w-4" />
+                  Submit Request
+                </>
+              )}
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
