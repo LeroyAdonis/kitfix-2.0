@@ -5,6 +5,5 @@
     "**/*.ts": {
       "maxDuration": 30
     }
-  },
-  "nodeVersion": "22.x"
+  }
 }
