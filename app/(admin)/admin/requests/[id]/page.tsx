@@ -10,7 +10,6 @@ import { TechnicianAssignment } from "@/components/admin/technician-assignment";
 import { RepairDetailView } from "./repair-detail-view";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { formatCurrency, formatDateSAST } from "@/lib/utils";
 import type { RepairStatus } from "@/types";
 

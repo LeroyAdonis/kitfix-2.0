@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Lint, Typecheck, Test & Build
+    runs-on: ubuntu-latest
+
+    env:
+      BETTER_AUTH_SECRET: ci-test-secret-at-least-32-chars-long
+      BETTER_AUTH_URL: http://localhost:3000
+      DATABASE_URL: postgres://user:pass@localhost:5432/kitfix
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      POLAR_ACCESS_TOKEN: dummy
+      POLAR_WEBHOOK_SECRET: dummy
+      POLAR_PRODUCT_ID: dummy
+      BLOB_READ_WRITE_TOKEN: dummy
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm run test:run
+
+      - name: Build
+        run: npm run build

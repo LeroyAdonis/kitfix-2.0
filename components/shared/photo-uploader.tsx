@@ -10,7 +10,6 @@ import { Progress } from "@/components/ui/progress";
 import { useUpload } from "@/hooks/use-upload";
 import {
   ALLOWED_TYPES,
-  MAX_FILE_SIZE,
   validateUploadFile,
 } from "@/lib/upload";
 import { cn } from "@/lib/utils";
@@ -219,7 +218,7 @@ export function PhotoUploader({
 
         {/* Error message */}
         {errorMessage && (
-          <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+          <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive" role="alert">
             <AlertCircle className="size-4 shrink-0" />
             <span>{errorMessage}</span>
             <Button
@@ -230,6 +229,7 @@ export function PhotoUploader({
                 setValidationError(null);
                 reset();
               }}
+              aria-label="Dismiss error"
             >
               <X className="size-3" />
             </Button>
@@ -258,6 +258,7 @@ export function PhotoUploader({
                       removePreview(preview.id);
                     }}
                     disabled={isUploading}
+                    aria-label={`Remove ${preview.file.name}`}
                   >
                     <X className="size-3" />
                   </Button>
@@ -317,6 +318,7 @@ export function PhotoUploader({
                     e.stopPropagation();
                     removeUploaded(photo.id);
                   }}
+                  aria-label={`Remove ${photo.originalFilename}`}
                 >
                   <X className="size-3" />
                 </Button>

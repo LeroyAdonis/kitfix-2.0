@@ -33,7 +33,6 @@ interface Puter {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
   var puter: Puter | undefined;
 }
 

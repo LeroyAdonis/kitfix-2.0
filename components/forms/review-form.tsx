@@ -77,6 +77,7 @@ export function ReviewForm({ repairRequestId }: ReviewFormProps) {
               onMouseLeave={() => setHoveredRating(0)}
               className="p-0.5 transition-transform hover:scale-110"
               disabled={isPending}
+              aria-label={`Rate ${star} out of 5 stars`}
             >
               <Star
                 className={`h-8 w-8 ${

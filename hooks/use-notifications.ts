@@ -43,9 +43,11 @@ export function useNotifications() {
   }, []);
 
   useEffect(() => {
-    refresh();
+    // Schedule initial fetch asynchronously to avoid sync setState in effect
+    const initialFetch = setTimeout(refresh, 0);
     intervalRef.current = setInterval(refresh, POLL_INTERVAL_MS);
     return () => {
+      clearTimeout(initialFetch);
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [refresh]);

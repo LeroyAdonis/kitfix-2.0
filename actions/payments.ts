@@ -9,6 +9,7 @@ import { user } from "@/lib/db/schema";
 import { getRepairById } from "@/lib/db/queries/repairs";
 import { getPaymentsByRepair, createPayment } from "@/lib/db/queries/payments";
 import { createNotification } from "@/lib/db/queries/notifications";
+import { logger } from "@/lib/logger";
 import type { ActionResult } from "@/types";
 
 /**
@@ -66,8 +67,7 @@ export async function initiateCheckout(
     // 7. Create Polar checkout session
     const productId = process.env.POLAR_PRODUCT_ID;
     if (!productId) {
-      // eslint-disable-next-line no-console -- no logger module yet
-      console.error("[payments] POLAR_PRODUCT_ID env var is not configured");
+      logger.error("POLAR_PRODUCT_ID env var is not configured");
       return { success: false, error: "Payment system is not configured. Please contact support." };
     }
 
@@ -118,8 +118,7 @@ export async function initiateCheckout(
       data: { checkoutUrl: checkout.url },
     };
   } catch (error) {
-    // eslint-disable-next-line no-console -- no logger module yet
-    console.error("[payments] Failed to initiate checkout:", error);
+    logger.error("Failed to initiate checkout", { error });
     return {
       success: false,
       error: "An unexpected error occurred while creating the checkout session.",

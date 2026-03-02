@@ -1,4 +1,4 @@
-import { eq, sql, desc } from "drizzle-orm";
+import { sql, desc } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import { payments } from "@/lib/db/schema";

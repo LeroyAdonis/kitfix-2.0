@@ -9,7 +9,6 @@ import { DamageTypeBadge } from "@/components/repair/damage-type-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { formatCurrency, formatDateSAST } from "@/lib/utils";
 import { Star, Package, MessageSquare } from "lucide-react";
 

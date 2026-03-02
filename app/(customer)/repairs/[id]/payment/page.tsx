@@ -102,8 +102,8 @@ export default async function PaymentPage({ params }: PaymentPageProps) {
             Awaiting Estimate
           </h1>
           <p className="text-gray-600">
-            The admin is still preparing your cost estimate. You'll be notified
-            when it's ready.
+            The admin is still preparing your cost estimate. You&apos;ll be notified
+            when it&apos;s ready.
           </p>
         </div>
       </div>

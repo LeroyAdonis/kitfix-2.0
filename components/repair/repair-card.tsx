@@ -4,7 +4,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DamageTypeBadge } from "./damage-type-badge";
 import { formatDateSAST } from "@/lib/utils";
-import { cn } from "@/lib/utils";
 import { Clock, Zap, AlertTriangle } from "lucide-react";
 import type { RepairRequest, RepairPhoto } from "@/lib/db/schema";
 import type { RepairStatus, UrgencyLevel } from "@/types";

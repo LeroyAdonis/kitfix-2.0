@@ -9,6 +9,7 @@ import {
 } from "@/lib/db/queries/payments";
 import { updateRepairStatus } from "@/lib/db/queries/repairs";
 import { createNotification } from "@/lib/db/queries/notifications";
+import { logger } from "@/lib/logger";
 
 /**
  * Polar.sh webhook handler.
@@ -21,8 +22,7 @@ import { createNotification } from "@/lib/db/queries/notifications";
 export async function POST(request: NextRequest) {
   const webhookSecret = process.env.POLAR_WEBHOOK_SECRET;
   if (!webhookSecret) {
-    // eslint-disable-next-line no-console -- no logger module yet
-    console.error("[webhook/polar] POLAR_WEBHOOK_SECRET is not configured");
+    logger.error("POLAR_WEBHOOK_SECRET is not configured");
     return NextResponse.json(
       { error: "Webhook secret not configured" },
       { status: 500 },
@@ -41,15 +41,13 @@ export async function POST(request: NextRequest) {
     event = validateEvent(body, headers, webhookSecret) as WebhookEvent;
   } catch (error) {
     if (error instanceof WebhookVerificationError) {
-      // eslint-disable-next-line no-console
-      console.error("[webhook/polar] Signature verification failed:", error.message);
+      logger.error("Signature verification failed", { message: error.message });
       return NextResponse.json(
         { error: "Invalid webhook signature" },
         { status: 403 },
       );
     }
-    // eslint-disable-next-line no-console
-    console.error("[webhook/polar] Failed to parse webhook:", error);
+    logger.error("Failed to parse webhook", { error });
     return NextResponse.json(
       { error: "Invalid webhook payload" },
       { status: 400 },
@@ -59,8 +57,7 @@ export async function POST(request: NextRequest) {
   try {
     await handleWebhookEvent(event);
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("[webhook/polar] Error processing event:", error);
+    logger.error("Error processing event", { error });
     // Return 200 to prevent Polar from retrying — we log the error for investigation
     return NextResponse.json({ received: true, error: "Processing failed" });
   }
@@ -119,10 +116,7 @@ async function handleCheckoutUpdated(data: CheckoutEventData): Promise<void> {
   // 1. Find the payment record we created during checkout initiation
   const payment = await getPaymentByCheckoutId(polarCheckoutId);
   if (!payment) {
-    // eslint-disable-next-line no-console
-    console.error(
-      `[webhook/polar] No payment found for checkout ${polarCheckoutId}`,
-    );
+    logger.error("No payment found for checkout", { polarCheckoutId });
     return;
   }
 

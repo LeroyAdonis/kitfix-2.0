@@ -1,6 +1,6 @@
 import { requireAuth } from "@/lib/auth-utils";
 import { getPaymentsByCustomer } from "@/lib/db/queries/payments";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { formatCurrency, formatDateSAST } from "@/lib/utils";

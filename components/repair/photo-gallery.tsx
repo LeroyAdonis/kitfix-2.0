@@ -200,6 +200,7 @@ export function PhotoGallery({ photos }: PhotoGalleryProps) {
                     className="absolute left-2 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm hover:bg-background"
                     onClick={goPrev}
                     disabled={lightboxIndex === 0}
+                    aria-label="Previous photo"
                   >
                     <ChevronLeft className="size-5" />
                   </Button>
@@ -209,6 +210,7 @@ export function PhotoGallery({ photos }: PhotoGalleryProps) {
                     className="absolute right-2 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm hover:bg-background"
                     onClick={goNext}
                     disabled={lightboxIndex === currentPhotos.length - 1}
+                    aria-label="Next photo"
                   >
                     <ChevronRight className="size-5" />
                   </Button>
