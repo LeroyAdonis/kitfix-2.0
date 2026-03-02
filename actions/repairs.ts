@@ -5,8 +5,9 @@ import { eq } from "drizzle-orm";
 
 import { getSession } from "@/lib/auth-utils";
 import { db } from "@/lib/db";
-import { repairRequests } from "@/lib/db/schema";
+import { repairRequests, user } from "@/lib/db/schema";
 import { createRepair, getRepairById } from "@/lib/db/queries/repairs";
+import { createNotification } from "@/lib/db/queries/notifications";
 import { createRepairSchema } from "@/lib/validators/repair";
 import type { ActionResult } from "@/types";
 import type { RepairRequest } from "@/lib/db/schema";
@@ -57,6 +58,22 @@ export async function createRepairAction(
     urgencyLevel: data.urgencyLevel,
     shippingAddress: data.shippingAddress,
   });
+
+  // Notify all admin users about the new repair submission (non-blocking)
+  try {
+    const admins = await db.select({ id: user.id }).from(user).where(eq(user.role, "admin"));
+    for (const admin of admins) {
+      await createNotification({
+        userId: admin.id,
+        type: "system",
+        title: "New Repair Request",
+        message: `New repair request from ${session.user.name}.`,
+        repairRequestId: repair.id,
+      });
+    }
+  } catch {
+    // Notification failure should not block repair creation
+  }
 
   revalidatePath("/repairs");
   revalidatePath("/dashboard");

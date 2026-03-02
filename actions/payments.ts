@@ -1,9 +1,14 @@
 "use server";
 
+import { eq } from "drizzle-orm";
+
 import { polar } from "@/lib/polar";
 import { requireAuth } from "@/lib/auth-utils";
+import { db } from "@/lib/db";
+import { user } from "@/lib/db/schema";
 import { getRepairById } from "@/lib/db/queries/repairs";
 import { getPaymentsByRepair, createPayment } from "@/lib/db/queries/payments";
+import { createNotification } from "@/lib/db/queries/notifications";
 import type { ActionResult } from "@/types";
 
 /**
@@ -91,6 +96,22 @@ export async function initiateCheckout(
         polarCheckoutUrl: checkout.url,
       },
     });
+
+    // 9. Notify admin(s) about the initiated payment (non-blocking)
+    try {
+      const admins = await db.select({ id: user.id }).from(user).where(eq(user.role, "admin"));
+      for (const admin of admins) {
+        await createNotification({
+          userId: admin.id,
+          type: "payment",
+          title: "Payment Initiated",
+          message: `A customer has initiated payment for repair #${repairRequestId.slice(0, 8)}.`,
+          repairRequestId,
+        });
+      }
+    } catch {
+      // Notification failure should not block payment initiation
+    }
 
     return {
       success: true,

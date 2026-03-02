@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth-utils";
 import { getRepairById } from "@/lib/db/queries/repairs";
 import { createReview, getReviewByRepair } from "@/lib/db/queries/reviews";
+import { createNotification } from "@/lib/db/queries/notifications";
 import { createReviewSchema } from "@/lib/validators/review";
 import type { ActionResult } from "@/types";
 import type { Review } from "@/lib/db/schema";
@@ -58,6 +59,21 @@ export async function submitReviewAction(
     rating: data.rating,
     comment: data.comment ?? null,
   });
+
+  // Notify the assigned technician about the new review (non-blocking)
+  try {
+    if (repair.technicianId) {
+      await createNotification({
+        userId: repair.technicianId,
+        type: "review_request",
+        title: "New Review Received",
+        message: `A customer has left a ${data.rating}-star review on repair #${repair.id.slice(0, 8)}.`,
+        repairRequestId: repair.id,
+      });
+    }
+  } catch {
+    // Notification failure should not block review submission
+  }
 
   revalidatePath(`/repairs/${data.repairRequestId}`);
   revalidatePath("/repairs");
