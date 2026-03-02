@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
 import { signUp } from "@/lib/auth-client";
+import { AnimatedText, PageTransition } from "@/components/motion";
+
+const INPUT_CLASSES =
+  "flex h-12 w-full rounded-xl border border-input bg-background px-4 py-2 text-sm ring-offset-background transition-[color,border-color,box-shadow] placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -46,21 +52,29 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="rounded-xl border bg-card p-8 shadow-sm">
-      <div className="mb-6 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Create an account
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+    <PageTransition>
+      <div className="mb-8 text-center">
+        <AnimatedText
+          text="Create an account"
+          as="h1"
+          className="justify-center text-3xl font-bold tracking-tight"
+        />
+        <p className="mt-2 text-sm text-muted-foreground">
           Get started with KitFix jersey repairs
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         {error && (
-          <div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive" role="alert">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="rounded-xl border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive"
+            role="alert"
+          >
             {error}
-          </div>
+          </motion.div>
         )}
 
         <div className="space-y-2">
@@ -72,10 +86,11 @@ export default function SignUpPage() {
             type="text"
             required
             autoComplete="name"
+            name="name"
             placeholder="John Doe"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className={INPUT_CLASSES}
           />
         </div>
 
@@ -88,10 +103,12 @@ export default function SignUpPage() {
             type="email"
             required
             autoComplete="email"
+            name="email"
+            spellCheck={false}
             placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className={INPUT_CLASSES}
           />
         </div>
 
@@ -104,10 +121,11 @@ export default function SignUpPage() {
             type="password"
             required
             autoComplete="new-password"
+            name="password"
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className={INPUT_CLASSES}
           />
         </div>
 
@@ -123,31 +141,39 @@ export default function SignUpPage() {
             type="password"
             required
             autoComplete="new-password"
+            name="confirmPassword"
             placeholder="••••••••"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className={INPUT_CLASSES}
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-secondary text-sm font-semibold text-primary-foreground transition-[filter,opacity] hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
         >
-          {loading ? "Creating account…" : "Create account"}
+          {loading ? (
+            <>
+              <Loader2 className="size-4 animate-spin" />
+              Creating account…
+            </>
+          ) : (
+            "Create account"
+          )}
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-muted-foreground">
+      <p className="mt-8 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
         <Link
           href="/sign-in"
-          className="font-medium text-primary underline-offset-4 hover:underline"
+          className="font-medium text-primary underline-offset-4 transition-colors hover:text-primary/80 hover:underline"
         >
           Sign in
         </Link>
       </p>
-    </div>
+    </PageTransition>
   );
 }

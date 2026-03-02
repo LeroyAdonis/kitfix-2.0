@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { motion, useReducedMotion } from "framer-motion";
 import { Menu, Wrench } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
@@ -29,16 +30,22 @@ export function Header() {
   const { data: sessionData, isPending } = useSession();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   const user = sessionData?.user;
   const isAdmin = user?.role === "admin";
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <motion.header
+      className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60"
+      initial={shouldReduceMotion ? false : { y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+    >
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2 font-bold text-lg">
-            <Wrench className="h-5 w-5" />
+            <Wrench className="h-5 w-5" aria-hidden="true" />
             KitFix
           </Link>
 
@@ -129,6 +136,6 @@ export function Header() {
       </div>
 
       <MobileNav open={mobileOpen} onOpenChange={setMobileOpen} />
-    </header>
+    </motion.header>
   );
 }
