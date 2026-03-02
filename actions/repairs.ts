@@ -11,6 +11,21 @@ import { createNotification } from "@/lib/db/queries/notifications";
 import { createRepairSchema } from "@/lib/validators/repair";
 import type { ActionResult } from "@/types";
 import type { RepairRequest } from "@/lib/db/schema";
+import type { AIDamageAssessment } from "@/types/ai";
+
+/** Parse and loosely validate AI assessment JSON from form data */
+function parseAIAssessment(raw: string | null): AIDamageAssessment | null {
+  if (!raw) return null;
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (typeof parsed !== "object" || parsed === null) return null;
+    const obj = parsed as Record<string, unknown>;
+    if (typeof obj.damageType !== "string" || typeof obj.severity !== "string") return null;
+    return parsed as AIDamageAssessment;
+  } catch {
+    return null;
+  }
+}
 
 export async function createRepairAction(
   formData: FormData,
@@ -47,6 +62,10 @@ export async function createRepairAction(
     return { success: false, error: "Validation failed.", fieldErrors };
   }
 
+  const aiAssessment = parseAIAssessment(
+    formData.get("aiDamageAssessment") as string | null,
+  );
+
   const data = result.data;
   const repair = await createRepair({
     customerId: session.user.id,
@@ -57,6 +76,7 @@ export async function createRepairAction(
     damageDescription: data.damageDescription,
     urgencyLevel: data.urgencyLevel,
     shippingAddress: data.shippingAddress,
+    ...(aiAssessment ? { aiDamageAssessment: aiAssessment } : {}),
   });
 
   // Notify all admin users about the new repair submission (non-blocking)

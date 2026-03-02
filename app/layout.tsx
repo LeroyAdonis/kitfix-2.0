@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ServiceWorkerRegistrar } from "@/components/pwa/service-worker-registrar";
 import "./globals.css";
@@ -53,6 +54,7 @@ export default function RootLayout({
       >
         <ServiceWorkerRegistrar />
         {children}
+        <Script src="https://js.puter.com/v2/" strategy="lazyOnload" />
       </body>
     </html>
   );
