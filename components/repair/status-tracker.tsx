@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { formatDateSAST } from "@/lib/utils";
 import type { RepairStatus } from "@/types";
 import type { StatusHistoryEntry } from "@/lib/db/schema";
-import { CheckCircle2, Circle, Loader2 } from "lucide-react";
+import { CheckCircle2, Circle } from "lucide-react";
 
 const statusPipeline: { key: RepairStatus; label: string }[] = [
   { key: "submitted", label: "Submitted" },
@@ -49,7 +49,7 @@ export function StatusTracker({ currentStatus, statusHistory = [] }: StatusTrack
                   {isCompleted ? (
                     <CheckCircle2 className="h-6 w-6 text-primary" />
                   ) : isCurrent ? (
-                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                    <Circle className="h-6 w-6 fill-primary text-primary" />
                   ) : (
                     <Circle className="h-6 w-6 text-muted-foreground/40" />
                   )}
@@ -96,7 +96,7 @@ export function StatusTracker({ currentStatus, statusHistory = [] }: StatusTrack
                 {isCompleted ? (
                   <CheckCircle2 className="h-5 w-5 text-primary" />
                 ) : isCurrent ? (
-                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                  <Circle className="h-5 w-5 fill-primary text-primary" />
                 ) : (
                   <Circle className="h-5 w-5 text-muted-foreground/40" />
                 )}

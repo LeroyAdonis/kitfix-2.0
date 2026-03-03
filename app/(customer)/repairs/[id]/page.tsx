@@ -89,6 +89,64 @@ export default async function RepairDetailPage(props: {
         </Card>
       </div>
 
+      {/* AI Assessment */}
+      {repair.aiDamageAssessment != null && (() => {
+        const assessment = repair.aiDamageAssessment as {
+          damageType: string;
+          severity: "minor" | "moderate" | "severe";
+          affectedArea: string;
+          repairability: "easy" | "moderate" | "difficult";
+          confidence: number;
+        };
+        const severityVariant: Record<string, "default" | "secondary" | "destructive"> = {
+          minor: "secondary",
+          moderate: "default",
+          severe: "destructive",
+        };
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">AI Damage Assessment</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Damage Type
+                  </p>
+                  <p className="text-sm capitalize">
+                    {assessment.damageType.replace(/_/g, " ")}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Severity
+                  </p>
+                  <Badge variant={severityVariant[assessment.severity] ?? "default"} className="capitalize">
+                    {assessment.severity}
+                  </Badge>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Affected Area
+                  </p>
+                  <p className="text-sm capitalize">{assessment.affectedArea}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Repairability
+                  </p>
+                  <p className="text-sm capitalize">{assessment.repairability}</p>
+                </div>
+              </div>
+              <p className="mt-3 text-xs text-muted-foreground">
+                Confidence: {Math.round(assessment.confidence * 100)}%
+              </p>
+            </CardContent>
+          </Card>
+        );
+      })()}
+
       {/* Photos */}
       {repair.photos.length > 0 && (
         <Card>
