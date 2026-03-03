@@ -42,3 +42,6 @@ next-env.d.ts
 
 # diagnostic logs
 gcm-diagnose.log
+
+# IDE
+.idea/

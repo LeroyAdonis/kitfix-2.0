@@ -101,7 +101,7 @@ export function AnimatedDashboard({
                 <CardTitle className="text-sm font-medium">
                   {stat.label}
                 </CardTitle>
-                <stat.icon className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
+                <stat.icon className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" aria-hidden="true" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
@@ -141,13 +141,13 @@ export function AnimatedDashboard({
         ) : (
           <ScrollReveal delay={0.2}>
             <EmptyState
-              icon={<Wrench className="h-10 w-10" />}
+              icon={<Wrench className="h-10 w-10" aria-hidden="true" />}
               title="No repairs yet"
               description="Submit your first jersey repair request to get started."
               action={
                 <Button asChild>
                   <Link href="/repairs/new">
-                    <PlusCircle className="mr-2 h-4 w-4" />
+                    <PlusCircle className="mr-2 h-4 w-4" aria-hidden="true" />
                     New Repair Request
                   </Link>
                 </Button>

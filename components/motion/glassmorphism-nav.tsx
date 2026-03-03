@@ -7,6 +7,7 @@ import {
   useScroll,
   useTransform,
   useMotionValueEvent,
+  useReducedMotion,
   AnimatePresence,
 } from "framer-motion";
 import { Scissors, Menu, X } from "lucide-react";
@@ -23,6 +24,7 @@ export function GlassmorphismNav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
+  const shouldReduceMotion = useReducedMotion();
 
   // Smooth height transition driven by scroll position
   const navHeight = useTransform(scrollY, [0, SCROLL_THRESHOLD], [80, 64]);
@@ -108,10 +110,10 @@ export function GlassmorphismNav() {
         {mobileOpen && (
           <motion.div
             className="fixed inset-0 z-[60] flex flex-col bg-background/95 backdrop-blur-2xl overscroll-contain md:hidden"
-            initial={{ opacity: 0 }}
+            initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
+            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.25 }}
           >
             {/* Close button */}
             <div className="flex h-20 items-center justify-between px-6">
@@ -140,10 +142,10 @@ export function GlassmorphismNav() {
               {NAV_LINKS.map((link, i) => (
                 <motion.div
                   key={link.href}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ delay: 0.1 + i * 0.08, duration: 0.3 }}
+                  exit={shouldReduceMotion ? undefined : { opacity: 0, y: 10 }}
+                  transition={shouldReduceMotion ? { duration: 0 } : { delay: 0.1 + i * 0.08, duration: 0.3 }}
                 >
                   <Link
                     href={link.href}
@@ -156,10 +158,10 @@ export function GlassmorphismNav() {
               ))}
 
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{
+                exit={shouldReduceMotion ? undefined : { opacity: 0, y: 10 }}
+                transition={shouldReduceMotion ? { duration: 0 } : {
                   delay: 0.1 + NAV_LINKS.length * 0.08,
                   duration: 0.3,
                 }}
@@ -175,10 +177,10 @@ export function GlassmorphismNav() {
               </motion.div>
 
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{
+                exit={shouldReduceMotion ? undefined : { opacity: 0, y: 10 }}
+                transition={shouldReduceMotion ? { duration: 0 } : {
                   delay: 0.1 + (NAV_LINKS.length + 1) * 0.08,
                   duration: 0.3,
                 }}

@@ -26,7 +26,7 @@ export default async function RepairsPage(props: {
         </div>
         <Button asChild>
           <Link href="/repairs/new">
-            <PlusCircle className="mr-2 h-4 w-4" />
+            <PlusCircle className="mr-2 h-4 w-4" aria-hidden="true" />
             New Request
           </Link>
         </Button>
@@ -40,7 +40,7 @@ export default async function RepairsPage(props: {
         </div>
       ) : (
         <EmptyState
-          icon={<Wrench className="h-10 w-10" />}
+          icon={<Wrench className="h-10 w-10" aria-hidden="true" />}
           title="No repairs found"
           description={
             page > 1
@@ -51,7 +51,7 @@ export default async function RepairsPage(props: {
             page <= 1 ? (
               <Button asChild>
                 <Link href="/repairs/new">
-                  <PlusCircle className="mr-2 h-4 w-4" />
+                  <PlusCircle className="mr-2 h-4 w-4" aria-hidden="true" />
                   Submit Your First Request
                 </Link>
               </Button>
@@ -61,7 +61,7 @@ export default async function RepairsPage(props: {
       )}
 
       {(page > 1 || hasMore) && (
-        <div className="flex justify-center gap-2">
+        <nav aria-label="Pagination" className="flex justify-center gap-2">
           {page > 1 && (
             <Button asChild variant="outline">
               <Link href={`/repairs?page=${page - 1}`}>Previous</Link>
@@ -72,7 +72,7 @@ export default async function RepairsPage(props: {
               <Link href={`/repairs?page=${page + 1}`}>Next</Link>
             </Button>
           )}
-        </div>
+        </nav>
       )}
     </div>
   );

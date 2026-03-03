@@ -111,6 +111,7 @@ export default function Home() {
     <div className="min-h-screen overflow-x-hidden">
       <CustomCursor />
       <GlassmorphismNav />
+      <main id="main-content">
 
       {/* ── Hero ── */}
       <section className="relative isolate flex min-h-screen flex-col items-center justify-center overflow-hidden">
@@ -189,7 +190,7 @@ export default function Home() {
                 style={{ background: "var(--gradient-primary)" }}
               >
                 Get Started
-                <ArrowRight className="size-4" />
+                <ArrowRight className="size-4" aria-hidden="true" />
               </MagneticButton>
             </Link>
 
@@ -263,7 +264,7 @@ export default function Home() {
                       className="flex size-16 items-center justify-center rounded-2xl text-primary-foreground shadow-lg"
                       style={{ background: "var(--gradient-primary)" }}
                     >
-                      <step.icon className="size-7" />
+                      <step.icon className="size-7" aria-hidden="true" />
                     </div>
                     <span className="absolute -right-2 -top-2 flex size-7 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground shadow-sm">
                       {i + 1}
@@ -309,7 +310,7 @@ export default function Home() {
                   <div className="absolute left-0 top-4 bottom-4 w-0.5 rounded-full bg-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
                   <div className="mb-4 flex size-12 items-center justify-center rounded-xl text-primary-foreground" style={{ background: "var(--gradient-primary)" }}>
-                    <feature.icon className="size-5" />
+                    <feature.icon className="size-5" aria-hidden="true" />
                   </div>
 
                   <h3 className="text-base font-semibold leading-snug">
@@ -383,7 +384,7 @@ export default function Home() {
                     style={{ background: "var(--gradient-cta)" }}
                   >
                     Get Started — It&apos;s Free
-                    <ArrowRight className="size-4" />
+                    <ArrowRight className="size-4" aria-hidden="true" />
                   </MagneticButton>
                 </Link>
               </div>
@@ -420,6 +421,7 @@ export default function Home() {
           </div>
         </ScrollReveal>
       </footer>
+      </main>
     </div>
   );
 }

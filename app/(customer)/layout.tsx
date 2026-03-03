@@ -21,7 +21,7 @@ export default async function CustomerLayout({
         <aside className="hidden w-56 shrink-0 md:block">
           <CustomerNav />
         </aside>
-        <main className="min-w-0 flex-1">
+        <main id="main-content" className="min-w-0 flex-1">
           <CustomerShell>{children}</CustomerShell>
         </main>
       </div>

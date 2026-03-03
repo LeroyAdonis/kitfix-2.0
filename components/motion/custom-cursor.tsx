@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 
 const DOT_SIZE = 8;
 const CIRCLE_SIZE = 32;
@@ -15,6 +15,7 @@ export function CustomCursor() {
   const [isVisible, setIsVisible] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(true);
+  const shouldReduceMotion = useReducedMotion();
 
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
@@ -71,7 +72,7 @@ export function CustomCursor() {
     };
   }, [cursorX, cursorY]);
 
-  if (isTouchDevice) return null;
+  if (isTouchDevice || shouldReduceMotion) return null;
 
   const circleSize = isHovering ? CIRCLE_HOVER_SIZE : CIRCLE_SIZE;
 

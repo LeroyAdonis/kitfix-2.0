@@ -45,7 +45,7 @@ export function StatsCards({ stats }: { stats: DashboardStats }) {
             <CardTitle className="text-sm font-medium text-muted-foreground">
               {label}
             </CardTitle>
-            <Icon className="h-4 w-4 text-muted-foreground" />
+            <Icon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{format(stats[key])}</div>

@@ -156,7 +156,7 @@ export default function SignUpPage() {
         >
           {loading ? (
             <>
-              <Loader2 className="size-4 animate-spin" />
+              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
               Creating account…
             </>
           ) : (

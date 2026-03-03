@@ -3,7 +3,7 @@ import { Scissors, ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-6">
+    <main id="main-content" className="flex min-h-screen flex-col items-center justify-center px-6">
       <div className="mx-auto max-w-sm text-center">
         {/* Logo */}
         <div className="mb-10 flex items-center justify-center gap-2 text-muted-foreground">
@@ -34,6 +34,6 @@ export default function NotFound() {
           Back to Home
         </Link>
       </div>
-    </div>
+    </main>
   );
 }

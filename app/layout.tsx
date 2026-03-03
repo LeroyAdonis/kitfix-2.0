@@ -52,6 +52,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* Skip-to-content link for keyboard navigation */}
+        <a
+          href="#main-content"
+          className="fixed left-4 top-4 z-[9999] -translate-y-16 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-lg transition-transform focus:translate-y-0"
+        >
+          Skip to content
+        </a>
         <ServiceWorkerRegistrar />
         {children}
         <Script src="https://js.puter.com/v2/" strategy="lazyOnload" />
