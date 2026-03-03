@@ -2,7 +2,7 @@
 
 # ⚽ KitFix 2.0
 
-**Jersey Repair Service — Built for South Africa**
+**Jersey Repair Service PWA — Built for South Africa**
 
 [![CI](https://github.com/{owner}/{repo}/actions/workflows/ci.yml/badge.svg)](https://github.com/{owner}/{repo}/actions/workflows/ci.yml)
 
@@ -23,13 +23,15 @@ KitFix 2.0 is a progressive web app for submitting, tracking, and managing jerse
 
 ### Key Features
 
-- **Repair Submissions** — Multi-step form with photo upload and damage description
+- **Repair Submissions** — Customer repair request submission with AI damage assessment
 - **AI Damage Assessment** — Client-side analysis via Puter.js for instant cost estimates
-- **Status Tracking** — Real-time 5-stage pipeline: Submitted → Reviewed → In Repair → Quality Check → Shipped
+- **5-Stage Repair Pipeline** — Real-time status tracking: Submitted → Reviewed → In Repair → Quality Check → Shipped
+- **Admin/Technician Dashboard** — Manage requests, assign technicians, update statuses
+- **Photo Upload** — Image uploads with Vercel Blob storage
 - **Payments** — Secure checkout powered by Polar.sh
-- **Admin Dashboard** — Manage requests, assign technicians, update statuses
-- **Notifications** — In-app notification system for repair updates
 - **PWA** — Installable, works offline, mobile-first
+- **Email Notifications** — Repair status updates via Resend
+- **Role-Based Access Control** — Customer, technician, and admin roles with scoped permissions
 
 ### 🇿🇦 South African Context
 
@@ -51,6 +53,7 @@ KitFix 2.0 is a progressive web app for submitting, tracking, and managing jerse
 | **Payments** | [Polar.sh](https://polar.sh/) |
 | **AI** | [Puter.js](https://puter.com/) (client-side damage assessment) |
 | **Storage** | [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) |
+| **Email** | [Resend](https://resend.com/) |
 | **Validation** | [Zod 4](https://zod.dev/) |
 | **Testing** | [Vitest](https://vitest.dev/), [Playwright](https://playwright.dev/) |
 
@@ -60,7 +63,7 @@ KitFix 2.0 is a progressive web app for submitting, tracking, and managing jerse
 
 ### Prerequisites
 
-- **Node.js 22+** and npm
+- **Node.js 20+** and npm
 - A [Neon](https://neon.tech/) PostgreSQL database
 - A [Polar.sh](https://polar.sh/) account (for payments)
 - A [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) store (for photo uploads)
@@ -76,11 +79,11 @@ cd kitfix-2.0
 npm install
 
 # Set up environment variables
-cp .env.example .env
-# Edit .env with your credentials (see Environment Variables below)
+cp .env.example .env.local
+# Edit .env.local with your credentials (see Environment Variables below)
 
 # Run database migrations
-npm run db:migrate
+npm run db:push
 
 # Start the development server
 npm run dev
@@ -90,7 +93,7 @@ The app will be running at [http://localhost:3000](http://localhost:3000).
 
 ### Environment Variables
 
-Copy `.env.example` and fill in the values:
+Copy `.env.example` to `.env.local` and fill in the values:
 
 | Variable | Description |
 | --- | --- |
@@ -102,6 +105,7 @@ Copy `.env.example` and fill in the values:
 | `POLAR_PRODUCT_ID` | Polar.sh product ID for repair payments |
 | `BLOB_READ_WRITE_TOKEN` | Vercel Blob read/write token |
 | `NEXT_PUBLIC_APP_URL` | Public-facing app URL |
+| `RESEND_API_KEY` | Resend API key for transactional email |
 
 ---
 
@@ -154,6 +158,7 @@ kitfix-2.0/
 | `npm run typecheck` | Type-check with `tsc --noEmit` |
 | `npm run test` | Run tests in watch mode (Vitest) |
 | `npm run test:run` | Run tests once |
+| `npm run test:e2e` | Run end-to-end tests (Playwright) |
 | `npm run db:generate` | Generate Drizzle migration files |
 | `npm run db:migrate` | Apply database migrations |
 | `npm run db:push` | Push schema changes directly (dev only) |

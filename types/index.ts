@@ -1,5 +1,40 @@
-// TODO: Implement — Shared type definitions + Drizzle infers
-// Export inferred types from Drizzle schema for type-safe queries
+// Shared type definitions + Drizzle-inferred types
+// Re-exports inferred types from Drizzle schema for convenient imports
+
+import type {
+  repairRequests,
+  repairPhotos,
+  statusHistory,
+  payments,
+  reviews,
+  notifications,
+} from "@/lib/db/schema";
+
+// ---------------------------------------------------------------------------
+// Drizzle-inferred types (select = read, insert = create)
+// ---------------------------------------------------------------------------
+
+export type RepairRequest = typeof repairRequests.$inferSelect;
+export type NewRepairRequest = typeof repairRequests.$inferInsert;
+
+export type RepairPhoto = typeof repairPhotos.$inferSelect;
+export type NewRepairPhoto = typeof repairPhotos.$inferInsert;
+
+export type StatusHistoryEntry = typeof statusHistory.$inferSelect;
+export type NewStatusHistoryEntry = typeof statusHistory.$inferInsert;
+
+export type Payment = typeof payments.$inferSelect;
+export type NewPayment = typeof payments.$inferInsert;
+
+export type Review = typeof reviews.$inferSelect;
+export type NewReview = typeof reviews.$inferInsert;
+
+export type Notification = typeof notifications.$inferSelect;
+export type NewNotification = typeof notifications.$inferInsert;
+
+// ---------------------------------------------------------------------------
+// Server action result type
+// ---------------------------------------------------------------------------
 
 /** Standardized return type for all server actions */
 export type ActionResult<T> =
