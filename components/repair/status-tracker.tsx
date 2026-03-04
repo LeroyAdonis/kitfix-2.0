@@ -7,6 +7,8 @@ import { CheckCircle2, Circle } from "lucide-react";
 const statusPipeline: { key: RepairStatus; label: string }[] = [
   { key: "submitted", label: "Submitted" },
   { key: "reviewed", label: "Reviewed" },
+  { key: "quote_sent", label: "Quote Sent" },
+  { key: "quote_accepted", label: "Quote Accepted" },
   { key: "in_repair", label: "In Repair" },
   { key: "quality_check", label: "Quality Check" },
   { key: "shipped", label: "Shipped" },

@@ -11,6 +11,8 @@ import type { RepairStatus, UrgencyLevel } from "@/types";
 const statusConfig: Record<RepairStatus, { label: string; variant: "default" | "secondary" | "outline" | "destructive" }> = {
   submitted: { label: "Submitted", variant: "secondary" },
   reviewed: { label: "Reviewed", variant: "outline" },
+  quote_sent: { label: "Quote Sent", variant: "outline" },
+  quote_accepted: { label: "Quote Accepted", variant: "secondary" },
   in_repair: { label: "In Repair", variant: "default" },
   quality_check: { label: "Quality Check", variant: "default" },
   shipped: { label: "Shipped", variant: "default" },

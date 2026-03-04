@@ -36,6 +36,8 @@ export const urgencyLevelEnum = pgEnum("urgency_level", [
 export const repairStatusEnum = pgEnum("repair_status", [
   "submitted",
   "reviewed",
+  "quote_sent",
+  "quote_accepted",
   "in_repair",
   "quality_check",
   "shipped",
@@ -158,6 +160,7 @@ export const repairRequests = pgTable(
     finalCost: integer("final_cost"),
     aiDamageAssessment: jsonb("ai_damage_assessment"),
     adminNotes: text("admin_notes"),
+    quoteDeclineReason: text("quote_decline_reason"),
     trackingNumber: varchar("tracking_number", { length: 100 }),
     shippingAddress: jsonb("shipping_address"),
     deletedAt: timestamp("deleted_at"),

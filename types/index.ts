@@ -48,6 +48,8 @@ export type UserRole = "customer" | "admin" | "technician";
 export type RepairStatus =
   | "submitted"
   | "reviewed"
+  | "quote_sent"
+  | "quote_accepted"
   | "in_repair"
   | "quality_check"
   | "shipped";
