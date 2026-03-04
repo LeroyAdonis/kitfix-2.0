@@ -28,3 +28,18 @@ export const createRepairSchema = z.object({
 
 export type CreateRepairInput = z.infer<typeof createRepairSchema>;
 export type ShippingAddress = z.infer<typeof shippingAddressSchema>;
+
+export const sendQuoteSchema = z.object({
+  repairId: z.string().min(1, "Repair ID is required"),
+  estimatedCost: z.number().int().positive("Estimated cost must be positive"),
+  adminNotes: z.string().max(1000).optional(),
+});
+
+export const declineQuoteSchema = z.object({
+  repairId: z.string().min(1, "Repair ID is required"),
+  reason: z.string().min(10, "Please provide at least 10 characters explaining why").max(500),
+});
+
+export const acceptQuoteSchema = z.object({
+  repairId: z.string().min(1, "Repair ID is required"),
+});
