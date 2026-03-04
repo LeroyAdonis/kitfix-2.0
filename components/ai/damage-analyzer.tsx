@@ -85,7 +85,7 @@ export function DamageAnalyzer({ files, photoUrls, onAnalysisComplete }: DamageA
   const isAnalyzing = useRef(false);
 
   async function handleAnalyze() {
-    if (files.length === 0 || isAnalyzing.current) return;
+    if ((files.length === 0 && photoUrls.length === 0) || isAnalyzing.current) return;
     isAnalyzing.current = true;
 
     setState("loading");
@@ -165,7 +165,7 @@ export function DamageAnalyzer({ files, photoUrls, onAnalysisComplete }: DamageA
     }
   }
 
-  if (files.length === 0) {
+  if (files.length === 0 && photoUrls.length === 0) {
     return (
       <Card className="border-dashed">
         <CardContent>
