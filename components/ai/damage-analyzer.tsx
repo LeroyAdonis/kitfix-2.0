@@ -14,15 +14,9 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, Sparkles, AlertTriangle } from "lucide-react";
 import type { AIDamageAssessment } from "@/types/ai";
 
-const AI_PROMPT = `Analyze this jersey repair photo. Identify:
-1. Type of damage (tear, hole, stain, fading, logo damage, seam split)
-2. Severity (minor, moderate, severe)
-3. Affected area (front, back, sleeve, collar, hem)
-4. Estimated repairability (easy, moderate, difficult)
-Return as JSON with keys: damageType, severity, affectedArea, repairability.
-Only return the JSON object, no markdown fences or extra text.`;
-
 type AnalysisState = "idle" | "loading" | "success" | "error";
+
+const TIMEOUT_MS = 30_000;
 
 const SEVERITY_VARIANT: Record<string, "default" | "secondary" | "destructive"> = {
   minor: "secondary",
@@ -33,35 +27,6 @@ const SEVERITY_VARIANT: Record<string, "default" | "secondary" | "destructive"> 
 interface DamageAnalyzerProps {
   photoUrls: string[];
   onAnalysisComplete: (result: AIDamageAssessment) => void;
-}
-
-function parseAIResponse(raw: string): Omit<AIDamageAssessment, "confidence" | "rawResponse"> {
-  // Strip markdown code fences if present
-  const cleaned = raw.replace(/```(?:json)?\s*/g, "").replace(/```\s*/g, "").trim();
-  const parsed: unknown = JSON.parse(cleaned);
-
-  if (
-    typeof parsed !== "object" ||
-    parsed === null ||
-    !("damageType" in parsed) ||
-    !("severity" in parsed) ||
-    !("affectedArea" in parsed) ||
-    !("repairability" in parsed)
-  ) {
-    throw new Error("Invalid AI response structure");
-  }
-
-  const obj = parsed as Record<string, unknown>;
-  return {
-    damageType: String(obj.damageType),
-    severity: validateEnum(String(obj.severity), ["minor", "moderate", "severe"], "moderate"),
-    affectedArea: String(obj.affectedArea),
-    repairability: validateEnum(String(obj.repairability), ["easy", "moderate", "difficult"], "moderate"),
-  };
-}
-
-function validateEnum<T extends string>(value: string, allowed: T[], fallback: T): T {
-  return allowed.includes(value as T) ? (value as T) : fallback;
 }
 
 export function DamageAnalyzer({ photoUrls, onAnalysisComplete }: DamageAnalyzerProps) {
@@ -75,33 +40,47 @@ export function DamageAnalyzer({ photoUrls, onAnalysisComplete }: DamageAnalyzer
     setState("loading");
     setErrorMessage("");
 
-    try {
-      if (typeof globalThis.puter === "undefined") {
-        throw new Error("AI service is not available. Please try again later.");
-      }
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
-      const imageArg = photoUrls.length === 1 ? photoUrls[0] : photoUrls;
-      const response = await globalThis.puter.ai.chat(AI_PROMPT, imageArg, {
-        model: "gpt-4o",
-        temperature: 0.2,
+    try {
+      const response = await fetch("/api/ai/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          photoDataUrls: photoUrls,
+          damageType: "unknown",
+          damageDescription: "User-submitted for AI analysis",
+        }),
+        signal: controller.signal,
       });
 
-      const rawContent = response.message.content;
-      const parsed = parseAIResponse(rawContent);
+      const json: unknown = await response.json();
+      const body = json as Record<string, unknown>;
 
-      const assessment: AIDamageAssessment = {
-        ...parsed,
-        confidence: 0.75,
-        rawResponse: rawContent,
-      };
+      if (!response.ok) {
+        const serverMessage =
+          typeof body.error === "string"
+            ? body.error
+            : "AI analysis failed unexpectedly.";
+        throw new Error(serverMessage);
+      }
 
+      const assessment = body.data as AIDamageAssessment;
       setResult(assessment);
       setState("success");
       onAnalysisComplete(assessment);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "AI analysis failed unexpectedly.";
-      setErrorMessage(message);
+      if (err instanceof DOMException && err.name === "AbortError") {
+        setErrorMessage("AI analysis timed out. Please try again.");
+      } else {
+        const message =
+          err instanceof Error ? err.message : "AI analysis failed unexpectedly.";
+        setErrorMessage(message);
+      }
       setState("error");
+    } finally {
+      clearTimeout(timeout);
     }
   }
 

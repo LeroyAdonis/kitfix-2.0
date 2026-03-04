@@ -61,7 +61,7 @@ export default function RootLayout({
         </a>
         <ServiceWorkerRegistrar />
         {children}
-        <Script src="https://js.puter.com/v2/" strategy="lazyOnload" />
+        <Script src="https://js.puter.com/v2/" strategy="afterInteractive" />
       </body>
     </html>
   );
