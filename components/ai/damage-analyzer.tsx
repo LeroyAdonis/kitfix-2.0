@@ -17,7 +17,8 @@ import type { AIDamageAssessment } from "@/types/ai";
 type AnalysisState = "idle" | "loading" | "success" | "error";
 
 const TIMEOUT_MS = 30_000;
-const AI_MODEL = "claude-sonnet-4-20250514";
+// Puter.js uses "vendor/model-name" format — see https://developer.puter.com/ai/models/
+const AI_MODEL = "anthropic/claude-sonnet-4-6";
 
 const AI_PROMPT = `Analyze this jersey repair photo. Identify:
 1. Type of damage (tear, hole, stain, fading, logo_damage, seam_split)
@@ -120,7 +121,11 @@ export function DamageAnalyzer({ files, photoUrls, onAnalysisComplete }: DamageA
       onAnalysisComplete(assessment);
     } catch (err) {
       if (timedOut) return;
-      const message = err instanceof Error ? err.message : "AI analysis failed unexpectedly.";
+      const raw = err instanceof Error ? err.message : String(err);
+      const isAuthError = /\b(auth|login|sign.?in|permission|unauthorized)\b/i.test(raw);
+      const message = isAuthError
+        ? "Please sign in to Puter to use AI analysis. A login popup may have appeared behind this window."
+        : raw || "AI analysis failed unexpectedly.";
       setErrorMessage(message);
       setState("error");
     } finally {
