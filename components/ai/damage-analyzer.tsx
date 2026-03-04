@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,6 +17,15 @@ import type { AIDamageAssessment } from "@/types/ai";
 type AnalysisState = "idle" | "loading" | "success" | "error";
 
 const TIMEOUT_MS = 30_000;
+const AI_MODEL = "claude-sonnet-4-20250514";
+
+const AI_PROMPT = `Analyze this jersey repair photo. Identify:
+1. Type of damage (tear, hole, stain, fading, logo_damage, seam_split)
+2. Severity (minor, moderate, severe)
+3. Affected area (front, back, sleeve, collar, hem)
+4. Estimated repairability (easy, moderate, difficult)
+Return ONLY a JSON object with keys: damageType, severity, affectedArea, repairability.
+No markdown fences, no extra text.`;
 
 const SEVERITY_VARIANT: Record<string, "default" | "secondary" | "destructive"> = {
   minor: "secondary",
@@ -24,67 +33,103 @@ const SEVERITY_VARIANT: Record<string, "default" | "secondary" | "destructive"> 
   severe: "destructive",
 };
 
+function validateEnum<T extends string>(value: string, allowed: T[], fallback: T): T {
+  return allowed.includes(value as T) ? (value as T) : fallback;
+}
+
+function parseAIResponse(raw: string): Omit<AIDamageAssessment, "confidence" | "rawResponse"> {
+  const cleaned = raw
+    .replace(/```(?:json)?\s*/g, "")
+    .replace(/```\s*/g, "")
+    .trim();
+
+  // Find the first JSON object in the response
+  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error("No JSON object found in AI response");
+
+  const parsed: unknown = JSON.parse(jsonMatch[0]);
+
+  if (
+    typeof parsed !== "object" ||
+    parsed === null ||
+    !("damageType" in parsed) ||
+    !("severity" in parsed) ||
+    !("affectedArea" in parsed) ||
+    !("repairability" in parsed)
+  ) {
+    throw new Error("Invalid AI response structure");
+  }
+
+  const obj = parsed as Record<string, unknown>;
+  return {
+    damageType: String(obj.damageType),
+    severity: validateEnum(String(obj.severity), ["minor", "moderate", "severe"], "moderate"),
+    affectedArea: String(obj.affectedArea),
+    repairability: validateEnum(String(obj.repairability), ["easy", "moderate", "difficult"], "moderate"),
+  };
+}
+
 interface DamageAnalyzerProps {
+  files: File[];
   photoUrls: string[];
   onAnalysisComplete: (result: AIDamageAssessment) => void;
 }
 
-export function DamageAnalyzer({ photoUrls, onAnalysisComplete }: DamageAnalyzerProps) {
+export function DamageAnalyzer({ files, photoUrls, onAnalysisComplete }: DamageAnalyzerProps) {
   const [state, setState] = useState<AnalysisState>("idle");
   const [result, setResult] = useState<AIDamageAssessment | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const isAnalyzing = useRef(false);
 
   async function handleAnalyze() {
-    if (photoUrls.length === 0) return;
+    if (files.length === 0 || isAnalyzing.current) return;
+    isAnalyzing.current = true;
 
     setState("loading");
     setErrorMessage("");
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
+    let timedOut = false;
+    const timeout = setTimeout(() => {
+      timedOut = true;
+      isAnalyzing.current = false;
+      setErrorMessage("AI analysis timed out. Please try again.");
+      setState("error");
+    }, TIMEOUT_MS);
 
     try {
-      const response = await fetch("/api/ai/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          photoDataUrls: photoUrls,
-          damageType: "unknown",
-          damageDescription: "User-submitted for AI analysis",
-        }),
-        signal: controller.signal,
-      });
-
-      const json: unknown = await response.json();
-      const body = json as Record<string, unknown>;
-
-      if (!response.ok) {
-        const serverMessage =
-          typeof body.error === "string"
-            ? body.error
-            : "AI analysis failed unexpectedly.";
-        throw new Error(serverMessage);
+      if (!window.puter) {
+        throw new Error("AI service is still loading. Please wait a moment and try again.");
       }
 
-      const assessment = body.data as AIDamageAssessment;
+      const response = await window.puter.ai.chat(AI_PROMPT, files[0], {
+        model: AI_MODEL,
+      });
+
+      if (timedOut) return; // timeout already fired, discard late result
+
+      const rawContent = response.message.content;
+      const parsed = parseAIResponse(rawContent);
+      const assessment: AIDamageAssessment = {
+        ...parsed,
+        confidence: 0.75,
+        rawResponse: rawContent,
+      };
+
       setResult(assessment);
       setState("success");
       onAnalysisComplete(assessment);
     } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") {
-        setErrorMessage("AI analysis timed out. Please try again.");
-      } else {
-        const message =
-          err instanceof Error ? err.message : "AI analysis failed unexpectedly.";
-        setErrorMessage(message);
-      }
+      if (timedOut) return;
+      const message = err instanceof Error ? err.message : "AI analysis failed unexpectedly.";
+      setErrorMessage(message);
       setState("error");
     } finally {
       clearTimeout(timeout);
+      isAnalyzing.current = false;
     }
   }
 
-  if (photoUrls.length === 0) {
+  if (files.length === 0) {
     return (
       <Card className="border-dashed">
         <CardContent>
