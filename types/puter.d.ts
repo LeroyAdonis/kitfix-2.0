@@ -34,6 +34,9 @@ interface Puter {
 
 declare global {
   var puter: Puter | undefined;
+  interface Window {
+    puter?: Puter;
+  }
 }
 
 export {};
