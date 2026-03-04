@@ -544,6 +544,7 @@ export function RepairRequestForm() {
           </div>
 
           <DamageAnalyzer
+            files={selectedFiles}
             photoUrls={formData.photoUrls}
             onAnalysisComplete={setAiAssessment}
           />
