@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDateSAST } from "@/lib/utils";
+import { QuoteReviewCard } from "@/components/customer/quote-review-card";
 import { Star, Package, MessageSquare } from "lucide-react";
 
 export default async function RepairDetailPage(props: {
@@ -146,6 +147,17 @@ export default async function RepairDetailPage(props: {
           </Card>
         );
       })()}
+
+      {/* Quote Review (customer action) */}
+      {repair.currentStatus === "quote_sent" && repair.estimatedCost !== null && (
+        <QuoteReviewCard
+          repairId={repair.id}
+          estimatedCost={repair.estimatedCost}
+          adminNotes={repair.adminNotes}
+          jerseyDescription={repair.jerseyDescription}
+          damageType={repair.damageType}
+        />
+      )}
 
       {/* Photos */}
       {repair.photos.length > 0 && (
