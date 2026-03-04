@@ -1,6 +1,6 @@
 /**
  * Minimal type declarations for Puter.js v2 (loaded via CDN script).
- * Only covers the puter.ai.chat() API surface used in this project.
+ * Covers puter.auth and puter.ai.chat() API surfaces used in this project.
  * @see https://docs.puter.com/AI/chat/
  */
 
@@ -25,6 +25,13 @@ interface PuterAIStreamChunk {
   text: string;
 }
 
+interface PuterAuth {
+  /** Sign in the user via Puter popup (must be user-initiated to avoid popup blocker). */
+  signIn(): Promise<{ username?: string } | undefined>;
+  /** Check whether the user is currently signed in. */
+  isSignedIn(): boolean;
+}
+
 interface PuterAI {
   /** Streaming overload — returns an async iterable of text chunks. */
   chat(
@@ -33,16 +40,17 @@ interface PuterAI {
     options: PuterAIChatOptions & { stream: true },
   ): Promise<AsyncIterable<PuterAIStreamChunk>>;
 
-  /** Non-streaming overload (default) — returns the full response. */
+  /** Non-streaming overload — returns the full response (string or object). */
   chat(
     prompt: string,
     imageOrOptions?: string | string[] | File | PuterAIChatOptions,
     options?: PuterAIChatOptions,
-  ): Promise<PuterAIChatResponse>;
+  ): Promise<string | PuterAIChatResponse>;
 }
 
 interface Puter {
   ai: PuterAI;
+  auth: PuterAuth;
 }
 
 declare global {

@@ -35,6 +35,61 @@ const SEVERITY_VARIANT: Record<string, "default" | "secondary" | "destructive"> 
   severe: "destructive",
 };
 
+/**
+ * Wrap a promise with a timeout using Promise.race.
+ * Unlike a flag-based timeout, this actually rejects and unblocks the await
+ * when the timer fires — preventing indefinite hangs from Puter.js.
+ */
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(
+        () => reject(new Error(`${label} timed out after ${ms / 1000}s. Please try again.`)),
+        ms,
+      ),
+    ),
+  ]);
+}
+
+/**
+ * Ensure the user is authenticated with Puter before making API calls.
+ * Must be called from a user-initiated action (click handler) so the
+ * browser allows the auth popup.
+ */
+async function ensurePuterAuth(): Promise<boolean> {
+  if (!window.puter) return false;
+  try {
+    // If already signed in, skip the popup
+    if (window.puter.auth.isSignedIn()) return true;
+    const user = await withTimeout(
+      window.puter.auth.signIn(),
+      30_000,
+      "Puter authentication",
+    );
+    return !!user;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Parse Puter.js chat response — handles both plain string and
+ * { message: { content: string } } formats returned by different models.
+ */
+function parsePuterResponse(response: string | { message: { content: string } }): string {
+  if (typeof response === "string") return response;
+  if (
+    response &&
+    typeof response === "object" &&
+    "message" in response &&
+    response.message?.content
+  ) {
+    return response.message.content;
+  }
+  throw new Error("Invalid Puter.js response format");
+}
+
 function validateEnum<T extends string>(value: string, allowed: T[], fallback: T): T {
   return allowed.includes(value as T) ? (value as T) : fallback;
 }
@@ -89,78 +144,58 @@ export function DamageAnalyzer({ files, photoUrls, onAnalysisComplete }: DamageA
     isAnalyzing.current = true;
 
     setState("loading");
-    setStatusText("Analyzing jersey damage…");
+    setStatusText("Authenticating with AI service…");
     setErrorMessage("");
-
-    let timedOut = false;
-    const timeout = setTimeout(() => {
-      timedOut = true;
-      isAnalyzing.current = false;
-      setErrorMessage("AI analysis timed out. Please try again.");
-      setState("error");
-    }, TIMEOUT_MS);
 
     try {
       if (!window.puter) {
         throw new Error("AI service is still loading. Please wait a moment and try again.");
       }
 
-      // In development, log available models so devs can verify AI_MODEL is valid
-      if (process.env.NODE_ENV === "development") {
-        const aiService = window.puter.ai as unknown as Record<string, unknown>;
-        if (typeof aiService.listModels === "function") {
-          (aiService.listModels as () => Promise<unknown>)()
-            .then((models) => console.log("[DamageAnalyzer] Available Puter.js models:", models))
-            .catch(() => { /* non-critical diagnostic */ });
-        }
+      // Step 1: Authenticate with Puter (user-initiated click, so popup is allowed)
+      const authed = await ensurePuterAuth();
+      if (!authed) {
+        throw new Error(
+          "Please sign in to Puter to use AI analysis. If the popup didn't appear, check your popup blocker and try again.",
+        );
       }
+
+      setStatusText("Analyzing jersey damage…");
 
       // Prefer already-available photo URL (avoids re-uploading the raw File
       // through Puter's SDK, which is the main timeout bottleneck).
       const imageInput: string | File = photoUrls[0] ?? files[0];
 
-      const stream = await window.puter.ai.chat(AI_PROMPT, imageInput, {
-        model: AI_MODEL,
-        stream: true,
-      });
+      // Step 2: Call AI with Promise.race timeout (no streaming — simpler and more reliable).
+      // The reference implementation avoids streaming because the for-await loop can hang
+      // indefinitely even with a flag-based timeout.
+      const response = await withTimeout(
+        window.puter.ai.chat(AI_PROMPT, imageInput, { model: AI_MODEL }),
+        TIMEOUT_MS,
+        "AI analysis",
+      );
 
-      if (timedOut) return; // timeout already fired, discard late result
-
-      // Accumulate streamed text chunks and show progress once data arrives
-      let accumulated = "";
-      let receivedFirstChunk = false;
-      for await (const chunk of stream) {
-        if (timedOut) return;
-        accumulated += chunk.text;
-        if (!receivedFirstChunk) {
-          receivedFirstChunk = true;
-          setStatusText("Analyzing… receiving AI response");
-        }
-      }
-
-      if (timedOut) return;
-
-      const parsed = parseAIResponse(accumulated);
+      // Step 3: Parse response — Puter may return string or { message: { content } }
+      const rawText = parsePuterResponse(response);
+      const parsed = parseAIResponse(rawText);
       const assessment: AIDamageAssessment = {
         ...parsed,
         confidence: 0.75,
-        rawResponse: accumulated,
+        rawResponse: rawText,
       };
 
       setResult(assessment);
       setState("success");
       onAnalysisComplete(assessment);
     } catch (err) {
-      if (timedOut) return;
       const raw = err instanceof Error ? err.message : String(err);
-      const isAuthError = /\b(auth|login|sign.?in|permission|unauthorized)\b/i.test(raw);
+      const isAuthError = /\b(auth|login|sign.?in|permission|unauthorized|popup)\b/i.test(raw);
       const message = isAuthError
         ? "Please sign in to Puter to use AI analysis. A login popup may have appeared behind this window."
         : raw || "AI analysis failed unexpectedly.";
       setErrorMessage(message);
       setState("error");
     } finally {
-      clearTimeout(timeout);
       isAnalyzing.current = false;
     }
   }
@@ -252,4 +287,3 @@ export function DamageAnalyzer({ files, photoUrls, onAnalysisComplete }: DamageA
     </Card>
   );
 }
-
