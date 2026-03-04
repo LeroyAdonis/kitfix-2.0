@@ -41,14 +41,15 @@ const SEVERITY_VARIANT: Record<string, "default" | "secondary" | "destructive"> 
  * when the timer fires — preventing indefinite hangs from Puter.js.
  */
 function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout>;
   return Promise.race([
-    promise,
-    new Promise<never>((_, reject) =>
-      setTimeout(
+    promise.finally(() => clearTimeout(timeoutId)),
+    new Promise<never>((_, reject) => {
+      timeoutId = setTimeout(
         () => reject(new Error(`${label} timed out after ${ms / 1000}s. Please try again.`)),
         ms,
-      ),
-    ),
+      );
+    }),
   ]);
 }
 
@@ -83,7 +84,7 @@ function parsePuterResponse(response: string | { message: { content: string } })
     response &&
     typeof response === "object" &&
     "message" in response &&
-    response.message?.content
+    typeof response.message?.content === "string"
   ) {
     return response.message.content;
   }
