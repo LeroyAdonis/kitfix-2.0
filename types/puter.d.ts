@@ -20,7 +20,20 @@ interface PuterAIChatResponse {
   message: PuterAIChatMessage;
 }
 
+/** A single chunk emitted when streaming is enabled via { stream: true }. */
+interface PuterAIStreamChunk {
+  text: string;
+}
+
 interface PuterAI {
+  /** Streaming overload — returns an async iterable of text chunks. */
+  chat(
+    prompt: string,
+    image: string | string[] | File,
+    options: PuterAIChatOptions & { stream: true },
+  ): Promise<AsyncIterable<PuterAIStreamChunk>>;
+
+  /** Non-streaming overload (default) — returns the full response. */
   chat(
     prompt: string,
     imageOrOptions?: string | string[] | File | PuterAIChatOptions,

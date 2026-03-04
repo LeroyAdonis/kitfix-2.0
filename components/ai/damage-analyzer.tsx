@@ -16,9 +16,10 @@ import type { AIDamageAssessment } from "@/types/ai";
 
 type AnalysisState = "idle" | "loading" | "success" | "error";
 
-const TIMEOUT_MS = 30_000;
-// Puter.js uses "vendor/model-name" format — see https://developer.puter.com/ai/models/
-const AI_MODEL = "anthropic/claude-sonnet-4-6";
+const TIMEOUT_MS = 60_000;
+// Puter.js model naming: Claude models have NO vendor prefix (e.g. "claude-sonnet-4"),
+// while other providers use "vendor/model" format (e.g. "google/gemini-2.5-flash").
+const AI_MODEL = "claude-sonnet-4";
 
 const AI_PROMPT = `Analyze this jersey repair photo. Identify:
 1. Type of damage (tear, hole, stain, fading, logo_damage, seam_split)
@@ -80,6 +81,7 @@ export function DamageAnalyzer({ files, photoUrls, onAnalysisComplete }: DamageA
   const [state, setState] = useState<AnalysisState>("idle");
   const [result, setResult] = useState<AIDamageAssessment | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [statusText, setStatusText] = useState("Analyzing jersey damage…");
   const isAnalyzing = useRef(false);
 
   async function handleAnalyze() {
@@ -87,6 +89,7 @@ export function DamageAnalyzer({ files, photoUrls, onAnalysisComplete }: DamageA
     isAnalyzing.current = true;
 
     setState("loading");
+    setStatusText("Analyzing jersey damage…");
     setErrorMessage("");
 
     let timedOut = false;
@@ -102,18 +105,46 @@ export function DamageAnalyzer({ files, photoUrls, onAnalysisComplete }: DamageA
         throw new Error("AI service is still loading. Please wait a moment and try again.");
       }
 
-      const response = await window.puter.ai.chat(AI_PROMPT, files[0], {
+      // In development, log available models so devs can verify AI_MODEL is valid
+      if (process.env.NODE_ENV === "development") {
+        const aiService = window.puter.ai as unknown as Record<string, unknown>;
+        if (typeof aiService.listModels === "function") {
+          (aiService.listModels as () => Promise<unknown>)()
+            .then((models) => console.log("[DamageAnalyzer] Available Puter.js models:", models))
+            .catch(() => { /* non-critical diagnostic */ });
+        }
+      }
+
+      // Prefer already-available photo URL (avoids re-uploading the raw File
+      // through Puter's SDK, which is the main timeout bottleneck).
+      const imageInput: string | File = photoUrls[0] ?? files[0];
+
+      const stream = await window.puter.ai.chat(AI_PROMPT, imageInput, {
         model: AI_MODEL,
+        stream: true,
       });
 
       if (timedOut) return; // timeout already fired, discard late result
 
-      const rawContent = response.message.content;
-      const parsed = parseAIResponse(rawContent);
+      // Accumulate streamed text chunks and show progress once data arrives
+      let accumulated = "";
+      let receivedFirstChunk = false;
+      for await (const chunk of stream) {
+        if (timedOut) return;
+        accumulated += chunk.text;
+        if (!receivedFirstChunk) {
+          receivedFirstChunk = true;
+          setStatusText("Analyzing… receiving AI response");
+        }
+      }
+
+      if (timedOut) return;
+
+      const parsed = parseAIResponse(accumulated);
       const assessment: AIDamageAssessment = {
         ...parsed,
         confidence: 0.75,
-        rawResponse: rawContent,
+        rawResponse: accumulated,
       };
 
       setResult(assessment);
@@ -171,7 +202,7 @@ export function DamageAnalyzer({ files, photoUrls, onAnalysisComplete }: DamageA
         {state === "loading" && (
           <div className="flex items-center justify-center gap-2 py-6 text-muted-foreground">
             <Loader2 className="h-5 w-5 animate-spin" />
-            <span className="text-sm">Analyzing jersey damage…</span>
+            <span className="text-sm">{statusText}</span>
           </div>
         )}
 
