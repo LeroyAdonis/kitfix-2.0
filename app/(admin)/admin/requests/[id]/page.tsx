@@ -7,6 +7,7 @@ import { getRepairById } from "@/lib/db/queries/repairs";
 import { getPaymentsByRepair } from "@/lib/db/queries/payments";
 import { StatusUpdater } from "@/components/admin/status-updater";
 import { TechnicianAssignment } from "@/components/admin/technician-assignment";
+import { SendQuoteForm } from "@/components/admin/send-quote-form";
 import { RepairDetailView } from "./repair-detail-view";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -219,6 +220,16 @@ export default async function AdminRequestDetailPage({
               />
             </CardContent>
           </Card>
+
+          {/* Send quote (visible when status is reviewed) */}
+          {repair.currentStatus === "reviewed" && (
+            <SendQuoteForm
+              repairId={repair.id}
+              currentEstimate={repair.estimatedCost}
+              currentNotes={repair.adminNotes}
+              quoteDeclineReason={repair.quoteDeclineReason}
+            />
+          )}
 
           {/* Technician assignment */}
           <Card>
