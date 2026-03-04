@@ -84,6 +84,10 @@ function parseDataUrl(dataUrl: string): { mimeType: string; data: string } {
   return { mimeType: match[1], data: match[2] };
 }
 
+function shouldSendInngestEvents(): boolean {
+  return !!(process.env.INNGEST_EVENT_KEY || process.env.INNGEST_SIGNING_KEY);
+}
+
 // ── Request body schema ──────────────────────────────────────────────────────
 
 interface AnalyzeRequestBody {
@@ -229,8 +233,8 @@ export async function POST(request: NextRequest) {
     });
 
     // ── Fire-and-forget Inngest event ────────────────────────────────
-    try {
-      await inngest.send({
+    if (shouldSendInngestEvents()) {
+      void inngest.send({
         name: "ai/damage.analyze",
         data: {
           userId: session.user.id,
@@ -244,13 +248,13 @@ export async function POST(request: NextRequest) {
           durationMs,
           status: "success",
         },
-      });
-    } catch (inngestErr) {
-      logger.warn("Failed to send Inngest event", {
-        error:
-          inngestErr instanceof Error
-            ? inngestErr.message
-            : "Unknown Inngest error",
+      }).catch((inngestErr: unknown) => {
+        logger.warn("Failed to send Inngest event", {
+          error:
+            inngestErr instanceof Error
+              ? inngestErr.message
+              : "Unknown Inngest error",
+        });
       });
     }
 
@@ -272,8 +276,8 @@ export async function POST(request: NextRequest) {
     });
 
     // ── Fire-and-forget Inngest event for failure ────────────────────
-    try {
-      await inngest.send({
+    if (shouldSendInngestEvents()) {
+      void inngest.send({
         name: "ai/damage.analyze",
         data: {
           userId: session.user.id,
@@ -284,13 +288,13 @@ export async function POST(request: NextRequest) {
           status: "error",
           error: message,
         },
-      });
-    } catch (inngestErr) {
-      logger.warn("Failed to send Inngest event (failure path)", {
-        error:
-          inngestErr instanceof Error
-            ? inngestErr.message
-            : "Unknown Inngest error",
+      }).catch((inngestErr: unknown) => {
+        logger.warn("Failed to send Inngest event (failure path)", {
+          error:
+            inngestErr instanceof Error
+              ? inngestErr.message
+              : "Unknown Inngest error",
+        });
       });
     }
 
