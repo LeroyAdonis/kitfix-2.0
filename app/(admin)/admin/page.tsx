@@ -23,6 +23,8 @@ import type { RepairStatus } from "@/types";
 const ACTIVE_STATUSES: RepairStatus[] = [
   "submitted",
   "reviewed",
+  "quote_sent",
+  "quote_accepted",
   "in_repair",
   "quality_check",
 ];
