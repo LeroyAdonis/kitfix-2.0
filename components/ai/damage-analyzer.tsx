@@ -198,8 +198,11 @@ export function DamageAnalyzer({ files, photoUrls, onAnalysisComplete }: DamageA
     } catch (err) {
       const raw = err instanceof Error ? err.message : String(err);
       const isAuthError = /\b(auth|login|sign.?in|permission|unauthorized|popup)\b/i.test(raw);
+      const isParseError = /\b(json|parse|response format|response structure|found in ai)\b/i.test(raw);
       const message = isAuthError
         ? "Please sign in to Puter to use AI analysis. A login popup may have appeared behind this window."
+        : isParseError
+        ? "The AI could not read the photo clearly. Please ensure the photo shows the damage and try again."
         : raw || "AI analysis failed unexpectedly.";
       setErrorMessage(message);
       setState("error");
