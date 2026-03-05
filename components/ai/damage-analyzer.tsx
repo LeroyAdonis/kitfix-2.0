@@ -95,6 +95,12 @@ function validateEnum<T extends string>(value: string, allowed: T[], fallback: T
   return allowed.includes(value as T) ? (value as T) : fallback;
 }
 
+export function selectAnalysisImageInput(files: File[], photoUrls: string[]): File | string | null {
+  if (files.length > 0) return files[0];
+  if (photoUrls.length > 0) return photoUrls[0];
+  return null;
+}
+
 function parseAIResponse(raw: string): Omit<AIDamageAssessment, "confidence" | "rawResponse"> {
   const cleaned = raw
     .replace(/```(?:json)?\s*/g, "")
@@ -163,9 +169,10 @@ export function DamageAnalyzer({ files, photoUrls, onAnalysisComplete }: DamageA
 
       setStatusText("Analyzing jersey damage…");
 
-      // Prefer already-available photo URL (avoids re-uploading the raw File
-      // through Puter's SDK, which is the main timeout bottleneck).
-      const imageInput: string | File = photoUrls[0] ?? files[0];
+      const imageInput = selectAnalysisImageInput(files, photoUrls);
+      if (!imageInput) {
+        throw new Error("Please upload a photo before running AI analysis.");
+      }
 
       // Step 2: Call AI with Promise.race timeout (no streaming — simpler and more reliable).
       // The reference implementation avoids streaming because the for-await loop can hang
