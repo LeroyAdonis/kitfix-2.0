@@ -69,19 +69,23 @@ export default async function PaymentPage({ params }: PaymentPageProps) {
     );
   }
 
-  // Repair not reviewed yet — can't pay
-  if (repair.currentStatus !== "reviewed") {
+  // Repair quote not yet accepted — can't pay
+  if (repair.currentStatus !== "quote_accepted") {
+    const message =
+      repair.currentStatus === "submitted"
+        ? "Your repair request is being reviewed. You'll be able to pay once an admin has sent you a quote and you've accepted it."
+        : repair.currentStatus === "reviewed"
+          ? "Your repair has been reviewed. A quote will be sent to you shortly."
+          : repair.currentStatus === "quote_sent"
+            ? "A quote has been sent to you. Please review and accept it to proceed with payment."
+            : "This repair is already in progress.";
     return (
       <div className="mx-auto max-w-lg px-4 py-12">
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-8 text-center">
           <h1 className="mb-2 text-xl font-semibold text-amber-800">
             Payment Not Available
           </h1>
-          <p className="mb-4 text-amber-700">
-            {repair.currentStatus === "submitted"
-              ? "Your repair request is still being reviewed. You'll be able to pay once an admin has reviewed and estimated the cost."
-              : "This repair is already in progress."}
-          </p>
+          <p className="mb-4 text-amber-700">{message}</p>
           <a
             href={`/repairs/${id}`}
             className="inline-block rounded-md bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700"

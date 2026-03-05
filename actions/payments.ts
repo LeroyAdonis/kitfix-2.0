@@ -17,7 +17,7 @@ import type { ActionResult } from "@/types";
  *
  * Pre-conditions:
  *  - User is authenticated (customer who owns the repair, or admin)
- *  - Repair status is 'reviewed' (admin has set the estimate)
+ *  - Repair status is 'quote_accepted' (customer has accepted the admin quote)
  *  - Repair has an estimatedCost (set by admin during review)
  *  - No completed payment already exists for this repair
  */
@@ -41,11 +41,12 @@ export async function initiateCheckout(
       return { success: false, error: "You do not have access to this repair request." };
     }
 
-    // 4. Validate repair status — must be 'reviewed' to accept payment
-    if (repair.currentStatus !== "reviewed") {
+    // 4. Validate repair status — must be 'quote_accepted' to accept payment
+    //    (customer must accept the quote before checkout is allowed)
+    if (repair.currentStatus !== "quote_accepted") {
       return {
         success: false,
-        error: "This repair must be reviewed by an admin before payment can be made.",
+        error: "Payment is only available after you have accepted the repair quote.",
       };
     }
 
