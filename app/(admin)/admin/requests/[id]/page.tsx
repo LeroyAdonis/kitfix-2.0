@@ -328,6 +328,9 @@ export default async function AdminRequestDetailPage({
               currentEstimate={repair.estimatedCost}
               currentNotes={repair.adminNotes}
               quoteDeclineReason={repair.quoteDeclineReason}
+              aiAssessed={repair.aiDamageAssessment !== null}
+              customerProvince={(repair.shippingAddress as { province?: string } | null)?.province}
+              customerCity={(repair.shippingAddress as { city?: string } | null)?.city}
             />
           )}
 
