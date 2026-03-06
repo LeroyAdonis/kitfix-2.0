@@ -50,13 +50,20 @@ export async function initiateCheckout(
       };
     }
 
-    // 5. Validate estimated cost is set
-    if (!repair.estimatedCost || repair.estimatedCost <= 0) {
+    // 5. Calculate deposit from total (repair + pickup + delivery fees)
+    const repairCost = repair.estimatedCost ?? 0;
+    const pickupFee = repair.pickupFee ?? 0;
+    const deliveryFee = repair.deliveryFee ?? 0;
+    const totalCost = repairCost + pickupFee + deliveryFee;
+
+    if (totalCost <= 0) {
       return {
         success: false,
         error: "No cost estimate has been set for this repair yet.",
       };
     }
+
+    const depositAmount = Math.ceil(totalCost / 2);
 
     // 6. Check for existing completed payment (prevent double payment)
     const existingPayments = await getPaymentsByRepair(repairRequestId);
@@ -80,6 +87,9 @@ export async function initiateCheckout(
       metadata: {
         repairRequestId,
         customerId: userId,
+        totalCost: String(totalCost),
+        depositAmount: String(depositAmount),
+        paymentMilestone: "deposit",
       },
     });
 
@@ -88,7 +98,7 @@ export async function initiateCheckout(
       repairRequestId,
       customerId: userId,
       polarCheckoutId: checkout.id,
-      amount: repair.estimatedCost,
+      amount: depositAmount,
       currency: "usd",
       status: "pending",
       metadata: {

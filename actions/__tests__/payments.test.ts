@@ -411,6 +411,9 @@ describe("initiateCheckout", () => {
       metadata: {
         repairRequestId: "repair-1",
         customerId: "user-1",
+        totalCost: "25000",
+        depositAmount: "12500",
+        paymentMilestone: "deposit",
       },
     });
     expect(createPayment).toHaveBeenCalledWith(
@@ -418,7 +421,7 @@ describe("initiateCheckout", () => {
         repairRequestId: "repair-1",
         customerId: "user-1",
         polarCheckoutId: "checkout-new",
-        amount: 25000,
+        amount: 12500,
         currency: "usd",
         status: "pending",
       }),
