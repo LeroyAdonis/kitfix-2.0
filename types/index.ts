@@ -80,3 +80,10 @@ export type NotificationType =
   | "review_request"
   | "assignment"
   | "system";
+
+// ---------------------------------------------------------------------------
+// Domain types (pricing & validation)
+// ---------------------------------------------------------------------------
+
+export type { QuoteBreakdown } from "@/lib/config/pricing";
+export type { PickupAddress } from "@/lib/validators/repair";
