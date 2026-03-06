@@ -163,6 +163,9 @@ export const repairRequests = pgTable(
     quoteDeclineReason: text("quote_decline_reason"),
     trackingNumber: varchar("tracking_number", { length: 100 }),
     shippingAddress: jsonb("shipping_address"),
+    pickupRequired: boolean("pickup_required").notNull().default(false),
+    pickupFee: integer("pickup_fee").default(0),
+    deliveryFee: integer("delivery_fee").default(0),
     deletedAt: timestamp("deleted_at"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
