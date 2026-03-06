@@ -153,6 +153,9 @@ export default async function RepairDetailPage(props: {
         <QuoteReviewCard
           repairId={repair.id}
           estimatedCost={repair.estimatedCost}
+          pickupFee={repair.pickupFee ?? 0}
+          deliveryFee={repair.deliveryFee ?? 0}
+          pickupRequired={repair.pickupRequired ?? false}
           adminNotes={repair.adminNotes}
           jerseyDescription={repair.jerseyDescription}
           damageType={repair.damageType}
