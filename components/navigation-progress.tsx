@@ -21,11 +21,13 @@ export function NavigationProgress() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // ── Navigation complete ──────────────────────────────────────────────
-  // Whenever the pathname changes, the new page has mounted.
-  useEffect(() => {
+  // Render-time state adjustment: reset when pathname changes (React-recommended pattern)
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
     setIsNavigating(false);
     setProgress(0);
-  }, [pathname]);
+  }
 
   // ── Cleanup interval on unmount or when navigation ends ──────────────
   useEffect(() => {
