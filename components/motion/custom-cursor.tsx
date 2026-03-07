@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { motion, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 
 const DOT_SIZE = 8;
@@ -11,10 +11,18 @@ const SPRING_CONFIG = { damping: 25, stiffness: 250, mass: 0.5 };
 const INTERACTIVE_SELECTOR =
   "a, button, [role='button'], input, textarea, select, [data-cursor-hover]";
 
+const noopSubscribe = () => () => {};
+const getTouchSnapshot = () => window.matchMedia("(pointer: coarse)").matches;
+const getTouchServerSnapshot = () => true;
+
 export function CustomCursor() {
   const [isVisible, setIsVisible] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(true);
+  const isTouchDevice = useSyncExternalStore(
+    noopSubscribe,
+    getTouchSnapshot,
+    getTouchServerSnapshot,
+  );
   const shouldReduceMotion = useReducedMotion();
 
   const cursorX = useMotionValue(-100);
@@ -23,13 +31,7 @@ export function CustomCursor() {
   const springY = useSpring(cursorY, SPRING_CONFIG);
 
   useEffect(() => {
-    // Detect touch device
-    const hasCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
-    if (hasCoarsePointer) {
-      setIsTouchDevice(true);
-      return;
-    }
-    setIsTouchDevice(false);
+    if (isTouchDevice) return;
 
     // Set cursor: none on body
     document.body.style.cursor = "none";
@@ -70,7 +72,7 @@ export function CustomCursor() {
       document.removeEventListener("mouseover", handleMouseOver);
       document.removeEventListener("mouseout", handleMouseOut);
     };
-  }, [cursorX, cursorY]);
+  }, [cursorX, cursorY, isTouchDevice]);
 
   if (isTouchDevice || shouldReduceMotion) return null;
 

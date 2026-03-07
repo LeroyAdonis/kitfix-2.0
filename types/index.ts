@@ -48,6 +48,8 @@ export type UserRole = "customer" | "admin" | "technician";
 export type RepairStatus =
   | "submitted"
   | "reviewed"
+  | "quote_sent"
+  | "quote_accepted"
   | "in_repair"
   | "quality_check"
   | "shipped";
@@ -78,3 +80,10 @@ export type NotificationType =
   | "review_request"
   | "assignment"
   | "system";
+
+// ---------------------------------------------------------------------------
+// Domain types (pricing & validation)
+// ---------------------------------------------------------------------------
+
+export type { QuoteBreakdown } from "@/lib/config/pricing";
+export type { PickupAddress } from "@/lib/validators/repair";

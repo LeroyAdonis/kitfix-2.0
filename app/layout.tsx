@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ServiceWorkerRegistrar } from "@/components/pwa/service-worker-registrar";
+import { NavigationProgress } from "@/components/navigation-progress";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -60,8 +61,9 @@ export default function RootLayout({
           Skip to content
         </a>
         <ServiceWorkerRegistrar />
+        <NavigationProgress />
         {children}
-        <Script src="https://js.puter.com/v2/" strategy="lazyOnload" />
+        <Script src="https://js.puter.com/v2/" strategy="afterInteractive" />
       </body>
     </html>
   );

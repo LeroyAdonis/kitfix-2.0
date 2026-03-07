@@ -23,6 +23,8 @@ interface StatusUpdaterProps {
 const STATUS_FLOW: Record<RepairStatus, RepairStatus[]> = {
   submitted: ["reviewed"],
   reviewed: ["in_repair"],
+  quote_sent: ["quote_accepted"],
+  quote_accepted: ["in_repair"],
   in_repair: ["quality_check"],
   quality_check: ["shipped"],
   shipped: [],
@@ -31,6 +33,8 @@ const STATUS_FLOW: Record<RepairStatus, RepairStatus[]> = {
 const STATUS_LABELS: Record<RepairStatus, string> = {
   submitted: "Submitted",
   reviewed: "Reviewed",
+  quote_sent: "Quote Sent",
+  quote_accepted: "Quote Accepted",
   in_repair: "In Repair",
   quality_check: "Quality Check",
   shipped: "Shipped",

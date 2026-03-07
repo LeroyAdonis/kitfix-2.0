@@ -42,6 +42,8 @@ interface RequestTableProps {
 const STATUS_VARIANTS: Record<RepairStatus, "default" | "secondary" | "destructive" | "outline"> = {
   submitted: "outline",
   reviewed: "secondary",
+  quote_sent: "outline",
+  quote_accepted: "secondary",
   in_repair: "default",
   quality_check: "secondary",
   shipped: "default",
@@ -50,6 +52,8 @@ const STATUS_VARIANTS: Record<RepairStatus, "default" | "secondary" | "destructi
 const ALL_STATUSES: RepairStatus[] = [
   "submitted",
   "reviewed",
+  "quote_sent",
+  "quote_accepted",
   "in_repair",
   "quality_check",
   "shipped",

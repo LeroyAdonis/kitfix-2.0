@@ -1,4 +1,10 @@
-import { createRepairSchema, shippingAddressSchema } from "../repair";
+import {
+  createRepairSchema,
+  shippingAddressSchema,
+  sendQuoteSchema,
+  acceptQuoteSchema,
+  pickupAddressSchema,
+} from "../repair";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -291,5 +297,128 @@ describe("createRepairSchema", () => {
       jerseyBrand: "A".repeat(101),
     });
     expect(result.success).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// sendQuoteSchema
+// ---------------------------------------------------------------------------
+
+describe("sendQuoteSchema", () => {
+  it("accepts valid input with pickupRequired override", () => {
+    const result = sendQuoteSchema.safeParse({
+      repairId: "abc-123",
+      estimatedCost: 30000,
+      pickupRequired: true,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("defaults pickupRequired to undefined (auto-detect)", () => {
+    const result = sendQuoteSchema.safeParse({
+      repairId: "abc-123",
+      estimatedCost: 30000,
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.pickupRequired).toBeUndefined();
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// acceptQuoteSchema
+// ---------------------------------------------------------------------------
+
+describe("acceptQuoteSchema", () => {
+  it("accepts repairId only (no pickup address needed)", () => {
+    const result = acceptQuoteSchema.safeParse({ repairId: "abc-123" });
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts repairId with valid pickup address", () => {
+    const result = acceptQuoteSchema.safeParse({
+      repairId: "abc-123",
+      pickupAddress: {
+        street: "42 Main Street",
+        city: "Johannesburg",
+        province: "Gauteng",
+        postalCode: "2001",
+        contactName: "Thabo Mokoena",
+        contactPhone: "0821234567",
+      },
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects pickup address with invalid phone number", () => {
+    const result = acceptQuoteSchema.safeParse({
+      repairId: "abc-123",
+      pickupAddress: {
+        street: "42 Main Street",
+        city: "Johannesburg",
+        province: "Gauteng",
+        postalCode: "2001",
+        contactName: "Thabo",
+        contactPhone: "123",
+      },
+    });
+    expect(result.success).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// pickupAddressSchema
+// ---------------------------------------------------------------------------
+
+describe("pickupAddressSchema", () => {
+  it("requires contactName and contactPhone", () => {
+    const result = pickupAddressSchema.safeParse({
+      street: "42 Main Street",
+      city: "Johannesburg",
+      province: "Gauteng",
+      postalCode: "2001",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("accepts +27 phone format", () => {
+    const result = pickupAddressSchema.safeParse({
+      street: "42 Main Street",
+      city: "Johannesburg",
+      province: "Gauteng",
+      postalCode: "2001",
+      contactName: "Thabo Mokoena",
+      contactPhone: "+27821234567",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts 0XX phone format", () => {
+    const result = pickupAddressSchema.safeParse({
+      street: "42 Main Street",
+      city: "Johannesburg",
+      province: "Gauteng",
+      postalCode: "2001",
+      contactName: "Thabo Mokoena",
+      contactPhone: "0821234567",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("allows optional specialInstructions", () => {
+    const result = pickupAddressSchema.safeParse({
+      street: "42 Main Street",
+      city: "Johannesburg",
+      province: "Gauteng",
+      postalCode: "2001",
+      contactName: "Thabo Mokoena",
+      contactPhone: "0821234567",
+      specialInstructions: "Ring doorbell twice",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.specialInstructions).toBe("Ring doorbell twice");
+    }
   });
 });

@@ -14,6 +14,7 @@ import { Resend } from "resend";
 
 import {
   estimateReadyTemplate,
+  formatZAR,
   paymentConfirmationTemplate,
   reviewRequestTemplate,
   statusUpdateTemplate,
@@ -125,12 +126,28 @@ export async function sendEstimateReadyEmail(
   to: string,
   customerName: string,
   repairId: string,
-  estimatedCost: number,
+  repairCost: number,
+  pickupFee: number,
+  deliveryFee: number,
+  totalCost: number,
+  depositAmount: number,
+  pickupRequired: boolean,
+  adminNotes?: string,
 ): Promise<boolean> {
   return send({
     to,
-    subject: `Repair #${repairId} — Estimate Ready`,
-    html: estimateReadyTemplate(customerName, repairId, estimatedCost),
+    subject: `Your KitFix Repair Quote is Ready — ${formatZAR(totalCost)}`,
+    html: estimateReadyTemplate(
+      customerName,
+      repairId,
+      repairCost,
+      pickupFee,
+      deliveryFee,
+      totalCost,
+      depositAmount,
+      pickupRequired,
+      adminNotes,
+    ),
   });
 }
 

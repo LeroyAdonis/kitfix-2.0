@@ -28,3 +28,31 @@ export const createRepairSchema = z.object({
 
 export type CreateRepairInput = z.infer<typeof createRepairSchema>;
 export type ShippingAddress = z.infer<typeof shippingAddressSchema>;
+
+export const pickupAddressSchema = shippingAddressSchema.extend({
+  contactName: z.string().min(2, "Contact name is required"),
+  contactPhone: z.string().regex(
+    /^(\+27|0)\d{9}$/,
+    "Phone must be a valid SA number (e.g. 0821234567 or +27821234567)",
+  ),
+  specialInstructions: z.string().max(500).optional(),
+});
+
+export type PickupAddress = z.infer<typeof pickupAddressSchema>;
+
+export const sendQuoteSchema = z.object({
+  repairId: z.string().min(1, "Repair ID is required"),
+  estimatedCost: z.number().int().positive("Estimated cost must be positive"),
+  adminNotes: z.string().max(1000).optional(),
+  pickupRequired: z.boolean().optional(),
+});
+
+export const declineQuoteSchema = z.object({
+  repairId: z.string().min(1, "Repair ID is required"),
+  reason: z.string().min(10, "Please provide at least 10 characters explaining why").max(500),
+});
+
+export const acceptQuoteSchema = z.object({
+  repairId: z.string().min(1, "Repair ID is required"),
+  pickupAddress: pickupAddressSchema.optional(),
+});

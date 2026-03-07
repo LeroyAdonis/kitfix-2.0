@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,9 +18,14 @@ import { Badge } from "@/components/ui/badge";
 import { DamageAnalyzer } from "@/components/ai/damage-analyzer";
 import { CostEstimator } from "@/components/ai/cost-estimator";
 import { createRepairAction } from "@/actions/repairs";
-import { Loader2, ChevronLeft, ChevronRight, Send, SkipForward } from "lucide-react";
+import { logger } from "@/lib/logger";
+import { cn } from "@/lib/utils";
+import { Loader2, ChevronLeft, ChevronRight, Send, SkipForward, Upload, X, ImageIcon } from "lucide-react";
 import type { DamageType, UrgencyLevel } from "@/types";
 import type { AIDamageAssessment } from "@/types/ai";
+
+const MAX_PHOTOS = 5;
+const ACCEPTED_IMAGE_TYPES = "image/jpeg,image/png,image/webp";
 
 const STEPS = [
   "Jersey Details",
@@ -96,10 +101,13 @@ export function RepairRequestForm() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<RepairFormData>(initialFormData);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [aiAssessment, setAiAssessment] = useState<AIDamageAssessment | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [isPending, startTransition] = useTransition();
+  const [isDragOver, setIsDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   function updateField(field: keyof RepairFormData, value: string) {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -109,6 +117,71 @@ export function RepairRequestForm() {
       return next;
     });
   }
+
+  // ── Photo selection helpers ────────────────────────────────────────────
+  const addFiles = useCallback(
+    async (incoming: FileList | File[]) => {
+      const files = Array.from(incoming);
+      const remaining = MAX_PHOTOS - selectedFiles.length;
+      if (remaining <= 0) return;
+
+      const accepted = files
+        .filter((f) => ACCEPTED_IMAGE_TYPES.split(",").includes(f.type) && f.size <= 10 * 1024 * 1024)
+        .slice(0, remaining);
+
+      if (accepted.length === 0) return;
+
+      // Read all files in parallel, preserving order with Promise.all
+      const dataUrls = await Promise.all(
+        accepted.map(
+          (file) =>
+            new Promise<string>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result as string);
+              reader.onerror = () => reject(reader.error);
+              reader.readAsDataURL(file);
+            }),
+        ),
+      );
+
+      setSelectedFiles((prev) => [...prev, ...accepted]);
+      setFormData((prev) => ({
+        ...prev,
+        photoUrls: [...prev.photoUrls, ...dataUrls],
+      }));
+    },
+    [selectedFiles.length],
+  );
+
+  function removeFile(index: number) {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+    setFormData((prev) => ({
+      ...prev,
+      photoUrls: prev.photoUrls.filter((_, i) => i !== index),
+    }));
+  }
+
+  const onDragOver = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      if (selectedFiles.length < MAX_PHOTOS) setIsDragOver(true);
+    },
+    [selectedFiles.length],
+  );
+
+  const onDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  }, []);
+
+  const onDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragOver(false);
+      if (e.dataTransfer.files.length > 0) addFiles(e.dataTransfer.files);
+    },
+    [addFiles],
+  );
 
   function validateStep(stepIndex: number): boolean {
     const errors: Record<string, string[]> = {};
@@ -180,7 +253,24 @@ export function RepairRequestForm() {
       const result = await createRepairAction(fd);
 
       if (result.success) {
-        router.push(`/repairs/${result.data.id}`);
+        // Upload selected photos in the background — don't block on failures
+        const repairId = result.data.id;
+        for (const file of selectedFiles) {
+          try {
+            const uploadFd = new globalThis.FormData();
+            uploadFd.set("file", file);
+            uploadFd.set("repairRequestId", repairId);
+            uploadFd.set("photoType", "before");
+            await fetch("/api/upload", { method: "POST", body: uploadFd });
+          } catch (uploadErr) {
+            logger.warn("Photo upload failed after form submission", {
+              repairId,
+              fileName: file.name,
+              error: uploadErr instanceof Error ? uploadErr.message : String(uploadErr),
+            });
+          }
+        }
+        router.push(`/repairs/${repairId}`);
       } else {
         setError(result.error);
         if (result.fieldErrors) {
@@ -364,6 +454,82 @@ export function RepairRequestForm() {
               ))}
             </div>
           </div>
+
+          {/* Photo upload */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <ImageIcon className="h-4 w-4" />
+              Photos (optional)
+              <span className="text-muted-foreground text-sm font-normal">
+                {selectedFiles.length}/{MAX_PHOTOS}
+              </span>
+            </Label>
+
+            {selectedFiles.length < MAX_PHOTOS && (
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => fileInputRef.current?.click()}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") fileInputRef.current?.click();
+                }}
+                onDragOver={onDragOver}
+                onDragLeave={onDragLeave}
+                onDrop={onDrop}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 text-center transition-colors cursor-pointer",
+                  isDragOver
+                    ? "border-primary bg-primary/5"
+                    : "border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/50",
+                )}
+              >
+                <Upload className="h-8 w-8 text-muted-foreground" />
+                <p className="text-sm font-medium">
+                  Drag & drop or click to browse
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  JPEG, PNG, or WebP — max {MAX_PHOTOS} photos
+                </p>
+              </div>
+            )}
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept={ACCEPTED_IMAGE_TYPES}
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  addFiles(e.target.files);
+                }
+                e.target.value = "";
+              }}
+            />
+
+            {selectedFiles.length > 0 && (
+              <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">
+                {selectedFiles.map((file, index) => (
+                  <div key={`${file.name}-${index}`} className="group relative aspect-square">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={formData.photoUrls[index] ?? ""}
+                      alt={file.name}
+                      className="h-full w-full rounded-md border object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeFile(index)}
+                      className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground opacity-0 transition-opacity group-hover:opacity-100"
+                      aria-label={`Remove ${file.name}`}
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -378,6 +544,7 @@ export function RepairRequestForm() {
           </div>
 
           <DamageAnalyzer
+            files={selectedFiles}
             photoUrls={formData.photoUrls}
             onAnalysisComplete={setAiAssessment}
           />
