@@ -17,7 +17,7 @@ import type { ActionResult } from "@/types";
  *
  * Pre-conditions:
  *  - User is authenticated (customer who owns the repair, or admin)
- *  - Repair status is 'reviewed' (admin has set the estimate)
+ *  - Repair status is 'quote_accepted' (customer has accepted the admin quote)
  *  - Repair has an estimatedCost (set by admin during review)
  *  - No completed payment already exists for this repair
  */
@@ -41,21 +41,29 @@ export async function initiateCheckout(
       return { success: false, error: "You do not have access to this repair request." };
     }
 
-    // 4. Validate repair status — must be 'reviewed' to accept payment
-    if (repair.currentStatus !== "reviewed") {
+    // 4. Validate repair status — must be 'quote_accepted' to accept payment
+    //    (customer must accept the quote before checkout is allowed)
+    if (repair.currentStatus !== "quote_accepted") {
       return {
         success: false,
-        error: "This repair must be reviewed by an admin before payment can be made.",
+        error: "Payment is only available after you have accepted the repair quote.",
       };
     }
 
-    // 5. Validate estimated cost is set
-    if (!repair.estimatedCost || repair.estimatedCost <= 0) {
+    // 5. Calculate deposit from total (repair + pickup + delivery fees)
+    const repairCost = repair.estimatedCost ?? 0;
+    const pickupFee = repair.pickupFee ?? 0;
+    const deliveryFee = repair.deliveryFee ?? 0;
+    const totalCost = repairCost + pickupFee + deliveryFee;
+
+    if (totalCost <= 0) {
       return {
         success: false,
         error: "No cost estimate has been set for this repair yet.",
       };
     }
+
+    const depositAmount = Math.ceil(totalCost / 2);
 
     // 6. Check for existing completed payment (prevent double payment)
     const existingPayments = await getPaymentsByRepair(repairRequestId);
@@ -79,6 +87,9 @@ export async function initiateCheckout(
       metadata: {
         repairRequestId,
         customerId: userId,
+        totalCost: String(totalCost),
+        depositAmount: String(depositAmount),
+        paymentMilestone: "deposit",
       },
     });
 
@@ -87,7 +98,7 @@ export async function initiateCheckout(
       repairRequestId,
       customerId: userId,
       polarCheckoutId: checkout.id,
-      amount: repair.estimatedCost,
+      amount: depositAmount,
       currency: "usd",
       status: "pending",
       metadata: {

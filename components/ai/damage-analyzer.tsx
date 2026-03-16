@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,15 +14,20 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, Sparkles, AlertTriangle } from "lucide-react";
 import type { AIDamageAssessment } from "@/types/ai";
 
+type AnalysisState = "idle" | "loading" | "success" | "error";
+
+const TIMEOUT_MS = 60_000;
+// Puter.js model naming: Claude models have NO vendor prefix (e.g. "claude-sonnet-4"),
+// while other providers use "vendor/model" format (e.g. "google/gemini-2.5-flash").
+const AI_MODEL = "claude-sonnet-4";
+
 const AI_PROMPT = `Analyze this jersey repair photo. Identify:
-1. Type of damage (tear, hole, stain, fading, logo damage, seam split)
+1. Type of damage (tear, hole, stain, fading, logo_damage, seam_split)
 2. Severity (minor, moderate, severe)
 3. Affected area (front, back, sleeve, collar, hem)
 4. Estimated repairability (easy, moderate, difficult)
-Return as JSON with keys: damageType, severity, affectedArea, repairability.
-Only return the JSON object, no markdown fences or extra text.`;
-
-type AnalysisState = "idle" | "loading" | "success" | "error";
+Return ONLY a JSON object with keys: damageType, severity, affectedArea, repairability.
+No markdown fences, no extra text.`;
 
 const SEVERITY_VARIANT: Record<string, "default" | "secondary" | "destructive"> = {
   minor: "secondary",
@@ -30,15 +35,83 @@ const SEVERITY_VARIANT: Record<string, "default" | "secondary" | "destructive"> 
   severe: "destructive",
 };
 
-interface DamageAnalyzerProps {
-  photoUrls: string[];
-  onAnalysisComplete: (result: AIDamageAssessment) => void;
+/**
+ * Wrap a promise with a timeout using Promise.race.
+ * Unlike a flag-based timeout, this actually rejects and unblocks the await
+ * when the timer fires — preventing indefinite hangs from Puter.js.
+ */
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  return Promise.race([
+    promise.finally(() => clearTimeout(timeoutId)),
+    new Promise<never>((_, reject) => {
+      timeoutId = setTimeout(
+        () => reject(new Error(`${label} timed out after ${ms / 1000}s. Please try again.`)),
+        ms,
+      );
+    }),
+  ]);
+}
+
+/**
+ * Ensure the user is authenticated with Puter before making API calls.
+ * Must be called from a user-initiated action (click handler) so the
+ * browser allows the auth popup.
+ */
+async function ensurePuterAuth(): Promise<boolean> {
+  if (!window.puter) return false;
+  try {
+    // If already signed in, skip the popup
+    if (window.puter.auth.isSignedIn()) return true;
+    const user = await withTimeout(
+      window.puter.auth.signIn(),
+      30_000,
+      "Puter authentication",
+    );
+    return !!user;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Parse Puter.js chat response — handles both plain string and
+ * { message: { content: string } } formats returned by different models.
+ */
+function parsePuterResponse(response: string | { message: { content: string } }): string {
+  if (typeof response === "string") return response;
+  if (
+    response &&
+    typeof response === "object" &&
+    "message" in response &&
+    typeof response.message?.content === "string"
+  ) {
+    return response.message.content;
+  }
+  throw new Error("Invalid Puter.js response format");
+}
+
+function validateEnum<T extends string>(value: string, allowed: T[], fallback: T): T {
+  return allowed.includes(value as T) ? (value as T) : fallback;
+}
+
+export function selectAnalysisImageInput(files: File[], photoUrls: string[]): File | string | null {
+  if (files.length > 0) return files[0];
+  if (photoUrls.length > 0) return photoUrls[0];
+  return null;
 }
 
 function parseAIResponse(raw: string): Omit<AIDamageAssessment, "confidence" | "rawResponse"> {
-  // Strip markdown code fences if present
-  const cleaned = raw.replace(/```(?:json)?\s*/g, "").replace(/```\s*/g, "").trim();
-  const parsed: unknown = JSON.parse(cleaned);
+  const cleaned = raw
+    .replace(/```(?:json)?\s*/g, "")
+    .replace(/```\s*/g, "")
+    .trim();
+
+  // Find the first JSON object in the response
+  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error("No JSON object found in AI response");
+
+  const parsed: unknown = JSON.parse(jsonMatch[0]);
 
   if (
     typeof parsed !== "object" ||
@@ -60,52 +133,85 @@ function parseAIResponse(raw: string): Omit<AIDamageAssessment, "confidence" | "
   };
 }
 
-function validateEnum<T extends string>(value: string, allowed: T[], fallback: T): T {
-  return allowed.includes(value as T) ? (value as T) : fallback;
+interface DamageAnalyzerProps {
+  files: File[];
+  photoUrls: string[];
+  onAnalysisComplete: (result: AIDamageAssessment) => void;
 }
 
-export function DamageAnalyzer({ photoUrls, onAnalysisComplete }: DamageAnalyzerProps) {
+export function DamageAnalyzer({ files, photoUrls, onAnalysisComplete }: DamageAnalyzerProps) {
   const [state, setState] = useState<AnalysisState>("idle");
   const [result, setResult] = useState<AIDamageAssessment | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [statusText, setStatusText] = useState("Analyzing jersey damage…");
+  const isAnalyzing = useRef(false);
 
   async function handleAnalyze() {
-    if (photoUrls.length === 0) return;
+    if ((files.length === 0 && photoUrls.length === 0) || isAnalyzing.current) return;
+    isAnalyzing.current = true;
 
     setState("loading");
+    setStatusText("Authenticating with AI service…");
     setErrorMessage("");
 
     try {
-      if (typeof globalThis.puter === "undefined") {
-        throw new Error("AI service is not available. Please try again later.");
+      if (!window.puter) {
+        throw new Error("AI service is still loading. Please wait a moment and try again.");
       }
 
-      const imageArg = photoUrls.length === 1 ? photoUrls[0] : photoUrls;
-      const response = await globalThis.puter.ai.chat(AI_PROMPT, imageArg, {
-        model: "gpt-4o",
-        temperature: 0.2,
-      });
+      // Step 1: Authenticate with Puter (user-initiated click, so popup is allowed)
+      const authed = await ensurePuterAuth();
+      if (!authed) {
+        throw new Error(
+          "Please sign in to Puter to use AI analysis. If the popup didn't appear, check your popup blocker and try again.",
+        );
+      }
 
-      const rawContent = response.message.content;
-      const parsed = parseAIResponse(rawContent);
+      setStatusText("Analyzing jersey damage…");
 
+      const imageInput = selectAnalysisImageInput(files, photoUrls);
+      if (!imageInput) {
+        throw new Error("Please upload a photo before running AI analysis.");
+      }
+
+      // Step 2: Call AI with Promise.race timeout (no streaming — simpler and more reliable).
+      // The reference implementation avoids streaming because the for-await loop can hang
+      // indefinitely even with a flag-based timeout.
+      const response = await withTimeout(
+        window.puter.ai.chat(AI_PROMPT, imageInput, { model: AI_MODEL }),
+        TIMEOUT_MS,
+        "AI analysis",
+      );
+
+      // Step 3: Parse response — Puter may return string or { message: { content } }
+      const rawText = parsePuterResponse(response);
+      const parsed = parseAIResponse(rawText);
       const assessment: AIDamageAssessment = {
         ...parsed,
         confidence: 0.75,
-        rawResponse: rawContent,
+        rawResponse: rawText,
       };
 
       setResult(assessment);
       setState("success");
       onAnalysisComplete(assessment);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "AI analysis failed unexpectedly.";
+      const raw = err instanceof Error ? err.message : String(err);
+      const isAuthError = /\b(auth|login|sign.?in|permission|unauthorized|popup)\b/i.test(raw);
+      const isParseError = /\b(json|parse|response format|response structure|found in ai)\b/i.test(raw);
+      const message = isAuthError
+        ? "Please sign in to Puter to use AI analysis. A login popup may have appeared behind this window."
+        : isParseError
+        ? "The AI could not read the photo clearly. Please ensure the photo shows the damage and try again."
+        : raw || "AI analysis failed unexpectedly.";
       setErrorMessage(message);
       setState("error");
+    } finally {
+      isAnalyzing.current = false;
     }
   }
 
-  if (photoUrls.length === 0) {
+  if (files.length === 0 && photoUrls.length === 0) {
     return (
       <Card className="border-dashed">
         <CardContent>
@@ -142,7 +248,7 @@ export function DamageAnalyzer({ photoUrls, onAnalysisComplete }: DamageAnalyzer
         {state === "loading" && (
           <div className="flex items-center justify-center gap-2 py-6 text-muted-foreground">
             <Loader2 className="h-5 w-5 animate-spin" />
-            <span className="text-sm">Analyzing jersey damage…</span>
+            <span className="text-sm">{statusText}</span>
           </div>
         )}
 
@@ -192,4 +298,3 @@ export function DamageAnalyzer({ photoUrls, onAnalysisComplete }: DamageAnalyzer
     </Card>
   );
 }
-

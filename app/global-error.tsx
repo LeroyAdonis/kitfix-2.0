@@ -1,5 +1,9 @@
 "use client";
 
+import { useEffect } from "react";
+
+const IS_DEV = process.env.NODE_ENV === "development";
+
 export default function GlobalError({
   error,
   reset,
@@ -7,6 +11,10 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    console.error("[GlobalErrorBoundary]", error);
+  }, [error]);
+
   return (
     <html lang="en">
       <body
@@ -76,9 +84,22 @@ export default function GlobalError({
                 lineHeight: 1.6,
               }}
             >
-              {error.message ||
-                "A critical error occurred. Please try refreshing the page."}
+              {IS_DEV
+                ? error.message || "A critical error occurred."
+                : "A critical error occurred. Please try refreshing the page."}
             </p>
+            {error.digest && (
+              <p
+                style={{
+                  marginTop: "0.5rem",
+                  fontFamily: "ui-monospace, monospace",
+                  fontSize: "0.6875rem",
+                  color: "#a3a3a380",
+                }}
+              >
+                Ref: {error.digest}
+              </p>
+            )}
           </div>
 
           <button

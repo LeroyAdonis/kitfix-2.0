@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { eq } from "drizzle-orm";
+import { AlertTriangle, Bot } from "lucide-react";
 
 import { db } from "@/lib/db";
 import { user } from "@/lib/db/schema";
@@ -7,7 +8,9 @@ import { getRepairById } from "@/lib/db/queries/repairs";
 import { getPaymentsByRepair } from "@/lib/db/queries/payments";
 import { StatusUpdater } from "@/components/admin/status-updater";
 import { TechnicianAssignment } from "@/components/admin/technician-assignment";
+import { SendQuoteForm } from "@/components/admin/send-quote-form";
 import { RepairDetailView } from "./repair-detail-view";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency, formatDateSAST } from "@/lib/utils";
@@ -67,6 +70,104 @@ export default async function AdminRequestDetailPage({
                   value={repair.damageDescription}
                 />
               </div>
+            </CardContent>
+          </Card>
+
+          {/* AI Damage Assessment */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">AI Damage Assessment</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {repair.aiDamageAssessment ? (
+                (() => {
+                  const ai = repair.aiDamageAssessment as {
+                    damageType?: string;
+                    severity?: string;
+                    affectedArea?: string;
+                    repairability?: string;
+                    confidence?: number;
+                  };
+                  return (
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Bot className="h-4 w-4 text-green-600" />
+                        <span className="text-sm font-medium text-green-700 dark:text-green-400">
+                          AI Analysis Complete
+                        </span>
+                      </div>
+                      <div className="grid gap-2 text-sm sm:grid-cols-2">
+                        {ai.damageType && (
+                          <div>
+                            <span className="text-muted-foreground">
+                              Damage:{" "}
+                            </span>
+                            <Badge variant="outline" className="capitalize">
+                              {ai.damageType.replace(/_/g, " ")}
+                            </Badge>
+                          </div>
+                        )}
+                        {ai.severity && (
+                          <div>
+                            <span className="text-muted-foreground">
+                              Severity:{" "}
+                            </span>
+                            <Badge
+                              variant={
+                                ai.severity === "severe"
+                                  ? "destructive"
+                                  : "outline"
+                              }
+                              className="capitalize"
+                            >
+                              {ai.severity}
+                            </Badge>
+                          </div>
+                        )}
+                        {ai.repairability && (
+                          <div>
+                            <span className="text-muted-foreground">
+                              Repairability:{" "}
+                            </span>
+                            <span className="capitalize">
+                              {ai.repairability}
+                            </span>
+                          </div>
+                        )}
+                        {ai.confidence != null && (
+                          <div>
+                            <span className="text-muted-foreground">
+                              Confidence:{" "}
+                            </span>
+                            <span>
+                              {Math.round(ai.confidence * 100)}%
+                            </span>
+                          </div>
+                        )}
+                        {ai.affectedArea && (
+                          <div>
+                            <span className="text-muted-foreground">
+                              Area:{" "}
+                            </span>
+                            <span className="capitalize">
+                              {ai.affectedArea}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()
+              ) : (
+                <Alert variant="destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTitle>No AI Analysis</AlertTitle>
+                  <AlertDescription>
+                    Customer skipped AI damage assessment. Consider requiring
+                    physical pickup for inspection.
+                  </AlertDescription>
+                </Alert>
+              )}
             </CardContent>
           </Card>
 
@@ -219,6 +320,19 @@ export default async function AdminRequestDetailPage({
               />
             </CardContent>
           </Card>
+
+          {/* Send quote (visible when status is reviewed) */}
+          {repair.currentStatus === "reviewed" && (
+            <SendQuoteForm
+              repairId={repair.id}
+              currentEstimate={repair.estimatedCost}
+              currentNotes={repair.adminNotes}
+              quoteDeclineReason={repair.quoteDeclineReason}
+              aiAssessed={repair.aiDamageAssessment !== null}
+              customerProvince={(repair.shippingAddress as { province?: string } | null)?.province}
+              customerCity={(repair.shippingAddress as { city?: string } | null)?.city}
+            />
+          )}
 
           {/* Technician assignment */}
           <Card>

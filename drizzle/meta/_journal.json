@@ -15,6 +15,20 @@
       "when": 1772478689573,
       "tag": "0001_little_the_liberteens",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1772627296861,
+      "tag": "0002_fast_energizer",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1772812892628,
+      "tag": "0003_spooky_korg",
+      "breakpoints": true
     }
   ]
 }

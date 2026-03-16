@@ -1,7 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { Wrench, Scissors } from "lucide-react";
+
+const IS_DEV = process.env.NODE_ENV === "development";
 
 export default function Error({
   error,
@@ -10,6 +13,10 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    console.error("[ErrorBoundary]", error);
+  }, [error]);
+
   return (
     <main id="main-content" className="flex min-h-screen flex-col items-center justify-center px-6">
       <div className="mx-auto max-w-sm text-center">
@@ -32,7 +39,9 @@ export default function Error({
 
         <div role="alert" className="mt-3">
           <p className="text-sm leading-relaxed text-muted-foreground">
-            {error.message || "An unexpected error occurred. Please try again."}
+            {IS_DEV
+              ? error.message || "An unexpected error occurred."
+              : "An unexpected error occurred. Please try again."}
           </p>
           {error.digest && (
             <p className="mt-2 font-mono text-[11px] text-muted-foreground/50">

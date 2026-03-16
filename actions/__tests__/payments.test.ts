@@ -113,7 +113,7 @@ function mockRepair(overrides: Record<string, unknown> = {}) {
     damageType: "tear",
     damageDescription: "Small tear on the sleeve",
     urgencyLevel: "standard",
-    currentStatus: "reviewed",
+    currentStatus: "quote_accepted",
     estimatedCost: 15000,
     finalCost: null,
     aiDamageAssessment: null,
@@ -180,7 +180,7 @@ describe("initiateCheckout", () => {
   it("allows admin to checkout for any repair", async () => {
     vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("admin", "admin-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
-      mockRepair({ customerId: "user-other", currentStatus: "reviewed", estimatedCost: 15000 }),
+      mockRepair({ customerId: "user-other", currentStatus: "quote_accepted", estimatedCost: 15000 }),
     );
     vi.mocked(getPaymentsByRepair).mockResolvedValueOnce([]);
     vi.mocked(polar.checkouts.create).mockResolvedValueOnce({
@@ -208,7 +208,7 @@ describe("initiateCheckout", () => {
     expect(result.success).toBe(true);
   });
 
-  it("returns error when repair status is not reviewed", async () => {
+  it("returns error when repair status is not quote_accepted", async () => {
     vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
       mockRepair({ customerId: "user-1", currentStatus: "submitted" }),
@@ -218,14 +218,42 @@ describe("initiateCheckout", () => {
 
     expect(result).toEqual({
       success: false,
-      error: "This repair must be reviewed by an admin before payment can be made.",
+      error: "Payment is only available after you have accepted the repair quote.",
+    });
+  });
+
+  it("returns error when repair status is reviewed (quote not yet accepted)", async () => {
+    vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
+    vi.mocked(getRepairById).mockResolvedValueOnce(
+      mockRepair({ customerId: "user-1", currentStatus: "reviewed" }),
+    );
+
+    const result = await initiateCheckout("repair-1");
+
+    expect(result).toEqual({
+      success: false,
+      error: "Payment is only available after you have accepted the repair quote.",
+    });
+  });
+
+  it("returns error when repair status is quote_sent (quote not yet accepted)", async () => {
+    vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
+    vi.mocked(getRepairById).mockResolvedValueOnce(
+      mockRepair({ customerId: "user-1", currentStatus: "quote_sent" }),
+    );
+
+    const result = await initiateCheckout("repair-1");
+
+    expect(result).toEqual({
+      success: false,
+      error: "Payment is only available after you have accepted the repair quote.",
     });
   });
 
   it("returns error when no estimated cost is set", async () => {
     vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
-      mockRepair({ customerId: "user-1", currentStatus: "reviewed", estimatedCost: null }),
+      mockRepair({ customerId: "user-1", currentStatus: "quote_accepted", estimatedCost: null }),
     );
 
     const result = await initiateCheckout("repair-1");
@@ -239,7 +267,7 @@ describe("initiateCheckout", () => {
   it("returns error when estimated cost is zero", async () => {
     vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
-      mockRepair({ customerId: "user-1", currentStatus: "reviewed", estimatedCost: 0 }),
+      mockRepair({ customerId: "user-1", currentStatus: "quote_accepted", estimatedCost: 0 }),
     );
 
     const result = await initiateCheckout("repair-1");
@@ -253,7 +281,7 @@ describe("initiateCheckout", () => {
   it("returns error when repair already has a completed payment", async () => {
     vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
-      mockRepair({ customerId: "user-1", currentStatus: "reviewed", estimatedCost: 15000 }),
+      mockRepair({ customerId: "user-1", currentStatus: "quote_accepted", estimatedCost: 15000 }),
     );
     vi.mocked(getPaymentsByRepair).mockResolvedValueOnce([
       {
@@ -284,7 +312,7 @@ describe("initiateCheckout", () => {
   it("allows checkout when existing payment is pending (not completed)", async () => {
     vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
-      mockRepair({ customerId: "user-1", currentStatus: "reviewed", estimatedCost: 15000 }),
+      mockRepair({ customerId: "user-1", currentStatus: "quote_accepted", estimatedCost: 15000 }),
     );
     vi.mocked(getPaymentsByRepair).mockResolvedValueOnce([
       {
@@ -333,7 +361,7 @@ describe("initiateCheckout", () => {
 
     vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
-      mockRepair({ customerId: "user-1", currentStatus: "reviewed", estimatedCost: 15000 }),
+      mockRepair({ customerId: "user-1", currentStatus: "quote_accepted", estimatedCost: 15000 }),
     );
     vi.mocked(getPaymentsByRepair).mockResolvedValueOnce([]);
 
@@ -348,7 +376,7 @@ describe("initiateCheckout", () => {
   it("creates checkout session and payment record on success", async () => {
     vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
-      mockRepair({ customerId: "user-1", currentStatus: "reviewed", estimatedCost: 25000 }),
+      mockRepair({ customerId: "user-1", currentStatus: "quote_accepted", estimatedCost: 25000 }),
     );
     vi.mocked(getPaymentsByRepair).mockResolvedValueOnce([]);
     vi.mocked(polar.checkouts.create).mockResolvedValueOnce({
@@ -383,6 +411,9 @@ describe("initiateCheckout", () => {
       metadata: {
         repairRequestId: "repair-1",
         customerId: "user-1",
+        totalCost: "25000",
+        depositAmount: "12500",
+        paymentMilestone: "deposit",
       },
     });
     expect(createPayment).toHaveBeenCalledWith(
@@ -390,7 +421,7 @@ describe("initiateCheckout", () => {
         repairRequestId: "repair-1",
         customerId: "user-1",
         polarCheckoutId: "checkout-new",
-        amount: 25000,
+        amount: 12500,
         currency: "usd",
         status: "pending",
       }),
@@ -400,7 +431,7 @@ describe("initiateCheckout", () => {
   it("notifies admin users after checkout initiation", async () => {
     vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
-      mockRepair({ customerId: "user-1", currentStatus: "reviewed", estimatedCost: 15000 }),
+      mockRepair({ customerId: "user-1", currentStatus: "quote_accepted", estimatedCost: 15000 }),
     );
     vi.mocked(getPaymentsByRepair).mockResolvedValueOnce([]);
     vi.mocked(polar.checkouts.create).mockResolvedValueOnce({
@@ -449,7 +480,7 @@ describe("initiateCheckout", () => {
   it("returns error when Polar checkout creation fails", async () => {
     vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
-      mockRepair({ customerId: "user-1", currentStatus: "reviewed", estimatedCost: 15000 }),
+      mockRepair({ customerId: "user-1", currentStatus: "quote_accepted", estimatedCost: 15000 }),
     );
     vi.mocked(getPaymentsByRepair).mockResolvedValueOnce([]);
     vi.mocked(polar.checkouts.create).mockRejectedValueOnce(

@@ -25,7 +25,8 @@ KitFix 2.0 is a progressive web app for submitting, tracking, and managing jerse
 
 - **Repair Submissions** — Customer repair request submission with AI damage assessment
 - **AI Damage Assessment** — Client-side analysis via Puter.js for instant cost estimates
-- **5-Stage Repair Pipeline** — Real-time status tracking: Submitted → Reviewed → In Repair → Quality Check → Shipped
+- **Quote Workflow** — Admins send cost quotes; customers accept or decline before repair begins
+- **7-Stage Repair Pipeline**— Real-time status tracking: Submitted → Reviewed → Quote Sent → Quote Accepted → In Repair → Quality Check → Shipped
 - **Admin/Technician Dashboard** — Manage requests, assign technicians, update statuses
 - **Photo Upload** — Image uploads with Vercel Blob storage
 - **Payments** — Secure checkout powered by Polar.sh
@@ -162,6 +163,7 @@ kitfix-2.0/
 | `npm run db:generate` | Generate Drizzle migration files |
 | `npm run db:migrate` | Apply database migrations |
 | `npm run db:push` | Push schema changes directly (dev only) |
+| `npm run db:seed` | Populate database with test admin/customer accounts and repair requests across all pipeline stages |
 | `npm run db:studio` | Open Drizzle Studio (database GUI) |
 
 ---

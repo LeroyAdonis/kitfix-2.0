@@ -176,30 +176,93 @@ export function paymentConfirmationTemplate(
 export function estimateReadyTemplate(
   customerName: string,
   repairId: string,
-  estimatedCost: number,
+  repairCost: number,
+  pickupFee: number,
+  deliveryFee: number,
+  totalCost: number,
+  depositAmount: number,
+  pickupRequired: boolean,
+  adminNotes?: string,
 ): string {
+  const remainingAmount = totalCost - depositAmount;
+
+  const pickupRow = pickupRequired
+    ? `<tr>
+        <td style="padding:6px 0;font-size:14px;color:${TEXT_PRIMARY};">Pickup Fee</td>
+        <td style="padding:6px 0;font-size:14px;color:${TEXT_PRIMARY};text-align:right;">${formatZAR(pickupFee)}</td>
+      </tr>`
+    : "";
+
+  const pickupNotice = pickupRequired
+    ? `<div style="background-color:#FFF7ED;border:1px solid #FDBA74;border-radius:8px;padding:16px;margin-bottom:24px;">
+        <p style="margin:0 0 4px;font-size:13px;font-weight:600;color:#9A3412;">📍 Pickup Required</p>
+        <p style="margin:0;font-size:13px;color:#9A3412;line-height:1.5;">
+          We need to physically inspect your jersey. A courier will collect it from your address after you accept and pay the deposit.
+        </p>
+      </div>`
+    : "";
+
+  const notesSection = adminNotes
+    ? `<div style="margin-bottom:24px;">
+        <p style="margin:0 0 8px;font-size:13px;color:${TEXT_SECONDARY};text-transform:uppercase;letter-spacing:0.5px;">Repair Notes</p>
+        <p style="margin:0;font-size:14px;color:${TEXT_PRIMARY};line-height:1.6;">${adminNotes}</p>
+      </div>`
+    : "";
+
   return layout(`
     <p style="margin:0 0 16px;font-size:16px;color:${TEXT_PRIMARY};">
       Hi <strong>${customerName}</strong>,
     </p>
     <p style="margin:0 0 24px;font-size:15px;color:${TEXT_PRIMARY};line-height:1.6;">
-      Great news — we&rsquo;ve completed the diagnosis for repair <strong style="color:${BRAND_BLUE};">#${repairId}</strong> and your estimate is ready.
+      Great news — we&rsquo;ve reviewed your jersey repair request <strong style="color:${BRAND_BLUE};">#${repairId.slice(0, 8)}</strong> and your quote is ready.
     </p>
+
+    ${pickupNotice}
+
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
       style="background-color:${BG_LIGHT};border-radius:8px;margin-bottom:24px;">
       <tr>
-        <td style="padding:20px 24px;text-align:center;">
-          <p style="margin:0 0 4px;font-size:13px;color:${TEXT_SECONDARY};text-transform:uppercase;letter-spacing:0.5px;">
-            Estimated Cost
+        <td style="padding:20px 24px;">
+          <p style="margin:0 0 12px;font-size:13px;color:${TEXT_SECONDARY};text-transform:uppercase;letter-spacing:0.5px;">
+            Quote Breakdown
           </p>
-          <p style="margin:0;font-size:28px;font-weight:700;color:${BRAND_BLUE};">
-            ${formatZAR(estimatedCost)}
-          </p>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="padding:6px 0;font-size:14px;color:${TEXT_PRIMARY};">Repair Cost</td>
+              <td style="padding:6px 0;font-size:14px;color:${TEXT_PRIMARY};text-align:right;">${formatZAR(repairCost)}</td>
+            </tr>
+            ${pickupRow}
+            <tr>
+              <td style="padding:6px 0;font-size:14px;color:${TEXT_PRIMARY};">Delivery Fee</td>
+              <td style="padding:6px 0;font-size:14px;color:${TEXT_PRIMARY};text-align:right;">${formatZAR(deliveryFee)}</td>
+            </tr>
+            <tr>
+              <td colspan="2" style="padding:8px 0 0;"><hr style="border:none;border-top:1px solid #E5E7EB;" /></td>
+            </tr>
+            <tr>
+              <td style="padding:6px 0;font-size:16px;font-weight:700;color:${BRAND_BLUE};">Total</td>
+              <td style="padding:6px 0;font-size:16px;font-weight:700;color:${BRAND_BLUE};text-align:right;">${formatZAR(totalCost)}</td>
+            </tr>
+          </table>
+          <hr style="border:none;border-top:1px solid #E5E7EB;margin:12px 0;" />
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="padding:4px 0;font-size:13px;color:${TEXT_SECONDARY};">50% Deposit (due now)</td>
+              <td style="padding:4px 0;font-size:13px;font-weight:600;color:${TEXT_PRIMARY};text-align:right;">${formatZAR(depositAmount)}</td>
+            </tr>
+            <tr>
+              <td style="padding:4px 0;font-size:13px;color:${TEXT_SECONDARY};">Balance (after repair)</td>
+              <td style="padding:4px 0;font-size:13px;color:${TEXT_PRIMARY};text-align:right;">${formatZAR(remainingAmount)}</td>
+            </tr>
+          </table>
         </td>
       </tr>
     </table>
+
+    ${notesSection}
+
     <p style="margin:0 0 16px;font-size:14px;color:${TEXT_PRIMARY};line-height:1.6;">
-      Please log in to your dashboard to approve or decline this estimate. We&rsquo;ll proceed as soon as we hear from you.
+      Please log in to your dashboard to review the quote, ${pickupRequired ? "provide your pickup address, " : ""}and pay the 50% deposit to proceed.
     </p>
     <p style="margin:0;font-size:14px;color:${TEXT_SECONDARY};line-height:1.6;">
       Questions? Reply to this email and we&rsquo;ll get back to you shortly.

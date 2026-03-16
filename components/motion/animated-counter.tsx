@@ -32,13 +32,8 @@ export function AnimatedCounter({
   const hasAnimated = useRef(false);
 
   useEffect(() => {
-    if (!isInView || hasAnimated.current) return;
+    if (!isInView || hasAnimated.current || shouldReduceMotion) return;
     hasAnimated.current = true;
-
-    if (shouldReduceMotion) {
-      setDisplayValue(value);
-      return;
-    }
 
     const decimals = (value.toString().split(".")[1] || "").length;
     const controls = animate(motionValue, value, {
@@ -56,7 +51,9 @@ export function AnimatedCounter({
     return () => controls.stop();
   }, [isInView, value, duration, shouldReduceMotion, motionValue]);
 
-  const formatted = new Intl.NumberFormat("en-ZA").format(displayValue);
+  // When reduced motion is active, show final value immediately without animation
+  const effectiveValue = shouldReduceMotion && isInView ? value : displayValue;
+  const formatted = new Intl.NumberFormat("en-ZA").format(effectiveValue);
 
   return (
     <span ref={ref} className={cn(className)} data-slot="animated-counter">
