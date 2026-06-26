@@ -1,10 +1,11 @@
-/** AI damage assessment result from Puter.js vision analysis */
+/** AI damage assessment result from NVIDIA vision model */
 export interface AIDamageAssessment {
   damageType: string;
   severity: "minor" | "moderate" | "severe";
   affectedArea: string;
   repairability: "easy" | "moderate" | "difficult";
   confidence: number;
+  description?: string;
   rawResponse?: string;
 }
 

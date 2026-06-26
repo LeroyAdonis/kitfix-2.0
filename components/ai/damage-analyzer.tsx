@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,23 +11,12 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Sparkles, AlertTriangle } from "lucide-react";
+import { Loader2, Sparkles, AlertTriangle, Cpu } from "lucide-react";
+import { analyzeDamageAction } from "@/actions/ai-damage";
 import type { AIDamageAssessment } from "@/types/ai";
+import { useRouter } from "next/navigation";
 
 type AnalysisState = "idle" | "loading" | "success" | "error";
-
-const TIMEOUT_MS = 60_000;
-// Puter.js model naming: Claude models have NO vendor prefix (e.g. "claude-sonnet-4"),
-// while other providers use "vendor/model" format (e.g. "google/gemini-2.5-flash").
-const AI_MODEL = "claude-sonnet-4";
-
-const AI_PROMPT = `Analyze this jersey repair photo. Identify:
-1. Type of damage (tear, hole, stain, fading, logo_damage, seam_split)
-2. Severity (minor, moderate, severe)
-3. Affected area (front, back, sleeve, collar, hem)
-4. Estimated repairability (easy, moderate, difficult)
-Return ONLY a JSON object with keys: damageType, severity, affectedArea, repairability.
-No markdown fences, no extra text.`;
 
 const SEVERITY_VARIANT: Record<string, "default" | "secondary" | "destructive"> = {
   minor: "secondary",
@@ -35,190 +24,26 @@ const SEVERITY_VARIANT: Record<string, "default" | "secondary" | "destructive"> 
   severe: "destructive",
 };
 
-/**
- * Wrap a promise with a timeout using Promise.race.
- * Unlike a flag-based timeout, this actually rejects and unblocks the await
- * when the timer fires — preventing indefinite hangs from Puter.js.
- */
-function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
-  let timeoutId: ReturnType<typeof setTimeout>;
-  return Promise.race([
-    promise.finally(() => clearTimeout(timeoutId)),
-    new Promise<never>((_, reject) => {
-      timeoutId = setTimeout(
-        () => reject(new Error(`${label} timed out after ${ms / 1000}s. Please try again.`)),
-        ms,
-      );
-    }),
-  ]);
-}
-
-/**
- * Ensure the user is authenticated with Puter before making API calls.
- * Must be called from a user-initiated action (click handler) so the
- * browser allows the auth popup.
- */
-async function ensurePuterAuth(): Promise<boolean> {
-  if (!window.puter) return false;
-  try {
-    // If already signed in, skip the popup
-    if (window.puter.auth.isSignedIn()) return true;
-    const user = await withTimeout(
-      window.puter.auth.signIn(),
-      30_000,
-      "Puter authentication",
-    );
-    return !!user;
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Parse Puter.js chat response — handles both plain string and
- * { message: { content: string } } formats returned by different models.
- */
-function parsePuterResponse(response: string | { message: { content: string } }): string {
-  if (typeof response === "string") return response;
-  if (
-    response &&
-    typeof response === "object" &&
-    "message" in response &&
-    typeof response.message?.content === "string"
-  ) {
-    return response.message.content;
-  }
-  throw new Error("Invalid Puter.js response format");
-}
-
-function validateEnum<T extends string>(value: string, allowed: T[], fallback: T): T {
-  return allowed.includes(value as T) ? (value as T) : fallback;
-}
-
-export function selectAnalysisImageInput(files: File[], photoUrls: string[]): File | string | null {
-  if (files.length > 0) return files[0];
-  if (photoUrls.length > 0) return photoUrls[0];
-  return null;
-}
-
-function parseAIResponse(raw: string): Omit<AIDamageAssessment, "confidence" | "rawResponse"> {
-  const cleaned = raw
-    .replace(/```(?:json)?\s*/g, "")
-    .replace(/```\s*/g, "")
-    .trim();
-
-  // Find the first JSON object in the response
-  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error("No JSON object found in AI response");
-
-  const parsed: unknown = JSON.parse(jsonMatch[0]);
-
-  if (
-    typeof parsed !== "object" ||
-    parsed === null ||
-    !("damageType" in parsed) ||
-    !("severity" in parsed) ||
-    !("affectedArea" in parsed) ||
-    !("repairability" in parsed)
-  ) {
-    throw new Error("Invalid AI response structure");
-  }
-
-  const obj = parsed as Record<string, unknown>;
-  return {
-    damageType: String(obj.damageType),
-    severity: validateEnum(String(obj.severity), ["minor", "moderate", "severe"], "moderate"),
-    affectedArea: String(obj.affectedArea),
-    repairability: validateEnum(String(obj.repairability), ["easy", "moderate", "difficult"], "moderate"),
-  };
-}
-
 interface DamageAnalyzerProps {
-  files: File[];
   photoUrls: string[];
-  onAnalysisComplete: (result: AIDamageAssessment) => void;
+  existingAssessment?: AIDamageAssessment | null;
+  onAnalysisComplete?: (result: AIDamageAssessment) => void;
 }
 
-export function DamageAnalyzer({ files, photoUrls, onAnalysisComplete }: DamageAnalyzerProps) {
-  const [state, setState] = useState<AnalysisState>("idle");
-  const [result, setResult] = useState<AIDamageAssessment | null>(null);
+export function DamageAnalyzer({ photoUrls, existingAssessment, onAnalysisComplete }: DamageAnalyzerProps) {
+  const [state, setState] = useState<AnalysisState>(existingAssessment ? "success" : "idle");
+  const [result, setResult] = useState<AIDamageAssessment | null>(existingAssessment ?? null);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [statusText, setStatusText] = useState("Analyzing jersey damage…");
-  const isAnalyzing = useRef(false);
+  const router = useRouter();
 
-  async function handleAnalyze() {
-    if ((files.length === 0 && photoUrls.length === 0) || isAnalyzing.current) return;
-    isAnalyzing.current = true;
-
-    setState("loading");
-    setStatusText("Authenticating with AI service…");
-    setErrorMessage("");
-
-    try {
-      if (!window.puter) {
-        throw new Error("AI service is still loading. Please wait a moment and try again.");
-      }
-
-      // Step 1: Authenticate with Puter (user-initiated click, so popup is allowed)
-      const authed = await ensurePuterAuth();
-      if (!authed) {
-        throw new Error(
-          "Please sign in to Puter to use AI analysis. If the popup didn't appear, check your popup blocker and try again.",
-        );
-      }
-
-      setStatusText("Analyzing jersey damage…");
-
-      const imageInput = selectAnalysisImageInput(files, photoUrls);
-      if (!imageInput) {
-        throw new Error("Please upload a photo before running AI analysis.");
-      }
-
-      // Step 2: Call AI with Promise.race timeout (no streaming — simpler and more reliable).
-      // The reference implementation avoids streaming because the for-await loop can hang
-      // indefinitely even with a flag-based timeout.
-      const response = await withTimeout(
-        window.puter.ai.chat(AI_PROMPT, imageInput, { model: AI_MODEL }),
-        TIMEOUT_MS,
-        "AI analysis",
-      );
-
-      // Step 3: Parse response — Puter may return string or { message: { content } }
-      const rawText = parsePuterResponse(response);
-      const parsed = parseAIResponse(rawText);
-      const assessment: AIDamageAssessment = {
-        ...parsed,
-        confidence: 0.75,
-        rawResponse: rawText,
-      };
-
-      setResult(assessment);
-      setState("success");
-      onAnalysisComplete(assessment);
-    } catch (err) {
-      const raw = err instanceof Error ? err.message : String(err);
-      const isAuthError = /\b(auth|login|sign.?in|permission|unauthorized|popup)\b/i.test(raw);
-      const isParseError = /\b(json|parse|response format|response structure|found in ai)\b/i.test(raw);
-      const message = isAuthError
-        ? "Please sign in to Puter to use AI analysis. A login popup may have appeared behind this window."
-        : isParseError
-        ? "The AI could not read the photo clearly. Please ensure the photo shows the damage and try again."
-        : raw || "AI analysis failed unexpectedly.";
-      setErrorMessage(message);
-      setState("error");
-    } finally {
-      isAnalyzing.current = false;
-    }
-  }
-
-  if (files.length === 0 && photoUrls.length === 0) {
+  if (photoUrls.length === 0) {
     return (
       <Card className="border-dashed">
-        <CardContent>
+        <CardContent className="pt-6">
           <div className="flex items-center gap-2 text-muted-foreground">
-            <Sparkles className="h-4 w-4" />
+            <Cpu className="h-4 w-4" />
             <p className="text-sm">
-              Upload photos in the previous step to enable AI damage analysis.
+              Upload photos first to enable AI damage analysis.
             </p>
           </div>
         </CardContent>
@@ -226,29 +51,60 @@ export function DamageAnalyzer({ files, photoUrls, onAnalysisComplete }: DamageA
     );
   }
 
+  async function handleAnalyze() {
+    setState("loading");
+    setErrorMessage("");
+
+    try {
+      const result = await analyzeDamageAction(photoUrls[0]);
+
+      if (!result.success) {
+        setErrorMessage(result.error);
+        setState("error");
+        return;
+      }
+
+      setResult(result.data);
+      setState("success");
+      onAnalysisComplete?.(result.data);
+      router.refresh();
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Analysis failed unexpectedly.");
+      setState("error");
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5" />
+          <Cpu className="h-5 w-5 text-brand-gold" />
           AI Damage Assessment
+          <Badge variant="outline" className="text-[10px] font-normal ml-1">
+            NVIDIA
+          </Badge>
         </CardTitle>
         <CardDescription>
-          Let AI analyze your jersey photos to estimate damage and repair complexity.
+          Vision AI analyzes your jersey photos to classify damage and estimate repair complexity.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {state === "idle" && (
-          <Button type="button" onClick={handleAnalyze} variant="outline" className="w-full">
-            <Sparkles className="mr-2 h-4 w-4" />
-            Try AI Assessment
+          <Button
+            type="button"
+            onClick={handleAnalyze}
+            variant="outline"
+            className="w-full"
+          >
+            <Cpu className="mr-2 h-4 w-4" />
+            Analyze with NVIDIA Vision
           </Button>
         )}
 
         {state === "loading" && (
           <div className="flex items-center justify-center gap-2 py-6 text-muted-foreground">
             <Loader2 className="h-5 w-5 animate-spin" />
-            <span className="text-sm">{statusText}</span>
+            <span className="text-sm">Analyzing jersey damage with NVIDIA vision model…</span>
           </div>
         )}
 
@@ -268,11 +124,11 @@ export function DamageAnalyzer({ files, photoUrls, onAnalysisComplete }: DamageA
         )}
 
         {state === "success" && result && (
-          <div className="space-y-3 rounded-lg border p-4">
+          <div className="space-y-3 rounded-lg border border-brand-gold/20 bg-brand-gold/5 p-4">
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
                 <p className="text-xs font-medium text-muted-foreground">Damage Type</p>
-                <p className="text-sm capitalize">{result.damageType.replace(/_/g, " ")}</p>
+                <p className="text-sm font-medium capitalize">{result.damageType.replace(/_/g, " ")}</p>
               </div>
               <div>
                 <p className="text-xs font-medium text-muted-foreground">Severity</p>
@@ -289,8 +145,13 @@ export function DamageAnalyzer({ files, photoUrls, onAnalysisComplete }: DamageA
                 <p className="text-sm capitalize">{result.repairability}</p>
               </div>
             </div>
+            {result.description && (
+              <p className="text-sm text-muted-foreground border-t border-brand-gold/10 pt-3">
+                {result.description}
+              </p>
+            )}
             <p className="text-xs text-muted-foreground">
-              Confidence: {Math.round(result.confidence * 100)}%
+              Confidence: {Math.round((result.confidence ?? 0.75) * 100)}%
             </p>
           </div>
         )}

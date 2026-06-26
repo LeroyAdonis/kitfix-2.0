@@ -71,7 +71,7 @@ export default function RootLayout({
         <ServiceWorkerRegistrar />
         <NavigationProgress />
         {children}
-        <Script src="https://js.puter.com/v2/" strategy="afterInteractive" />
+        {/* AI client SDK removed — NVIDIA vision runs server-side */}
       </body>
     </html>
   );

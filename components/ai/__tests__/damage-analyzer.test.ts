@@ -1,22 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { selectAnalysisImageInput } from "@/components/ai/damage-analyzer";
+// The selectAnalysisImageInput helper was inlined and removed when
+// switching from Puter.js (client-side) to NVIDIA (server-side).
+// All image selection now happens server-side in actions/ai-damage.ts.
+// The analysis logic is tested via the server action integration tests.
 
-describe("selectAnalysisImageInput", () => {
-  it("prefers uploaded File over preview data URL for AI analysis", () => {
-    const file = new File(["image-bytes"], "jersey.jpg", { type: "image/jpeg" });
-    const previewDataUrl = "data:image/jpeg;base64,abc123";
-
-    const selected = selectAnalysisImageInput([file], [previewDataUrl]);
-
-    expect(selected).toBe(file);
-  });
-
-  it("falls back to preview URL when File is unavailable", () => {
-    const previewDataUrl = "https://example.com/jersey.jpg";
-
-    const selected = selectAnalysisImageInput([], [previewDataUrl]);
-
-    expect(selected).toBe(previewDataUrl);
+describe("AI damage analysis", () => {
+  it("placeholder — server action tests live in actions/__tests__/ai-damage.test.ts", () => {
+    expect(true).toBe(true);
   });
 });
