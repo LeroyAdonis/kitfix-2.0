@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "CSS_TRANSFORMER_WASM=true next build",
     "start": "next start",
+    "postinstall": "node .scripts/postinstall.js",
     "lint": "eslint",
     "test": "vitest",
     "test:run": "vitest run",
