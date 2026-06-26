@@ -1,31 +1,48 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useSession } from "@/lib/auth-client";
 import { Header } from "@/components/layout/header";
 import { CustomerNav } from "@/components/layout/customer-nav";
 import { Footer } from "@/components/layout/footer";
 import { CustomerShell } from "@/components/motion/customer-shell";
+
+interface SessionUser {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  image: string | null;
+}
 
 export default function CustomerLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { data: session, isPending } = useSession();
+  const [session, setSession] = useState<SessionUser | null | "loading">("loading");
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!isPending && !session) {
-      const callbackUrl = encodeURIComponent(pathname);
-      router.replace(`/sign-in?callbackUrl=${callbackUrl}`);
-    }
-  }, [isPending, session, router, pathname]);
+    fetch("/api/auth/session")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.user) {
+          setSession(data.user);
+        } else {
+          setSession(null);
+          const callbackUrl = encodeURIComponent(pathname);
+          router.replace(`/sign-in?callbackUrl=${callbackUrl}`);
+        }
+      })
+      .catch(() => {
+        setSession(null);
+        router.replace("/sign-in");
+      });
+  }, [router, pathname]);
 
-  // Show nothing while checking auth (prevents flash)
-  if (isPending || !session) {
+  if (session === "loading" || !session) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-bg-deep">
         <div className="flex flex-col items-center gap-4">

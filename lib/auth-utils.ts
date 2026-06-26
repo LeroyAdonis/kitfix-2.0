@@ -1,13 +1,54 @@
 import { auth } from "./auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { db } from "./db";
+import { session as sessionTable, user } from "./db/schema";
+import { eq, and, gt } from "drizzle-orm";
 
 /**
- * Get the current session from Better Auth.
- * Returns null if no valid session exists.
+ * Get the current session by reading the cookie from request headers.
+ * Uses direct DB query instead of Better Auth's internal session lookup
+ * to work around a serialization issue that returns null for valid sessions.
  */
 export async function getSession() {
-  return auth.api.getSession({ headers: await headers() });
+  try {
+    const hdrs = await headers();
+    const cookieStr = hdrs.get("cookie") ?? "";
+    const cookies = Object.fromEntries(
+      cookieStr.split(";").map((c) => {
+        const [k, ...v] = c.trim().split("=");
+        return [k, v.join("=")];
+      }),
+    );
+    const token = cookies["better-auth.session_token"];
+    if (!token) return null;
+
+    const sessions = await db
+      .select()
+      .from(sessionTable)
+      .where(
+        and(eq(sessionTable.token, token), gt(sessionTable.expiresAt, new Date())),
+      )
+      .limit(1);
+
+    if (sessions.length === 0) return null;
+
+    const s = sessions[0];
+    const users = await db
+      .select()
+      .from(user)
+      .where(eq(user.id, s.userId))
+      .limit(1);
+
+    if (users.length === 0) return null;
+
+    return {
+      user: users[0],
+      session: s,
+    };
+  } catch {
+    return null;
+  }
 }
 
 /**
