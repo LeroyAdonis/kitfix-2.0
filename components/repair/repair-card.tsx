@@ -16,6 +16,7 @@ const statusConfig: Record<RepairStatus, { label: string; variant: "default" | "
   in_repair: { label: "In Repair", variant: "default" },
   quality_check: { label: "Quality Check", variant: "default" },
   shipped: { label: "Shipped", variant: "default" },
+  cancelled: { label: "Cancelled", variant: "destructive" },
 };
 
 const urgencyIcons: Record<UrgencyLevel, React.ReactNode> = {
