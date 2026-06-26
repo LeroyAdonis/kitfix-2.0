@@ -7,7 +7,7 @@ import {
   getPaymentByCheckoutId,
   updatePaymentStatus,
 } from "@/lib/db/queries/payments";
-import { updateRepairStatus } from "@/lib/db/queries/repairs";
+import { getRepairById, updateRepairStatus } from "@/lib/db/queries/repairs";
 import { updateOrderStatus } from "@/lib/db/queries/orders";
 import { createNotification } from "@/lib/db/queries/notifications";
 import { logger } from "@/lib/logger";
@@ -148,11 +148,14 @@ async function handleCheckoutUpdated(data: CheckoutEventData): Promise<void> {
       message: "Your payment has been received. Your order is being processed!",
     });
   } else if (payment.repairRequestId) {
+    const repair = await getRepairById(payment.repairRequestId);
+    const nextStatus = repair?.currentStatus === "item_received" ? "in_repair" : "item_received";
+
     await updateRepairStatus(
       payment.repairRequestId,
-      "in_repair",
+      nextStatus,
       payment.customerId,
-      "Payment confirmed via Polar.sh — repair work can begin.",
+      `Payment confirmed via Polar.sh — jersey ${nextStatus === "in_repair" ? "in repair" : "awaiting arrival at workshop"}.`,
     );
 
     await createNotification({
@@ -160,7 +163,9 @@ async function handleCheckoutUpdated(data: CheckoutEventData): Promise<void> {
       type: "payment",
       title: "Payment Confirmed",
       message:
-        "Your payment has been received. Your jersey repair is now in progress!",
+        nextStatus === "in_repair"
+          ? "Your payment has been received. Work on your jersey has begun!"
+          : "Your payment has been received. Please send your jersey to our workshop.",
       repairRequestId: payment.repairRequestId,
     });
   }

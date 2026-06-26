@@ -16,6 +16,8 @@ export const shippingAddressSchema = z.object({
   country: z.string().default("South Africa"),
 });
 
+export const shippingModeEnum = z.enum(["L2L", "D2D", "D2L", "L2D"]);
+
 export const createRepairSchema = z.object({
   jerseyDescription: z.string().min(10, "Description must be at least 10 characters").max(500),
   jerseyBrand: z.string().max(100).optional(),
@@ -24,6 +26,8 @@ export const createRepairSchema = z.object({
   damageDescription: z.string().min(20, "Please describe the damage in at least 20 characters").max(1000),
   urgencyLevel: z.enum(urgencyLevels).default("standard"),
   shippingAddress: shippingAddressSchema,
+  shippingMode: shippingModeEnum.optional(),
+  outboundLockerId: z.string().optional(),
 });
 
 export type CreateRepairInput = z.infer<typeof createRepairSchema>;

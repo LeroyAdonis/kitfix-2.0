@@ -13,7 +13,7 @@ export default async function ReviewPage(props: {
 
   if (!repair) notFound();
   if (repair.customerId !== session.user.id) notFound();
-  if (repair.currentStatus !== "shipped") {
+  if (repair.currentStatus !== "shipped" && repair.currentStatus !== "delivered") {
     redirect(`/repairs/${id}`);
   }
 

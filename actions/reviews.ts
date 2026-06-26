@@ -44,8 +44,8 @@ export async function submitReviewAction(
   if (repair.customerId !== session.user.id) {
     return { success: false, error: "You can only review your own repairs." };
   }
-  if (repair.currentStatus !== "shipped") {
-    return { success: false, error: "You can only review completed (shipped) repairs." };
+  if (repair.currentStatus !== "shipped" && repair.currentStatus !== "delivered") {
+    return { success: false, error: "You can only review completed repairs." };
   }
 
   const existingReview = await getReviewByRepair(data.repairRequestId);

@@ -23,8 +23,11 @@ const ACTIVE_STATUSES: RepairStatus[] = [
   "reviewed",
   "quote_sent",
   "quote_accepted",
+  "item_received",
   "in_repair",
   "quality_check",
+  "ready_for_shipment",
+  "shipped",
 ];
 
 export default async function AdminDashboardPage() {
@@ -49,7 +52,7 @@ export default async function AdminDashboardPage() {
         .select({ value: sql<number>`count(*)` })
         .from(repairRequests)
         .where(
-          and(notDeleted, eq(repairRequests.currentStatus, "shipped")),
+          and(notDeleted, eq(repairRequests.currentStatus, "delivered")),
         ),
       db
         .select({ value: sql<number>`coalesce(sum(amount), 0)` })

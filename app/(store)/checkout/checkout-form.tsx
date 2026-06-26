@@ -17,7 +17,9 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { formatCurrency } from "@/lib/utils";
 import { createOrderFromCart, initiateOrderCheckout } from "@/actions/orders";
+import { ShippingStep } from "@/components/store/ShippingStep";
 import type { EnrichedCartItem } from "@/actions/cart-enriched";
+import type { ShippingMode } from "@/lib/courier/types";
 
 interface CheckoutFormProps {
   items: EnrichedCartItem[];
@@ -28,12 +30,32 @@ export function CheckoutForm({ items, itemTotal }: CheckoutFormProps) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [shippingMode, setShippingMode] = useState<ShippingMode>("L2L");
+  const [lockerId, setLockerId] = useState("");
+  const [shippingCost, setShippingCost] = useState(0);
 
   async function handleSubmit(formData: FormData) {
     setPending(true);
     setError(null);
 
-    const orderResult = await createOrderFromCart();
+    const street = formData.get("street") as string;
+    const city = formData.get("city") as string;
+    const province = formData.get("province") as string;
+    const postalCode = formData.get("postalCode") as string;
+
+    const shippingData = {
+      shippingMode,
+      lockerId: shippingMode === "L2L" ? lockerId : undefined,
+      shippingAddress: {
+        street,
+        city,
+        province,
+        postalCode,
+        country: "South Africa",
+      },
+    };
+
+    const orderResult = await createOrderFromCart(shippingData);
     if (!orderResult.success) {
       setError(orderResult.error);
       setPending(false);
@@ -61,6 +83,25 @@ export function CheckoutForm({ items, itemTotal }: CheckoutFormProps) {
 
       <div className="grid gap-8 lg:grid-cols-3">
         <form action={handleSubmit} className="lg:col-span-2 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Shipping Method</CardTitle>
+              <CardDescription>
+                Choose how you want to receive your order
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ShippingStep
+                shippingMode={shippingMode}
+                onModeChange={setShippingMode}
+                lockerId={lockerId}
+                onLockerChange={setLockerId}
+                shippingCost={shippingCost}
+                onShippingCostChange={setShippingCost}
+              />
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle>Shipping Address</CardTitle>
@@ -115,7 +156,7 @@ export function CheckoutForm({ items, itemTotal }: CheckoutFormProps) {
             ) : (
               <>
                 <ShoppingCart className="mr-2 h-4 w-4" />
-                Place Order &mdash; {formatCurrency(itemTotal)}
+                Place Order &mdash; {formatCurrency(itemTotal + shippingCost)}
               </>
             )}
           </Button>
@@ -146,14 +187,14 @@ export function CheckoutForm({ items, itemTotal }: CheckoutFormProps) {
                 <span>Subtotal</span>
                 <span>{formatCurrency(itemTotal)}</span>
               </div>
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>Shipping</span>
-                <span>Calculated at next step</span>
+              <div className="flex justify-between text-sm">
+                <span>Shipping ({shippingMode})</span>
+                <span>{shippingCost > 0 ? formatCurrency(shippingCost) : "Free"}</span>
               </div>
               <Separator />
               <div className="flex justify-between font-semibold">
                 <span>Total</span>
-                <span>{formatCurrency(itemTotal)}</span>
+                <span>{formatCurrency(itemTotal + shippingCost)}</span>
               </div>
             </CardContent>
           </Card>

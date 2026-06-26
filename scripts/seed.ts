@@ -43,7 +43,7 @@ interface SeedRepairRequest {
   damageType: "tear" | "hole" | "stain" | "fading" | "logo_damage" | "seam_split" | "other";
   damageDescription: string;
   urgencyLevel: "standard" | "rush" | "emergency";
-  currentStatus: "submitted" | "reviewed" | "quote_sent" | "quote_accepted" | "in_repair" | "quality_check" | "shipped";
+  currentStatus: "submitted" | "reviewed" | "quote_sent" | "quote_accepted" | "item_received" | "in_repair" | "quality_check" | "ready_for_shipment" | "shipped" | "delivered";
   estimatedCost: number | null;
   adminNotes: string | null;
   quoteDeclineReason: string | null;

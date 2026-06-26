@@ -6,8 +6,9 @@ import { eq } from "drizzle-orm";
 import { getSession } from "@/lib/auth-utils";
 import { db } from "@/lib/db";
 import { repairRequests } from "@/lib/db/schema";
-import { updateRepairStatus } from "@/lib/db/queries/repairs";
+import { getRepairById, updateRepairStatus } from "@/lib/db/queries/repairs";
 import { createNotification } from "@/lib/db/queries/notifications";
+import { createClient } from "@/lib/courier/client";
 import type { ActionResult } from "@/types";
 import type { RepairStatus } from "@/types";
 
@@ -180,5 +181,77 @@ export async function addTrackingNumberAction(
     return { success: true, data: { repairRequestId } };
   } catch {
     return { success: false, error: "Failed to add tracking number" };
+  }
+}
+
+export async function generateReturnLabelAction(
+  repairRequestId: string,
+): Promise<ActionResult<{ labelUrl: string; tracking: string }>> {
+  const session = await requireAdminOrTechSession();
+  if (!session) return { success: false, error: "Unauthorized" };
+
+  try {
+    const repair = await getRepairById(repairRequestId);
+    if (!repair) return { success: false, error: "Repair not found" };
+    if (repair.currentStatus !== "ready_for_shipment") {
+      return { success: false, error: "Repair must be in 'Ready for Shipment' status." };
+    }
+
+    const shippingAddr = repair.shippingAddress as {
+      street?: string; city?: string; province?: string; postalCode?: string;
+    } | null;
+
+    const client = createClient();
+    const shipment = await client.createShipment({
+      fromName: "KitFix Workshop",
+      fromPhone: process.env.WORKSHOP_PHONE ?? "+27123456789",
+      fromLockerId: repair.returnLockerId ?? undefined,
+      fromPostalCode: process.env.WORKSHOP_POSTAL_CODE ?? "2000",
+      toName: repair.customer?.name ?? "Customer",
+      toPhone: "",
+      toLockerId: repair.returnLockerId ?? undefined,
+      toAddress: shippingAddr
+        ? `${shippingAddr.street}, ${shippingAddr.city}, ${shippingAddr.province}`
+        : undefined,
+      toPostalCode: shippingAddr?.postalCode ?? "2000",
+      mode: (repair.shippingMode as "L2L" | "D2D" | "D2L" | "L2D") ?? "L2L",
+      weightKg: 0.5,
+      dimensions: { height: 30, width: 20, length: 5 },
+      description: `Repaired jersey — ${repair.jerseyDescription}`,
+      reference: repair.id,
+    });
+
+    await db
+      .update(repairRequests)
+      .set({
+        returnTracking: shipment.barcode,
+        returnLabelUrl: shipment.labelUrl ?? null,
+        trackingNumber: shipment.barcode,
+      })
+      .where(eq(repairRequests.id, repairRequestId));
+
+    await updateRepairStatus(
+      repairRequestId,
+      "shipped",
+      session.user.id,
+      `Return label generated. Tracking: ${shipment.barcode}`,
+    );
+
+    await createNotification({
+      userId: repair.customerId,
+      type: "status_update",
+      title: "Repair Shipped!",
+      message: `Your repaired jersey is on its way back! Tracking: ${shipment.barcode}`,
+      repairRequestId,
+    });
+
+    revalidatePath(`/admin/requests/${repairRequestId}`);
+
+    return {
+      success: true,
+      data: { labelUrl: shipment.labelUrl ?? "", tracking: shipment.barcode },
+    };
+  } catch (error) {
+    return { success: false, error: "Failed to generate return label" };
   }
 }

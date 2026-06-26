@@ -39,10 +39,20 @@ export const repairStatusEnum = pgEnum("repair_status", [
   "reviewed",
   "quote_sent",
   "quote_accepted",
+  "item_received",
   "in_repair",
   "quality_check",
+  "ready_for_shipment",
   "shipped",
+  "delivered",
   "cancelled",
+]);
+
+export const shippingModeEnum = pgEnum("shipping_mode", [
+  "L2L",
+  "D2D",
+  "D2L",
+  "L2D",
 ]);
 
 export const photoTypeEnum = pgEnum("photo_type", [
@@ -168,6 +178,15 @@ export const repairRequests = pgTable(
     pickupRequired: boolean("pickup_required").notNull().default(false),
     pickupFee: integer("pickup_fee").default(0),
     deliveryFee: integer("delivery_fee").default(0),
+    shippingMode: shippingModeEnum("shipping_mode"),
+    outboundLockerId: text("outbound_locker_id"),
+    returnLockerId: text("return_locker_id"),
+    outboundTracking: varchar("outbound_tracking", { length: 100 }),
+    returnTracking: varchar("return_tracking", { length: 100 }),
+    outboundLabelUrl: text("outbound_label_url"),
+    returnLabelUrl: text("return_label_url"),
+    shippingRateCents: integer("shipping_rate_cents"),
+    shippingSurchargeCents: integer("shipping_surcharge_cents"),
     deletedAt: timestamp("deleted_at"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
@@ -436,6 +455,10 @@ export const orders = pgTable(
     shippingCents: integer("shipping_cents").notNull().default(0),
     grandTotalCents: integer("grand_total_cents").notNull(),
     shippingAddress: jsonb("shipping_address"),
+    shippingMode: shippingModeEnum("shipping_mode"),
+    lockerId: text("locker_id"),
+    trackingNumber: varchar("tracking_number", { length: 100 }),
+    labelUrl: text("label_url"),
     polarCheckoutId: text("polar_checkout_id"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")

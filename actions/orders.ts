@@ -14,8 +14,23 @@ import { createPayment } from "@/lib/db/queries/payments";
 import { polar } from "@/lib/polar";
 import { logger } from "@/lib/logger";
 import type { ActionResult, OrderResponse } from "@/types";
+import type { ShippingMode } from "@/lib/courier/types";
 
-export async function createOrderFromCart(): Promise<ActionResult<OrderResponse>> {
+interface ShippingData {
+  shippingMode: ShippingMode;
+  lockerId?: string;
+  shippingAddress: {
+    street: string;
+    city: string;
+    province: string;
+    postalCode: string;
+    country: string;
+  };
+}
+
+export async function createOrderFromCart(
+  shippingData?: ShippingData,
+): Promise<ActionResult<OrderResponse>> {
   const session = await getSession();
   if (!session) {
     return { success: false, error: "You must be signed in." };
@@ -67,8 +82,12 @@ export async function createOrderFromCart(): Promise<ActionResult<OrderResponse>
     });
   }
 
-  const shippingTotal = 0;
-  const grandTotal = itemTotal + shippingTotal;
+  const shippingMode = shippingData?.shippingMode;
+  const lockerId = shippingData?.lockerId ?? null;
+  const shippingAddress = shippingData?.shippingAddress ?? null;
+
+  const shippingCents = shippingMode === "D2D" ? 9900 : 0;
+  const grandTotal = itemTotal + shippingCents;
 
   const [order] = await db
     .insert(orders)
@@ -76,9 +95,11 @@ export async function createOrderFromCart(): Promise<ActionResult<OrderResponse>
       userId: session.user.id,
       status: "pending",
       totalCents: itemTotal,
-      shippingCents: shippingTotal,
+      shippingCents,
       grandTotalCents: grandTotal,
-      shippingAddress: null,
+      shippingAddress: shippingAddress as unknown as Record<string, unknown> | null,
+      shippingMode: shippingMode ?? null,
+      lockerId,
     })
     .returning();
 

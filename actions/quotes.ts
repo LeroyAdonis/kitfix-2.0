@@ -8,6 +8,7 @@ import { getRepairById, updateRepairStatus } from "@/lib/db/queries/repairs";
 import { createNotification } from "@/lib/db/queries/notifications";
 import { sendEstimateReadyEmail } from "@/lib/email";
 import { getPickupFee, getDeliveryFee } from "@/lib/config/pricing";
+import { getShippingRates } from "@/lib/shipping/rates";
 import { sendQuoteSchema, acceptQuoteSchema, declineQuoteSchema, pickupAddressSchema } from "@/lib/validators/repair";
 import type { z } from "zod";
 import { eq } from "drizzle-orm";
@@ -47,22 +48,49 @@ export async function sendQuoteAction(
   const needsPickup = pickupRequired ?? !aiAssessed;
 
   // Calculate fees based on customer's shipping address
-  const address = repair.shippingAddress as { province?: string; city?: string } | null;
+  const address = repair.shippingAddress as { province?: string; city?: string; postalCode?: string } | null;
   const pickupFeeAmount = needsPickup
     ? getPickupFee(address?.province, address?.city)
     : 0;
   const deliveryFeeAmount = getDeliveryFee(address?.province, address?.city);
 
+  // Fetch shipping rates from Courier Guy
+  let shippingRateCents: number | null = null;
+  let shippingSurchargeCents: number | null = null;
+  let shippingMode: string | null = repair.shippingMode;
+  try {
+    if (address?.postalCode) {
+      const fromPostalCode = process.env.WORKSHOP_POSTAL_CODE ?? "2000";
+      const quote = await getShippingRates(
+        fromPostalCode,
+        address.postalCode,
+        address.province,
+        address.city,
+      );
+      if (quote.bestRate) {
+        shippingRateCents = quote.bestRate.amountCents;
+        shippingSurchargeCents = quote.surchargeCents;
+        shippingMode = shippingMode ?? quote.bestRate.mode;
+      }
+    }
+  } catch {
+    // Shipping rate fetch is non-blocking
+  }
+
   // Build quote breakdown
-  const totalCost = estimatedCost + pickupFeeAmount + deliveryFeeAmount;
+  const totalShipping = (shippingRateCents ?? 0) + (shippingSurchargeCents ?? 0);
+  const totalCost = estimatedCost + pickupFeeAmount + deliveryFeeAmount + totalShipping;
   const depositAmount = Math.ceil(totalCost / 2);
 
-  // Update repair with estimate + fees
+  // Update repair with estimate + fees + shipping
   await db.update(repairRequests).set({
     estimatedCost,
     pickupRequired: needsPickup,
     pickupFee: pickupFeeAmount,
     deliveryFee: deliveryFeeAmount,
+    shippingRateCents,
+    shippingSurchargeCents,
+    shippingMode: shippingMode as typeof repairRequests.$inferSelect.shippingMode,
     adminNotes: adminNotes ?? repair.adminNotes,
     quoteDeclineReason: null,
   }).where(eq(repairRequests.id, repairId));
@@ -79,9 +107,12 @@ export async function sendQuoteAction(
 
   // Notify customer (in-app)
   if (repair.customer) {
+    const shippingLine = shippingMode
+      ? ` (incl. ${shippingMode} shipping R${(totalShipping / 100).toFixed(2)})`
+      : "";
     const message = needsPickup
-      ? `Your repair quote is R${(totalCost / 100).toFixed(2)} (includes R${(pickupFeeAmount / 100).toFixed(2)} pickup fee for physical inspection). A 50% deposit of R${(depositAmount / 100).toFixed(2)} is required to proceed.`
-      : `Your repair quote is R${(totalCost / 100).toFixed(2)}. A 50% deposit of R${(depositAmount / 100).toFixed(2)} is required to proceed.`;
+      ? `Your repair quote is R${(totalCost / 100).toFixed(2)}${shippingLine} (includes R${(pickupFeeAmount / 100).toFixed(2)} pickup fee for physical inspection). A 50% deposit of R${(depositAmount / 100).toFixed(2)} is required to proceed.`
+      : `Your repair quote is R${(totalCost / 100).toFixed(2)}${shippingLine}. A 50% deposit of R${(depositAmount / 100).toFixed(2)} is required to proceed.`;
 
     await createNotification({
       userId: repair.customer.id,

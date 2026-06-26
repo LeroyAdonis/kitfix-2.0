@@ -228,7 +228,7 @@ describe("submitReviewAction", () => {
 
     expect(result).toEqual({
       success: false,
-      error: "You can only review completed (shipped) repairs.",
+      error: "You can only review completed repairs.",
     });
   });
 

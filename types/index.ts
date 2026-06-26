@@ -83,9 +83,12 @@ export type RepairStatus =
   | "reviewed"
   | "quote_sent"
   | "quote_accepted"
+  | "item_received"
   | "in_repair"
   | "quality_check"
+  | "ready_for_shipment"
   | "shipped"
+  | "delivered"
   | "cancelled";
 
 /** Damage type categories */

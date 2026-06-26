@@ -49,6 +49,8 @@ export async function createRepairAction(
       postalCode: formData.get("postalCode") as string,
       country: (formData.get("country") as string) || "South Africa",
     },
+    shippingMode: (formData.get("shippingMode") as string) || undefined,
+    outboundLockerId: (formData.get("outboundLockerId") as string) || undefined,
   };
 
   const result = createRepairSchema.safeParse(raw);
@@ -76,6 +78,8 @@ export async function createRepairAction(
     damageDescription: data.damageDescription,
     urgencyLevel: data.urgencyLevel,
     shippingAddress: data.shippingAddress,
+    shippingMode: data.shippingMode ?? null,
+    outboundLockerId: data.outboundLockerId ?? null,
     ...(aiAssessment ? { aiDamageAssessment: aiAssessment } : {}),
   });
 

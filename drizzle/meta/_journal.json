@@ -36,6 +36,20 @@
       "when": 1782467631396,
       "tag": "0004_sharp_big_bertha",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1782492876192,
+      "tag": "0005_brown_kat_farrell",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1782493480878,
+      "tag": "0006_abnormal_forge",
+      "breakpoints": true
     }
   ]
 }

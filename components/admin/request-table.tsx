@@ -44,9 +44,12 @@ const STATUS_VARIANTS: Record<RepairStatus, "default" | "secondary" | "destructi
   reviewed: "secondary",
   quote_sent: "outline",
   quote_accepted: "secondary",
+  item_received: "secondary",
   in_repair: "default",
   quality_check: "secondary",
+  ready_for_shipment: "outline",
   shipped: "default",
+  delivered: "default",
   cancelled: "destructive",
 };
 
@@ -55,9 +58,12 @@ const ALL_STATUSES: RepairStatus[] = [
   "reviewed",
   "quote_sent",
   "quote_accepted",
+  "item_received",
   "in_repair",
   "quality_check",
+  "ready_for_shipment",
   "shipped",
+  "delivered",
   "cancelled",
 ];
 

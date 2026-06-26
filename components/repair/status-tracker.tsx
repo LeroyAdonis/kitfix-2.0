@@ -9,9 +9,12 @@ const statusPipeline: { key: RepairStatus; label: string }[] = [
   { key: "reviewed", label: "Reviewed" },
   { key: "quote_sent", label: "Quote Sent" },
   { key: "quote_accepted", label: "Quote Accepted" },
+  { key: "item_received", label: "Item Received" },
   { key: "in_repair", label: "In Repair" },
   { key: "quality_check", label: "Quality Check" },
+  { key: "ready_for_shipment", label: "Ready for Shipment" },
   { key: "shipped", label: "Shipped" },
+  { key: "delivered", label: "Delivered" },
 ];
 
 interface StatusTrackerProps {

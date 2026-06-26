@@ -7,10 +7,10 @@ export default async function CustomerDashboardPage() {
   const repairs = await getRepairsByCustomer(session.user.id, 1, 100);
 
   const activeRepairs = repairs.filter(
-    (r) => r.currentStatus !== "shipped",
+    (r) => r.currentStatus !== "delivered" && r.currentStatus !== "cancelled",
   );
   const completedRepairs = repairs.filter(
-    (r) => r.currentStatus === "shipped",
+    (r) => r.currentStatus === "delivered",
   );
   const recentRepairs = repairs.slice(0, 5);
 

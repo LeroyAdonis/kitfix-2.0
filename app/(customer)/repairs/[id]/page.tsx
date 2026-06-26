@@ -304,7 +304,7 @@ export default async function RepairDetailPage(props: {
             )}
           </CardContent>
         </Card>
-      ) : repair.currentStatus === "shipped" ? (
+      ) : repair.currentStatus === "shipped" || repair.currentStatus === "delivered" ? (
         <Card>
           <CardContent className="flex items-center justify-between p-6">
             <div className="flex items-center gap-2">

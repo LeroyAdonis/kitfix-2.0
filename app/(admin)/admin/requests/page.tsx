@@ -7,9 +7,14 @@ import type { RepairStatus } from "@/types";
 const VALID_STATUSES: RepairStatus[] = [
   "submitted",
   "reviewed",
+  "quote_sent",
+  "quote_accepted",
+  "item_received",
   "in_repair",
   "quality_check",
+  "ready_for_shipment",
   "shipped",
+  "delivered",
 ];
 
 export default async function AdminRequestsPage({

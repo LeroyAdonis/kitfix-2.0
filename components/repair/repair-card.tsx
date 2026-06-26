@@ -13,9 +13,12 @@ const statusConfig: Record<RepairStatus, { label: string; variant: "default" | "
   reviewed: { label: "Reviewed", variant: "outline" },
   quote_sent: { label: "Quote Sent", variant: "outline" },
   quote_accepted: { label: "Quote Accepted", variant: "secondary" },
+  item_received: { label: "Item Received", variant: "secondary" },
   in_repair: { label: "In Repair", variant: "default" },
   quality_check: { label: "Quality Check", variant: "default" },
+  ready_for_shipment: { label: "Ready for Shipment", variant: "outline" },
   shipped: { label: "Shipped", variant: "default" },
+  delivered: { label: "Delivered", variant: "default" },
   cancelled: { label: "Cancelled", variant: "destructive" },
 };
 

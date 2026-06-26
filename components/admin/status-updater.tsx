@@ -24,10 +24,13 @@ const STATUS_FLOW: Record<RepairStatus, RepairStatus[]> = {
   submitted: ["reviewed"],
   reviewed: ["in_repair"],
   quote_sent: ["quote_accepted"],
-  quote_accepted: ["in_repair"],
+  quote_accepted: ["item_received"],
+  item_received: ["in_repair"],
   in_repair: ["quality_check"],
-  quality_check: ["shipped"],
-  shipped: [],
+  quality_check: ["ready_for_shipment"],
+  ready_for_shipment: ["shipped"],
+  shipped: ["delivered"],
+  delivered: [],
   cancelled: [],
 };
 
@@ -36,9 +39,12 @@ const STATUS_LABELS: Record<RepairStatus, string> = {
   reviewed: "Reviewed",
   quote_sent: "Quote Sent",
   quote_accepted: "Quote Accepted",
+  item_received: "Item Received",
   in_repair: "In Repair",
   quality_check: "Quality Check",
+  ready_for_shipment: "Ready for Shipment",
   shipped: "Shipped",
+  delivered: "Delivered",
   cancelled: "Cancelled",
 };
 

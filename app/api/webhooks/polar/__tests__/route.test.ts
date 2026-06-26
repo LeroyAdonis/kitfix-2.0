@@ -24,6 +24,7 @@ vi.mock("@/lib/db/queries/payments", () => ({
 }));
 
 vi.mock("@/lib/db/queries/repairs", () => ({
+  getRepairById: vi.fn(),
   updateRepairStatus: vi.fn(),
 }));
 
@@ -55,7 +56,7 @@ import {
   getPaymentByCheckoutId,
   updatePaymentStatus,
 } from "@/lib/db/queries/payments";
-import { updateRepairStatus } from "@/lib/db/queries/repairs";
+import { getRepairById, updateRepairStatus } from "@/lib/db/queries/repairs";
 import { createNotification } from "@/lib/db/queries/notifications";
 import { updateOrderStatus } from "@/lib/db/queries/orders";
 import { POST } from "../../polar/route";
@@ -222,6 +223,11 @@ describe("POST /api/webhooks/polar", () => {
       checkoutUpdatedEvent("checkout-1", "succeeded", "order-1"),
     );
     vi.mocked(getPaymentByCheckoutId).mockResolvedValueOnce(payment);
+    vi.mocked(getRepairById).mockResolvedValueOnce({
+      id: "repair-1",
+      currentStatus: "quote_accepted",
+      customerId: "user-1",
+    } as unknown as Awaited<ReturnType<typeof getRepairById>>);
     vi.mocked(updatePaymentStatus).mockResolvedValueOnce({
       ...payment,
       status: "completed",
@@ -238,13 +244,26 @@ describe("POST /api/webhooks/polar", () => {
       damageType: "tear",
       damageDescription: "Torn",
       urgencyLevel: "standard",
-      currentStatus: "in_repair",
+      currentStatus: "item_received",
       estimatedCost: 15000,
       finalCost: null,
       aiDamageAssessment: null,
       adminNotes: null,
+      quoteDeclineReason: null,
       trackingNumber: null,
       shippingAddress: null,
+      pickupRequired: false,
+      pickupFee: 0,
+      deliveryFee: 0,
+      shippingMode: null,
+      outboundLockerId: null,
+      returnLockerId: null,
+      outboundTracking: null,
+      returnTracking: null,
+      outboundLabelUrl: null,
+      returnLabelUrl: null,
+      shippingRateCents: null,
+      shippingSurchargeCents: null,
       deletedAt: null,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -254,7 +273,7 @@ describe("POST /api/webhooks/polar", () => {
       userId: "user-1",
       type: "payment",
       title: "Payment Confirmed",
-      message: "Your payment has been received.",
+      message: "Your payment has been received. Please send your jersey to our workshop.",
       repairRequestId: "repair-1",
       isRead: false,
       createdAt: new Date(),
@@ -280,7 +299,7 @@ describe("POST /api/webhooks/polar", () => {
     // Verify repair status was transitioned to in_repair
     expect(updateRepairStatus).toHaveBeenCalledWith(
       "repair-1",
-      "in_repair",
+      "item_received",
       "user-1",
       expect.stringContaining("Payment confirmed"),
     );
@@ -363,6 +382,11 @@ describe("POST /api/webhooks/polar", () => {
       checkoutUpdatedEvent("checkout-1", "succeeded", "order-1"),
     );
     vi.mocked(getPaymentByCheckoutId).mockResolvedValueOnce(payment);
+    vi.mocked(getRepairById).mockResolvedValueOnce({
+      id: "repair-1",
+      currentStatus: "quote_accepted",
+      customerId: "user-1",
+    } as unknown as Awaited<ReturnType<typeof getRepairById>>);
     vi.mocked(updatePaymentStatus).mockResolvedValueOnce({
       ...payment,
       status: "completed",
@@ -377,13 +401,26 @@ describe("POST /api/webhooks/polar", () => {
       damageType: "tear",
       damageDescription: "Torn",
       urgencyLevel: "standard",
-      currentStatus: "in_repair",
+      currentStatus: "item_received",
       estimatedCost: 15000,
       finalCost: null,
       aiDamageAssessment: null,
       adminNotes: null,
+      quoteDeclineReason: null,
       trackingNumber: null,
       shippingAddress: null,
+      pickupRequired: false,
+      pickupFee: 0,
+      deliveryFee: 0,
+      shippingMode: null,
+      outboundLockerId: null,
+      returnLockerId: null,
+      outboundTracking: null,
+      returnTracking: null,
+      outboundLabelUrl: null,
+      returnLabelUrl: null,
+      shippingRateCents: null,
+      shippingSurchargeCents: null,
       deletedAt: null,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -393,7 +430,7 @@ describe("POST /api/webhooks/polar", () => {
       userId: "user-1",
       type: "payment",
       title: "Payment Confirmed",
-      message: "Payment confirmed.",
+      message: "Your payment has been received. Please send your jersey to our workshop.",
       repairRequestId: "repair-1",
       isRead: false,
       createdAt: new Date(),
@@ -502,13 +539,18 @@ describe("POST /api/webhooks/polar", () => {
       checkoutUpdatedEvent("checkout-1", "succeeded", "order-1"),
     );
     vi.mocked(getPaymentByCheckoutId).mockResolvedValueOnce(payment);
+    vi.mocked(getRepairById).mockResolvedValueOnce({
+      id: "repair-1",
+      currentStatus: "quote_accepted",
+      customerId: "user-1",
+    } as unknown as Awaited<ReturnType<typeof getRepairById>>);
     vi.mocked(updatePaymentStatus).mockResolvedValueOnce({
       ...payment,
       status: "completed",
     } as unknown as Awaited<ReturnType<typeof updatePaymentStatus>>);
     vi.mocked(updateRepairStatus).mockResolvedValueOnce({
       id: "repair-1",
-      currentStatus: "in_repair",
+      currentStatus: "item_received",
     } as unknown as Awaited<ReturnType<typeof updateRepairStatus>>);
     vi.mocked(createNotification).mockResolvedValueOnce({
       id: "notif-1",
