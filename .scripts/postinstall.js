@@ -1,6 +1,13 @@
 /**
- * Postinstall script — patches lightningcss to use lightningcss-wasm via module resolution
- * instead of a relative ../pkg/ path that doesn't exist on Vercel's clean install.
+ * Postinstall script — patches lightningcss/node/index.js to use lightningcss-wasm
+ * via proper module resolution instead of a relative ../pkg/ path.
+ * 
+ * This is required because:
+ * - Local dev: lightningcss-wasm is symlinked into lightningcss/pkg/
+ * - Vercel:    lightningcss-wasm is a separate top-level package
+ * - The ../pkg/ relative path only works in the symlinked setup
+ *
+ * This patch replaces the entire file (thin shim, ~20 lines) for reliability.
  */
 const fs = require('fs');
 const path = require('path');
@@ -14,27 +21,41 @@ if (!fs.existsSync(indexPath)) {
 
 const content = fs.readFileSync(indexPath, 'utf8');
 
-// Handle both original relative path and any previous broken resolve attempts
-const patterns = [
-  'module.exports = require(`../pkg/wasm-node.cjs`);',
-  "module.exports = require(require.resolve('lightningcss-wasm/wasm-node.cjs'));",
-  "module.exports = require(require.resolve('lightningcss-wasm'));",
-];
-const replacement = "module.exports = require('lightningcss-wasm');";
+// Check if already patched (our fixed version)
+if (content.includes("require('lightningcss-wasm')")) {
+  console.log('[postinstall] ⏭  lightningcss already patched');
+  process.exit(0);
+}
 
-let updated = content;
-let patched = false;
+const patched = `let parts = [process.platform, process.arch];
+if (process.platform === 'linux') {
+  const { MUSL, familySync } = require('detect-libc');
+  const family = familySync();
+  if (family === MUSL) {
+    parts.push('musl');
+  } else if (process.arch === 'arm') {
+    parts.push('gnueabihf');
+  } else {
+    parts.push('gnu');
+  }
+} else if (process.platform === 'win32') {
+  parts.push('msvc');
+}
 
-for (const pattern of patterns) {
-  if (updated.includes(pattern)) {
-    updated = updated.replace(pattern, replacement);
-    patched = true;
+if (process.env.CSS_TRANSFORMER_WASM || true) {
+  module.exports = require('lightningcss-wasm');
+} else {
+  try {
+    module.exports = require(\`lightningcss-\${parts.join('-')}\`);
+  } catch (err) {
+    module.exports = require(\`../lightningcss.\${parts.join('-')}.node\`);
   }
 }
 
-if (patched) {
-  fs.writeFileSync(indexPath, updated, 'utf8');
-  console.log('[postinstall] ✅ Patched lightningcss WASM require path');
-} else {
-  console.log('[postinstall] ⏭  lightningcss already correctly patched');
-}
+module.exports.browserslistToTargets = require('./browserslistToTargets');
+module.exports.composeVisitors = require('./composeVisitors');
+module.exports.Features = require('./flags').Features;
+`;
+
+fs.writeFileSync(indexPath, patched, 'utf8');
+console.log('[postinstall] ✅ Patched lightningcss WASM require path');
