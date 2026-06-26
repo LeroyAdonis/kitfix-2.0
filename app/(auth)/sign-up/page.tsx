@@ -56,8 +56,9 @@ export default function SignUpPage() {
       if (result.error) {
         setError(result.error.message ?? "Sign-up failed. Please try again.");
       } else {
-        // Full page load ensures the session cookie is committed before navigation
-        window.location.href = "/dashboard";
+        // Redirect to public homepage to avoid cookie race condition
+        // The session cookie will be available on subsequent navigations
+        window.location.href = "/";
       }
     } catch {
       setError("An unexpected error occurred. Please try again.");

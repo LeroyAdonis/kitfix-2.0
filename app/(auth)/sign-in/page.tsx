@@ -27,8 +27,10 @@ export default function SignInPage() {
       if (result.error) {
         setError(result.error.message ?? "Sign-in failed. Check your credentials.");
       } else {
-        // Full page load ensures the session cookie is committed before navigation
-        window.location.href = callbackUrl;
+        // Wait for browser to commit session cookie before navigating
+        setTimeout(() => {
+          window.location.href = callbackUrl;
+        }, 300);
       }
     } catch {
       setError("An unexpected error occurred. Please try again.");
