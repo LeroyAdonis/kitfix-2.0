@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
@@ -9,8 +8,6 @@ import { signUp } from "@/lib/auth-client";
 import { AnimatedText, PageTransition } from "@/components/motion";
 
 export default function SignUpPage() {
-  const router = useRouter();
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -59,7 +56,8 @@ export default function SignUpPage() {
       if (result.error) {
         setError(result.error.message ?? "Sign-up failed. Please try again.");
       } else {
-        router.push("/dashboard");
+        // Full page load ensures the session cookie is committed before navigation
+        window.location.href = "/dashboard";
       }
     } catch {
       setError("An unexpected error occurred. Please try again.");

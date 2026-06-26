@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
@@ -9,7 +9,6 @@ import { signIn } from "@/lib/auth-client";
 import { AnimatedText, PageTransition } from "@/components/motion";
 
 export default function SignInPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
 
@@ -28,7 +27,8 @@ export default function SignInPage() {
       if (result.error) {
         setError(result.error.message ?? "Sign-in failed. Check your credentials.");
       } else {
-        router.push(callbackUrl);
+        // Full page load ensures the session cookie is committed before navigation
+        window.location.href = callbackUrl;
       }
     } catch {
       setError("An unexpected error occurred. Please try again.");
