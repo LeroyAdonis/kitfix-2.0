@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "CSS_TRANSFORMER_WASM=true next build",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest",
@@ -18,18 +18,22 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@better-auth/utils": "^0.4.2",
     "@neondatabase/serverless": "^1.0.2",
+    "@next/swc-wasm-nodejs": "^16.2.9",
     "@polar-sh/better-auth": "^1.8.1",
     "@polar-sh/nextjs": "^0.9.3",
     "@polar-sh/sdk": "^0.45.1",
+    "@tailwindcss/node": "^4.2.1",
     "@vercel/blob": "^2.3.0",
-    "better-auth": "^1.5.0",
+    "better-auth": "^1.6.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.1",
     "framer-motion": "^12.34.4",
+    "lightningcss-wasm": "^1.31.1",
     "lucide-react": "^0.575.0",
-    "next": "16.1.6",
+    "next": "^16.2.9",
     "radix-ui": "^1.4.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -48,9 +52,17 @@
     "dotenv": "^17.3.1",
     "drizzle-kit": "^0.31.9",
     "eslint": "^9",
-    "eslint-config-next": "16.1.6",
+    "eslint-config-next": "^16.2.9",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.0.18"
+  },
+  "overrides": {
+    "esbuild": "0.20.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "esbuild": "0.20.2"
+    }
   }
 }

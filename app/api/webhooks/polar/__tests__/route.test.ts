@@ -31,6 +31,10 @@ vi.mock("@/lib/db/queries/notifications", () => ({
   createNotification: vi.fn(),
 }));
 
+vi.mock("@/lib/db/queries/orders", () => ({
+  updateOrderStatus: vi.fn(),
+}));
+
 vi.mock("@/lib/logger", () => ({
   logger: {
     info: vi.fn(),
@@ -53,6 +57,7 @@ import {
 } from "@/lib/db/queries/payments";
 import { updateRepairStatus } from "@/lib/db/queries/repairs";
 import { createNotification } from "@/lib/db/queries/notifications";
+import { updateOrderStatus } from "@/lib/db/queries/orders";
 import { POST } from "../../polar/route";
 
 // ---------------------------------------------------------------------------
@@ -93,6 +98,7 @@ function mockPayment(overrides: Record<string, unknown> = {}) {
   return {
     id: "pay-1",
     repairRequestId: "repair-1",
+    orderId: null,
     customerId: "user-1",
     polarCheckoutId: "checkout-1",
     polarOrderId: null,
@@ -411,5 +417,118 @@ describe("POST /api/webhooks/polar", () => {
         }),
       }),
     );
+  });
+
+  // ─── Order payment tests ─────────────────────────────────────────────
+
+  function orderCheckoutUpdatedEvent(
+    checkoutId: string,
+    status: string,
+    orderId?: string,
+  ) {
+    return {
+      type: "checkout.updated",
+      data: {
+        id: checkoutId,
+        status,
+        order_id: orderId,
+        metadata: {
+          orderId: "order-1",
+          customerId: "user-1",
+        },
+      },
+    } as unknown as ReturnType<typeof validateEvent>;
+  }
+
+  function mockOrderPayment(overrides: Record<string, unknown> = {}) {
+    return {
+      id: "pay-2",
+      repairRequestId: null,
+      orderId: "order-1",
+      customerId: "user-1",
+      polarCheckoutId: "checkout-2",
+      polarOrderId: null,
+      amount: 100000,
+      currency: "usd",
+      status: "pending",
+      paidAt: null,
+      refundedAt: null,
+      metadata: { orderId: "order-1", customerId: "user-1" },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ...overrides,
+    } as unknown as NonNullable<Awaited<ReturnType<typeof getPaymentByCheckoutId>>>;
+  }
+
+  it("routes order payment when metadata contains orderId", async () => {
+    const payment = mockOrderPayment();
+
+    vi.mocked(validateEvent).mockReturnValueOnce(
+      orderCheckoutUpdatedEvent("checkout-2", "succeeded"),
+    );
+    vi.mocked(getPaymentByCheckoutId).mockResolvedValueOnce(payment);
+    vi.mocked(updatePaymentStatus).mockResolvedValueOnce({
+      ...payment,
+      status: "completed",
+      polarOrderId: "polar-order-1",
+      paidAt: new Date(),
+    } as unknown as Awaited<ReturnType<typeof updatePaymentStatus>>);
+    vi.mocked(updateOrderStatus).mockResolvedValueOnce({
+      id: "order-1",
+      userId: "user-1",
+      status: "paid",
+    } as unknown as Awaited<ReturnType<typeof updateOrderStatus>>);
+
+    const request = createMockRequest(JSON.stringify({}));
+    const response = await POST(request);
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.received).toBe(true);
+    expect(updateOrderStatus).toHaveBeenCalledWith("order-1", "paid");
+    expect(createNotification).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: "user-1",
+        type: "payment",
+        title: "Payment Confirmed",
+      }),
+    );
+  });
+
+  it("still handles repair payments correctly (regression)", async () => {
+    const payment = mockPayment();
+
+    vi.mocked(validateEvent).mockReturnValueOnce(
+      checkoutUpdatedEvent("checkout-1", "succeeded", "order-1"),
+    );
+    vi.mocked(getPaymentByCheckoutId).mockResolvedValueOnce(payment);
+    vi.mocked(updatePaymentStatus).mockResolvedValueOnce({
+      ...payment,
+      status: "completed",
+    } as unknown as Awaited<ReturnType<typeof updatePaymentStatus>>);
+    vi.mocked(updateRepairStatus).mockResolvedValueOnce({
+      id: "repair-1",
+      currentStatus: "in_repair",
+    } as unknown as Awaited<ReturnType<typeof updateRepairStatus>>);
+    vi.mocked(createNotification).mockResolvedValueOnce({
+      id: "notif-1",
+      userId: "user-1",
+      type: "payment",
+      title: "Payment Confirmed",
+      message: "Your payment has been received.",
+      repairRequestId: "repair-1",
+      isRead: false,
+      createdAt: new Date(),
+    });
+
+    const request = createMockRequest(JSON.stringify({}));
+    const response = await POST(request);
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.received).toBe(true);
+    // Verify repair path was taken (not order path)
+    expect(updateRepairStatus).toHaveBeenCalled();
+    expect(updateOrderStatus).not.toHaveBeenCalled();
   });
 });

@@ -9,6 +9,7 @@ import {
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
   varchar,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
@@ -235,9 +236,13 @@ export const payments = pgTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
-    repairRequestId: text("repair_request_id")
-      .notNull()
-      .references(() => repairRequests.id, { onDelete: "cascade" }),
+    repairRequestId: text("repair_request_id").references(
+      () => repairRequests.id,
+      { onDelete: "cascade" },
+    ),
+    orderId: text("order_id").references(() => orders.id, {
+      onDelete: "cascade",
+    }),
     customerId: text("customer_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
@@ -259,6 +264,7 @@ export const payments = pgTable(
     index("idx_payments_repair_request_id").on(table.repairRequestId),
     index("idx_payments_polar_checkout_id").on(table.polarCheckoutId),
     index("idx_payments_polar_order_id").on(table.polarOrderId),
+    index("idx_payments_order_id").on(table.orderId),
   ],
 );
 
@@ -315,6 +321,159 @@ export const notifications = pgTable(
 );
 
 // ---------------------------------------------------------------------------
+// E-commerce tables
+// ---------------------------------------------------------------------------
+
+export const products = pgTable(
+  "products",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    name: text("name").notNull(),
+    description: text("description").notNull(),
+    slug: text("slug").notNull().unique(),
+    basePrice: integer("base_price").notNull(),
+    category: text("category").notNull(),
+    imageUrl: text("image_url"),
+    isActive: boolean("is_active").notNull().default(true),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .defaultNow()
+      .$onUpdateFn(() => new Date()),
+  },
+  (table) => [
+    index("idx_products_slug").on(table.slug),
+    index("idx_products_is_active").on(table.isActive),
+  ],
+);
+
+export const productVariants = pgTable(
+  "product_variants",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    productId: text("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    size: varchar("size", { length: 10 }).notNull(),
+    stock: integer("stock").notNull().default(0),
+    priceModifier: integer("price_modifier").notNull().default(0),
+  },
+  (table) => [
+    index("idx_product_variants_product_id").on(table.productId),
+  ],
+);
+
+export const personalizationOptions = pgTable(
+  "personalization_options",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    productId: text("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    fieldName: text("field_name").notNull(),
+    fieldType: text("field_type").notNull(),
+    isRequired: boolean("is_required").notNull().default(false),
+    maxLength: integer("max_length"),
+    options: jsonb("options"),
+  },
+  (table) => [
+    index("idx_personalization_options_product_id").on(table.productId),
+  ],
+);
+
+export const cartItems = pgTable(
+  "cart_items",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    productId: text("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    variantId: text("variant_id")
+      .notNull()
+      .references(() => productVariants.id, { onDelete: "cascade" }),
+    quantity: integer("quantity").notNull().default(1),
+    personalization: jsonb("personalization"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .defaultNow()
+      .$onUpdateFn(() => new Date()),
+  },
+  (table) => [
+    index("idx_cart_items_user_id").on(table.userId),
+    uniqueIndex("idx_cart_items_user_product_variant_pers").on(
+      table.userId,
+      table.productId,
+      table.variantId,
+      table.personalization,
+    ),
+  ],
+);
+
+export const orders = pgTable(
+  "orders",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    status: varchar("status", { length: 20 }).notNull().default("pending"),
+    totalCents: integer("total_cents").notNull(),
+    shippingCents: integer("shipping_cents").notNull().default(0),
+    grandTotalCents: integer("grand_total_cents").notNull(),
+    shippingAddress: jsonb("shipping_address"),
+    polarCheckoutId: text("polar_checkout_id"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .defaultNow()
+      .$onUpdateFn(() => new Date()),
+  },
+  (table) => [
+    index("idx_orders_user_id").on(table.userId),
+    index("idx_orders_status").on(table.status),
+    index("idx_orders_polar_checkout_id").on(table.polarCheckoutId),
+  ],
+);
+
+export const orderItems = pgTable(
+  "order_items",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    orderId: text("order_id")
+      .notNull()
+      .references(() => orders.id, { onDelete: "cascade" }),
+    productId: text("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    variantId: text("variant_id")
+      .notNull()
+      .references(() => productVariants.id, { onDelete: "cascade" }),
+    quantity: integer("quantity").notNull(),
+    unitPriceCents: integer("unit_price_cents").notNull(),
+    personalization: jsonb("personalization"),
+  },
+  (table) => [
+    index("idx_order_items_order_id").on(table.orderId),
+  ],
+);
+
+// ---------------------------------------------------------------------------
 // Relations (for Drizzle relational query builder)
 // ---------------------------------------------------------------------------
 
@@ -332,6 +491,8 @@ export const userRelations = relations(user, ({ many }) => ({
   reviews: many(reviews),
   notifications: many(notifications),
   statusChanges: many(statusHistory),
+  cartItems: many(cartItems),
+  orders: many(orders),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -399,6 +560,10 @@ export const paymentRelations = relations(payments, ({ one }) => ({
     fields: [payments.repairRequestId],
     references: [repairRequests.id],
   }),
+  order: one(orders, {
+    fields: [payments.orderId],
+    references: [orders.id],
+  }),
   customer: one(user, {
     fields: [payments.customerId],
     references: [user.id],
@@ -428,6 +593,79 @@ export const notificationRelations = relations(notifications, ({ one }) => ({
 }));
 
 // ---------------------------------------------------------------------------
+// E-commerce relations
+// ---------------------------------------------------------------------------
+
+export const productRelations = relations(products, ({ many }) => ({
+  variants: many(productVariants),
+  personalizationOptions: many(personalizationOptions),
+  cartItems: many(cartItems),
+  orderItems: many(orderItems),
+}));
+
+export const productVariantRelations = relations(
+  productVariants,
+  ({ one }) => ({
+    product: one(products, {
+      fields: [productVariants.productId],
+      references: [products.id],
+    }),
+  }),
+);
+
+export const personalizationOptionRelations = relations(
+  personalizationOptions,
+  ({ one }) => ({
+    product: one(products, {
+      fields: [personalizationOptions.productId],
+      references: [products.id],
+    }),
+  }),
+);
+
+export const cartItemRelations = relations(cartItems, ({ one }) => ({
+  user: one(user, {
+    fields: [cartItems.userId],
+    references: [user.id],
+  }),
+  product: one(products, {
+    fields: [cartItems.productId],
+    references: [products.id],
+  }),
+  variant: one(productVariants, {
+    fields: [cartItems.variantId],
+    references: [productVariants.id],
+  }),
+}));
+
+export const orderRelations = relations(orders, ({ one, many }) => ({
+  user: one(user, {
+    fields: [orders.userId],
+    references: [user.id],
+  }),
+  items: many(orderItems),
+  payments: many(payments),
+}));
+
+export const orderItemRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderItems.orderId],
+    references: [orders.id],
+  }),
+  product: one(products, {
+    fields: [orderItems.productId],
+    references: [products.id],
+  }),
+  variant: one(productVariants, {
+    fields: [orderItems.variantId],
+    references: [productVariants.id],
+  }),
+}));
+
+// Extend userRelations with new relations
+// (userRelations already exists; we add cartItems and orders to it above)
+
+// ---------------------------------------------------------------------------
 // Type exports (inferred from schema)
 // ---------------------------------------------------------------------------
 
@@ -451,3 +689,21 @@ export type NewReview = typeof reviews.$inferInsert;
 
 export type Notification = typeof notifications.$inferSelect;
 export type NewNotification = typeof notifications.$inferInsert;
+
+export type Product = typeof products.$inferSelect;
+export type NewProduct = typeof products.$inferInsert;
+
+export type ProductVariant = typeof productVariants.$inferSelect;
+export type NewProductVariant = typeof productVariants.$inferInsert;
+
+export type PersonalizationOption = typeof personalizationOptions.$inferSelect;
+export type NewPersonalizationOption = typeof personalizationOptions.$inferInsert;
+
+export type CartItem = typeof cartItems.$inferSelect;
+export type NewCartItem = typeof cartItems.$inferInsert;
+
+export type Order = typeof orders.$inferSelect;
+export type NewOrder = typeof orders.$inferInsert;
+
+export type OrderItem = typeof orderItems.$inferSelect;
+export type NewOrderItem = typeof orderItems.$inferInsert;

@@ -26,7 +26,7 @@ export default async function AdminPaymentsPage() {
   const [allPayments, aggregates] = await Promise.all([
     db.query.payments.findMany({
       orderBy: [desc(payments.createdAt)],
-      with: { customer: true, repairRequest: true },
+      with: { customer: true, repairRequest: true, order: true },
     }),
     db
       .select({
@@ -95,7 +95,11 @@ export default async function AdminPaymentsPage() {
                 </TableCell>
                 <TableCell>{p.customer?.name ?? "—"}</TableCell>
                 <TableCell className="font-mono text-xs">
-                  {p.repairRequestId.slice(0, 8)}…
+                  {p.repairRequestId
+                    ? `${p.repairRequestId.slice(0, 8)}…`
+                    : p.orderId
+                      ? `Order ${p.orderId.slice(0, 8)}…`
+                      : "—"}
                 </TableCell>
                 <TableCell>
                   {formatDateSAST(new Date(p.createdAt))}

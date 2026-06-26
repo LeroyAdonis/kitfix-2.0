@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="drawio" version="26.0.0">
+  <diagram name="Page-1">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ============================================ -->
+        <!-- STYLE DEFINITIONS (using built-in convention) -->
+        <!-- ============================================ -->
+
+        <!-- Layer: User Facing (Blue) -->
+        <!-- Layer: Core Backend (Green) -->
+        <!-- Layer: Infrastructure (Grey) -->
+        <!-- Layer: External Services (Orange) -->
+        <!-- Layer: Auth (Purple) -->
+
+        <!-- ============================================ -->
+        <!-- TITLE -->
+        <!-- ============================================ -->
+        <mxCell id="title" value="KitFix 2.0 — Full Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=24;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="0" y="10" width="1400" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- CLIENT LAYER (Swimlane) -->
+        <!-- ============================================ -->
+        <mxCell id="client-layer" value="CLIENT LAYER" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="1320" height="200" as="geometry" />
+        </mxCell>
+
+        <!-- PWA -->
+        <mxCell id="pwa" value="PWA Shell&#xa;Service Worker&#xa;Offline Fallback" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="client-layer">
+          <mxGeometry x="30" y="50" width="160" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Next.js App Router -->
+        <mxCell id="nextjs" value="Next.js 16&#xa;App Router&#xa;RSC + Client Components" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="client-layer">
+          <mxGeometry x="250" y="50" width="180" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Storefront Pages -->
+        <mxCell id="storefront" value="Storefront Pages&#xa;/store&#xa;/store/products/[slug]&#xa;/store/cart&#xa;/store/checkout&#xa;/store/orders" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="client-layer">
+          <mxGeometry x="500" y="40" width="180" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Customer Portal Pages -->
+        <mxCell id="customer" value="Customer Portal&#xa;/dashboard&#xa;/repairs/new&#xa;/repairs/[id]&#xa;/payments" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="client-layer">
+          <mxGeometry x="740" y="40" width="180" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Admin Dashboard -->
+        <mxCell id="admin-dash" value="Admin Dashboard&#xa;/admin/requests&#xa;/admin/store/products&#xa;/admin/store/orders&#xa;/admin/shipping" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="client-layer">
+          <mxGeometry x="980" y="40" width="180" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Personalization Builder -->
+        <mxCell id="personalization" value="Personalization Builder&#xa;Live SVG Preview&#xa;Font / Number / Name&#xa;Damage Analyzer (AI)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="client-layer">
+          <mxGeometry x="500" y="150" width="240" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Auth Context -->
+        <mxCell id="auth-ctx" value="Auth Context&#xa;Better Auth Client" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="client-layer">
+          <mxGeometry x="250" y="150" width="160" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Cart State -->
+        <mxCell id="cart-state" value="Cart State&#xa;(Server-side DB)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="client-layer">
+          <mxGeometry x="780" y="150" width="160" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- API LAYER (Swimlane) -->
+        <!-- ============================================ -->
+        <mxCell id="api-layer" value="SERVER LAYER — Next.js 16" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="280" width="1320" height="200" as="geometry" />
+        </mxCell>
+
+        <!-- Server Actions -->
+        <mxCell id="server-actions" value="Server Actions&#xa;(actions/*.ts)&#xa;createRepairAction&#xa;createOrder&#xa;addToCart&#xa;initiateCheckout" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="api-layer">
+          <mxGeometry x="30" y="40" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- API Routes -->
+        <mxCell id="api-routes" value="Route Handlers&#xa;(app/api/*)&#xa;auth/[...all] — Better Auth&#xa;webhooks/polar — Payments&#xa;webhooks/courier — Tracking&#xa;upload — Vercel Blob" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="api-layer">
+          <mxGeometry x="280" y="40" width="240" height="80" as="geometry" />
+        </mxClientLayer>
+
+        <!-- Courier Module -->
+        <mxCell id="courier-module" value="Courier Guy Module&#xa;(lib/courier/client.ts)&#xa;getLockers · getRates&#xa;createShipment · getTracking" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="api-layer">
+          <mxGeometry x="580" y="40" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Auth Config -->
+        <mxCell id="auth-config" value="Auth Config&#xa;(lib/auth.ts)&#xa;Better Auth Server&#xa;Admin Plugin&#xa;Polar Plugin" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="api-layer">
+          <mxGeometry x="840" y="40" width="180" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Validators + Utils -->
+        <mxCell id="validators" value="Zod Validators&#xa;(lib/validators/*)&#xa;+ Utils + Logger&#xa;+ Email Templates" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="api-layer">
+          <mxGeometry x="1080" y="40" width="180" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Middleware -->
+        <mxCell id="middleware" value="Middleware&#xa;Route Protection&#xa;Edge-level Auth" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="api-layer">
+          <mxGeometry x="30" y="140" width="160" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Data Flow arrows within server layer -->
+        <mxCell id="actions-to-db" value="DB Queries" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="api-layer" source="server-actions" target="api-routes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================ -->
+        <!-- DATA LAYER (Swimlane) -->
+        <!-- ============================================ -->
+        <mxCell id="data-layer" value="DATA LAYER" style="swimlane;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="500" width="1320" height="200" as="geometry" />
+        </mxCell>
+
+        <!-- PostgreSQL -->
+        <mxCell id="neon-db" value="Neon PostgreSQL" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;" vertex="1" parent="data-layer">
+          <mxGeometry x="30" y="40" width="160" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Drizzle ORM -->
+        <mxCell id="drizzle" value="Drizzle ORM&#xa;(lib/db/)&#xa;Schema · Queries · Migrations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="data-layer">
+          <mxGeometry x="250" y="40" width="180" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Schema Tables -->
+        <mxCell id="schema-tables" value="Tables:&#xa;user · session · account · verification&#xa;repairRequests · repairPhotos&#xa;statusHistory · payments · reviews&#xa;notifications&#xa;products · productVariants&#xa;personalizationOptions · cartItems&#xa;orders · orderItems" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="data-layer">
+          <mxGeometry x="480" y="40" width="220" height="100" as="geometry" />
+        </mxClientLayer>
+
+        <!-- Enums -->
+        <mxCell id="enums" value="Enums:&#xa;damage_type · repair_status&#xa;payment_status · user_role&#xa;order_status · shipping_mode&#xa;notification_type · photo_type" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="data-layer">
+          <mxGeometry x="750" y="40" width="180" height="80" as="geometry" />
+        </mxClientLayer>
+
+        <!-- Vercel Blob -->
+        <mxCell id="vercel-blob" value="Vercel Blob&#xa;Photo Storage" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="data-layer">
+          <mxGeometry x="1000" y="40" width="160" height="60" as="geometry" />
+        </mxClientLayer>
+
+        <!-- Seed Script -->
+        <mxCell id="seed" value="Seed Script&#xa;(scripts/seed.ts)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="data-layer">
+          <mxGeometry x="1000" y="120" width="160" height="40" as="geometry" />
+        </mxClientLayer>
+
+        <!-- ============================================ -->
+        <!-- EXTERNAL SERVICES LAYER (Swimlane) -->
+        <!-- ============================================ -->
+        <mxCell id="ext-layer" value="EXTERNAL SERVICES" style="swimlane;startSize=30;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="720" width="1320" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- Polar.sh -->
+        <mxCell id="polar" value="Polar.sh&#xa;Payment Processing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="ext-layer">
+          <mxGeometry x="30" y="40" width="180" height="80" as="geometry" />
+        </mxClientLayer>
+
+        <!-- Courier Guy -->
+        <mxCell id="courier-guy" value="Courier Guy&#xa;Locker API&#xa;L2L / D2D / D2L / L2D" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="ext-layer">
+          <mxGeometry x="280" y="40" width="180" height="80" as="geometry" />
+        </mxClientLayer>
+
+        <!-- Resend -->
+        <mxCell id="resend" value="Resend&#xa;Email Notifications" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="ext-layer">
+          <mxGeometry x="530" y="40" width="180" height="80" as="geometry" />
+        </mxClientLayer>
+
+        <!-- Puter.js AI -->
+        <mxCell id="puter" value="Puter.js&#xa;AI Damage Assessment&#xa;(Client-side)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="ext-layer">
+          <mxGeometry x="780" y="40" width="180" height="80" as="geometry" />
+        </mxClientLayer>
+
+        <!-- Better Auth APIs -->
+        <mxCell id="better-auth-ext" value="Better Auth&#xa;Auth APIs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="ext-layer">
+          <mxGeometry x="1030" y="40" width="180" height="80" as="geometry" />
+        </mxClientLayer>
+
+        <!-- ============================================ -->
+        <!-- CROSS-LAYER CONNECTIONS -->
+        <!-- ============================================ -->
+
+        <!-- Client → Server Actions -->
+        <mxCell id="c1" value="Server Actions" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;entryX=0.1;entryY=0;" edge="1" parent="1" source="client-layer" target="api-layer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Client → Next.js SSR -->
+        <mxCell id="c2" value="SSR / RSC" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;entryX=0.3;entryY=0;" edge="1" parent="1" source="client-layer" target="api-layer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Client → API Routes -->
+        <mxCell id="c3" value="REST / Upload" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.85;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="client-layer" target="api-layer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Server → Database -->
+        <mxCell id="c4" value="Drizzle Queries" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;entryX=0.25;entryY=0;" edge="1" parent="1" source="api-layer" target="data-layer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Server → External -->
+        <mxCell id="c5" value="HTTP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;entryX=0.3;entryY=0;" edge="1" parent="1" source="api-layer" target="ext-layer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Webhooks back to Server -->
+        <mxCell id="c6" value="Webhooks (Polar, Courier)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.1;exitY=0;entryX=0.7;entryY=1;" edge="1" parent="1" source="ext-layer" target="api-layer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxClientLayer>
+
+        <!-- ============================================ -->
+        <!-- LEGEND -->
+        <!-- ============================================ -->
+        <mxCell id="legend" value="Legend" style="swimlane;startSize=30;fillColor=#ffffff;strokeColor=#333333;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="900" width="900" height="140" as="geometry" />
+        </mxClientLayer>
+
+        <mxCell id="leg-blue" value="Client / UI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="legend">
+          <mxGeometry x="30" y="45" width="120" height="30" as="geometry" />
+        </mxClientLayer>
+
+        <mxCell id="leg-green" value="Server / API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="legend">
+          <mxGeometry x="200" y="45" width="120" height="30" as="geometry" />
+        </mxClientLayer>
+
+        <mxCell id="leg-grey" value="Data / Infra" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="legend">
+          <mxGeometry x="370" y="45" width="120" height="30" as="geometry" />
+        </mxClientLayer>
+
+        <mxCell id="leg-orange" value="External Services" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="legend">
+          <mxGeometry x="540" y="45" width="120" height="30" as="geometry" />
+        </mxClientLayer>
+
+        <mxCell id="leg-purple" value="Auth" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="legend">
+          <mxGeometry x="710" y="45" width="120" height="30" as="geometry" />
+        </mxClientLayer>
+
+        <mxCell id="leg-yellow" value="Storage / Seeds" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="legend">
+          <mxGeometry x="200" y="85" width="120" height="30" as="geometry" />
+        </mxClientLayer>
+
+        <mxCell id="leg-text" value="Colors match corresponding architecture layers. Arrows show data/request flow direction." style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontStyle=0;" vertex="1" parent="legend">
+          <mxGeometry x="30" y="85" width="160" height="30" as="geometry" />
+        </mxClientLayer>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

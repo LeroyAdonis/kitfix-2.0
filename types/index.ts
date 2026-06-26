@@ -8,6 +8,12 @@ import type {
   payments,
   reviews,
   notifications,
+  products,
+  productVariants,
+  personalizationOptions,
+  cartItems,
+  orders,
+  orderItems,
 } from "@/lib/db/schema";
 
 // ---------------------------------------------------------------------------
@@ -26,11 +32,38 @@ export type NewStatusHistoryEntry = typeof statusHistory.$inferInsert;
 export type Payment = typeof payments.$inferSelect;
 export type NewPayment = typeof payments.$inferInsert;
 
+export type OrderResponse = Order & {
+  items: Array<OrderItem & {
+    productName: string;
+    variantSize: string;
+  }>;
+  payment?: Payment | null;
+};
+
 export type Review = typeof reviews.$inferSelect;
 export type NewReview = typeof reviews.$inferInsert;
 
 export type Notification = typeof notifications.$inferSelect;
 export type NewNotification = typeof notifications.$inferInsert;
+
+// E-commerce types
+export type Product = typeof products.$inferSelect;
+export type NewProduct = typeof products.$inferInsert;
+
+export type ProductVariant = typeof productVariants.$inferSelect;
+export type NewProductVariant = typeof productVariants.$inferInsert;
+
+export type PersonalizationOption = typeof personalizationOptions.$inferSelect;
+export type NewPersonalizationOption = typeof personalizationOptions.$inferInsert;
+
+export type CartItem = typeof cartItems.$inferSelect;
+export type NewCartItem = typeof cartItems.$inferInsert;
+
+export type Order = typeof orders.$inferSelect;
+export type NewOrder = typeof orders.$inferInsert;
+
+export type OrderItem = typeof orderItems.$inferSelect;
+export type NewOrderItem = typeof orderItems.$inferInsert;
 
 // ---------------------------------------------------------------------------
 // Server action result type

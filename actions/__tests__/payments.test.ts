@@ -190,6 +190,7 @@ describe("initiateCheckout", () => {
     vi.mocked(createPayment).mockResolvedValueOnce({
       id: "pay-1",
       repairRequestId: "repair-1",
+      orderId: null,
       customerId: "admin-1",
       polarCheckoutId: "checkout-1",
       polarOrderId: null,
@@ -287,6 +288,7 @@ describe("initiateCheckout", () => {
       {
         id: "pay-existing",
         repairRequestId: "repair-1",
+      orderId: null,
         customerId: "user-1",
         polarCheckoutId: "checkout-old",
         polarOrderId: "order-old",
@@ -318,6 +320,7 @@ describe("initiateCheckout", () => {
       {
         id: "pay-pending",
         repairRequestId: "repair-1",
+      orderId: null,
         customerId: "user-1",
         polarCheckoutId: "checkout-pending",
         polarOrderId: null,
@@ -338,6 +341,7 @@ describe("initiateCheckout", () => {
     vi.mocked(createPayment).mockResolvedValueOnce({
       id: "pay-2",
       repairRequestId: "repair-1",
+      orderId: null,
       customerId: "user-1",
       polarCheckoutId: "checkout-2",
       polarOrderId: null,
@@ -386,6 +390,7 @@ describe("initiateCheckout", () => {
     vi.mocked(createPayment).mockResolvedValueOnce({
       id: "pay-new",
       repairRequestId: "repair-1",
+      orderId: null,
       customerId: "user-1",
       polarCheckoutId: "checkout-new",
       polarOrderId: null,
@@ -441,6 +446,7 @@ describe("initiateCheckout", () => {
     vi.mocked(createPayment).mockResolvedValueOnce({
       id: "pay-1",
       repairRequestId: "repair-1",
+      orderId: null,
       customerId: "user-1",
       polarCheckoutId: "checkout-1",
       polarOrderId: null,

@@ -39,7 +39,7 @@ export function AnimatedCounter({
     const controls = animate(motionValue, value, {
       duration,
       ease: "easeOut",
-      onUpdate: (latest) => {
+      onUpdate: (latest: number) => {
         setDisplayValue(
           decimals > 0
             ? parseFloat(latest.toFixed(decimals))

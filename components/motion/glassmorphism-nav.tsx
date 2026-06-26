@@ -35,7 +35,7 @@ export function GlassmorphismNav() {
   ]);
 
   // Track boolean state for blur toggle (CSS backdrop-filter can't be partially applied via motion value)
-  useMotionValueEvent(scrollY, "change", (latest) => {
+  useMotionValueEvent(scrollY, "change", (latest: number) => {
     setScrolled(latest > SCROLL_THRESHOLD);
   });
 

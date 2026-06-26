@@ -8,6 +8,7 @@ import {
   updatePaymentStatus,
 } from "@/lib/db/queries/payments";
 import { updateRepairStatus } from "@/lib/db/queries/repairs";
+import { updateOrderStatus } from "@/lib/db/queries/orders";
 import { createNotification } from "@/lib/db/queries/notifications";
 import { logger } from "@/lib/logger";
 
@@ -102,30 +103,26 @@ async function handleWebhookEvent(event: WebhookEvent): Promise<void> {
  *
  * When a checkout reaches 'succeeded' status:
  *  1. Mark the payment as completed
- *  2. Transition the repair to 'in_repair' status
+ *  2. Transition the associated entity (repair or order) to its next status
  *  3. Notify the customer
  */
 async function handleCheckoutUpdated(data: CheckoutEventData): Promise<void> {
   if (data.status !== "succeeded") {
-    // Only process successful checkouts — other statuses are informational
     return;
   }
 
   const polarCheckoutId = data.id;
 
-  // 1. Find the payment record we created during checkout initiation
   const payment = await getPaymentByCheckoutId(polarCheckoutId);
   if (!payment) {
     logger.error("No payment found for checkout", { polarCheckoutId });
     return;
   }
 
-  // Idempotency: skip if already completed
   if (payment.status === "completed") {
     return;
   }
 
-  // 2. Update payment status to completed
   const existingMeta =
     typeof payment.metadata === "object" && payment.metadata !== null
       ? (payment.metadata as Record<string, unknown>)
@@ -141,21 +138,30 @@ async function handleCheckoutUpdated(data: CheckoutEventData): Promise<void> {
     },
   });
 
-  // 3. Transition repair request to 'in_repair'
-  await updateRepairStatus(
-    payment.repairRequestId,
-    "in_repair",
-    payment.customerId, // changedBy — system action on behalf of customer
-    "Payment confirmed via Polar.sh — repair work can begin.",
-  );
+  if (payment.orderId) {
+    await updateOrderStatus(payment.orderId, "paid");
 
-  // 4. Notify the customer
-  await createNotification({
-    userId: payment.customerId,
-    type: "payment",
-    title: "Payment Confirmed",
-    message:
-      "Your payment has been received. Your jersey repair is now in progress!",
-    repairRequestId: payment.repairRequestId,
-  });
+    await createNotification({
+      userId: payment.customerId,
+      type: "payment",
+      title: "Payment Confirmed",
+      message: "Your payment has been received. Your order is being processed!",
+    });
+  } else if (payment.repairRequestId) {
+    await updateRepairStatus(
+      payment.repairRequestId,
+      "in_repair",
+      payment.customerId,
+      "Payment confirmed via Polar.sh — repair work can begin.",
+    );
+
+    await createNotification({
+      userId: payment.customerId,
+      type: "payment",
+      title: "Payment Confirmed",
+      message:
+        "Your payment has been received. Your jersey repair is now in progress!",
+      repairRequestId: payment.repairRequestId,
+    });
+  }
 }
