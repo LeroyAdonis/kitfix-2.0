@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Store } from "lucide-react";
 
 import { CartBadge } from "@/components/store/CartBadge";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { AccentPicker } from "@/components/accent-picker";
 
 export const dynamic = "force-dynamic";
 
@@ -24,10 +26,12 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
               </Link>
             </nav>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
+            <AccentPicker />
+            <ThemeToggle />
             <Link
               href="/"
-              className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+              className="text-sm text-text-secondary transition-colors hover:text-text-primary ml-2"
             >
               Home
             </Link>

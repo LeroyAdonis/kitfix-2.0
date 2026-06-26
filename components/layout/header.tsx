@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { AccentPicker } from "@/components/accent-picker";
 import { MobileNav } from "./mobile-nav";
 import { useState } from "react";
 
@@ -52,39 +53,50 @@ export function Header() {
             Kit<span className="text-brand-gold">Fix</span>
           </Link>
 
-          {user && (
-            <nav className="hidden items-center gap-4 md:flex">
-              <Link
-                href="/dashboard"
-                className="text-sm text-text-secondary transition-colors hover:text-text-primary"
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/repairs"
-                className="text-sm text-text-secondary transition-colors hover:text-text-primary"
-              >
-                My Repairs
-              </Link>
-              <Link
-                href="/repairs/new"
-                className="text-sm text-text-secondary transition-colors hover:text-text-primary"
-              >
-                New Repair
-              </Link>
-              {isAdmin && (
+          {/* Public nav — always visible */}
+          <nav className="hidden items-center gap-4 md:flex">
+            <Link
+              href="/shop"
+              className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+            >
+              Shop
+            </Link>
+            <Link
+              href="/repairs/new"
+              className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+            >
+              Repairs
+            </Link>
+            <Link
+              href="/"
+              className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+            >
+              How It Works
+            </Link>
+            {user && (
+              <>
+                <span className="h-4 w-px bg-border" />
                 <Link
-                  href="/admin"
+                  href="/dashboard"
                   className="text-sm text-text-secondary transition-colors hover:text-text-primary"
                 >
-                  Admin Panel
+                  Dashboard
                 </Link>
-              )}
-            </nav>
-          )}
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+                  >
+                    Admin
+                  </Link>
+                )}
+              </>
+            )}
+          </nav>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
+          <AccentPicker />
           <ThemeToggle />
           {isPending ? (
             <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
@@ -120,22 +132,22 @@ export function Header() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden"
-                onClick={() => setMobileOpen(true)}
-              >
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
             </>
           ) : (
             <Button asChild variant="default" size="sm" className="rounded-full">
               <Link href="/sign-in">Get Started</Link>
             </Button>
           )}
+          {/* Mobile hamburger — always visible */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setMobileOpen(true)}
+          >
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Toggle menu</span>
+          </Button>
         </div>
       </div>
 
