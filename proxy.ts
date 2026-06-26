@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 const protectedPaths = ["/dashboard", "/repairs", "/payments", "/profile", "/notifications", "/orders", "/admin"];
 
 export function proxy(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
+  const { pathname } = request.nextUrl;
   const isProtected = protectedPaths.some((path) => pathname === path || pathname.startsWith(`${path}/`));
 
   if (!isProtected) return NextResponse.next();
@@ -22,6 +22,6 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|manifest.json|icons|sw.js|~offline).*)",
+    "/(dashboard|repairs|payments|profile|notifications|orders|admin)(.*)",
   ],
 };
