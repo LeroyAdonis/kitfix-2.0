@@ -1,18 +1,47 @@
-import { requireAuth } from "@/lib/auth-utils";
+"use client";
+
+import { useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
 import { Header } from "@/components/layout/header";
 import { CustomerNav } from "@/components/layout/customer-nav";
 import { Footer } from "@/components/layout/footer";
 import { CustomerShell } from "@/components/motion/customer-shell";
 
-/** Customer pages require auth + live DB data — never statically prerender. */
-export const dynamic = "force-dynamic";
-
-export default async function CustomerLayout({
+export default function CustomerLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  await requireAuth();
+  const { data: session, isPending } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (!isPending && !session) {
+      const callbackUrl = encodeURIComponent(pathname);
+      router.replace(`/sign-in?callbackUrl=${callbackUrl}`);
+    }
+  }, [isPending, session, router, pathname]);
+
+  // Show nothing while checking auth (prevents flash)
+  if (isPending || !session) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-bg-deep">
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-gold to-brand-gold-light text-xs text-text-inverse">
+              ✦
+            </span>
+            <span className="text-lg font-extrabold tracking-tight text-text-primary">
+              Kit<span className="text-brand-gold">Fix</span>
+            </span>
+          </div>
+          <div className="size-5 animate-spin rounded-full border-2 border-text-tertiary/20 border-t-brand-gold" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
