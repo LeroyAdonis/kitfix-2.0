@@ -25,7 +25,7 @@ export default function CustomerLayout({
   const pathname = usePathname();
 
   useEffect(() => {
-    fetch("/api/auth/session")
+    fetch("/api/auth-session")
       .then((r) => r.json())
       .then((data) => {
         if (data?.user) {
