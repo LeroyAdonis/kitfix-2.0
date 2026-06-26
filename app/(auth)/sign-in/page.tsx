@@ -27,10 +27,14 @@ export default function SignInPage() {
       if (result.error) {
         setError(result.error.message ?? "Sign-in failed. Check your credentials.");
       } else {
-        // Wait for browser to commit session cookie before navigating
-        setTimeout(() => {
-          window.location.href = callbackUrl;
-        }, 300);
+        // Set the session cookie synchronously via JavaScript before redirecting.
+        // This avoids the race condition where HTTP Set-Cookie from fetch
+        // doesn't commit in time for the subsequent full-page navigation.
+        const token = result.data?.token;
+        if (token) {
+          document.cookie = `better-auth.session_token=${token};path=/;max-age=604800;SameSite=Lax`;
+        }
+        window.location.href = callbackUrl;
       }
     } catch {
       setError("An unexpected error occurred. Please try again.");

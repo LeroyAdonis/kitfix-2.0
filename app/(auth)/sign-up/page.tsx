@@ -56,8 +56,13 @@ export default function SignUpPage() {
       if (result.error) {
         setError(result.error.message ?? "Sign-up failed. Please try again.");
       } else {
-        // Redirect to public homepage to avoid cookie race condition
-        // The session cookie will be available on subsequent navigations
+        // Set the session cookie synchronously via JavaScript before redirecting.
+        // This avoids the race condition where HTTP Set-Cookie from fetch
+        // doesn't commit in time for the subsequent full-page navigation.
+        const token = result.data?.token;
+        if (token) {
+          document.cookie = `better-auth.session_token=${token};path=/;max-age=604800;SameSite=Lax`;
+        }
         window.location.href = "/";
       }
     } catch {
