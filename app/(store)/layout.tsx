@@ -8,17 +8,17 @@ export const dynamic = "force-dynamic";
 export default function StoreLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 border-b bg-background">
+      <header className="sticky top-0 z-50 border-b border-color-border bg-bg-deep/90 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-6">
-            <Link href="/shop" className="flex items-center gap-2 font-semibold">
-              <Store className="h-5 w-5" />
+            <Link href="/shop" className="flex items-center gap-2 font-semibold text-text-primary">
+              <Store className="h-5 w-5 text-brand-gold" />
               Shop
             </Link>
             <nav className="hidden items-center gap-1 md:flex">
               <Link
                 href="/shop"
-                className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                className="inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-text-secondary transition-colors hover:text-brand-gold"
               >
                 All Products
               </Link>
@@ -27,7 +27,7 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center gap-2">
             <Link
               href="/"
-              className="text-sm text-muted-foreground hover:text-foreground"
+              className="text-sm text-text-secondary transition-colors hover:text-text-primary"
             >
               Home
             </Link>

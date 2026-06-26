@@ -5,8 +5,8 @@ export default function CustomerLoading() {
     <div className="space-y-8" role="status" aria-label="Loading dashboard">
       {/* Welcome heading skeleton */}
       <div className="space-y-2">
-        <div className="h-8 w-64 animate-pulse rounded-md bg-muted" />
-        <div className="h-4 w-80 animate-pulse rounded-md bg-muted" />
+        <div className="skeleton h-8 w-64" />
+        <div className="skeleton h-4 w-80" />
       </div>
 
       {/* Stats cards skeleton */}

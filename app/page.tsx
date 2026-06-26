@@ -2,427 +2,407 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import {
-  Wrench,
-  Camera,
-  CreditCard,
-  Bell,
-  Shield,
-  Sparkles,
-  ArrowRight,
-  Scissors,
-  Layers,
-  Star,
-  ChevronDown,
-  Upload,
-  Search,
-  Truck,
-} from "lucide-react";
+import { ArrowRight, ChevronDown, Star } from "lucide-react";
 import {
   AnimatedText,
   ScrollReveal,
-  MagneticButton,
   AnimatedCounter,
-  FloatingShapes,
-  CustomCursor,
-  GradientText,
-  GlassmorphismNav,
 } from "@/components/motion";
 
-/* ─── Data ─── */
-
-const features = [
-  {
-    icon: Layers,
-    title: "5-Stage Repair Pipeline",
-    description:
-      "From intake to delivery, every repair follows our proven five-stage process for consistent, quality results.",
-    wide: true,
-  },
-  {
-    icon: Sparkles,
-    title: "AI Damage Assessment",
-    description:
-      "Upload a photo and our AI instantly analyzes damage severity, repair complexity, and estimated turnaround.",
-    wide: false,
-  },
-  {
-    icon: Camera,
-    title: "Photo Tracking",
-    description:
-      "Visual documentation at every stage. See your jersey's transformation from damaged to restored.",
-    wide: false,
-  },
-  {
-    icon: CreditCard,
-    title: "Secure Payments",
-    description:
-      "Pay with confidence through encrypted processing. No hidden fees, fully transparent pricing.",
-    wide: false,
-  },
-  {
-    icon: Bell,
-    title: "Real-Time Notifications",
-    description:
-      "Instant updates at every stage of your repair. Never wonder about your jersey's status again.",
-    wide: false,
-  },
-  {
-    icon: Shield,
-    title: "Quality Guarantee",
-    description:
-      "Every repair is backed by our satisfaction guarantee. We stand behind our craftsmanship, always.",
-    wide: true,
-  },
-];
-
 const stats = [
-  { value: 500, suffix: "+", label: "Jerseys Repaired" },
+  { value: 2500, suffix: "+", label: "Jerseys Repaired" },
   { value: 98, suffix: "%", label: "Satisfaction Rate" },
-  { value: 24, suffix: "h", label: "Avg. Turnaround" },
-  { value: 4.9, suffix: "", label: "Customer Rating", showStar: true },
+  { value: 4.9, label: "Rating", hasStar: true },
+  { value: 3, suffix: " Days", label: "Turnaround" },
 ];
 
 const steps = [
   {
-    icon: Upload,
+    number: "01",
     title: "Submit Your Jersey",
-    description:
-      "Upload photos of the damage and tell us about your jersey. Our AI instantly assesses repair complexity.",
+    description: "Snap photos of the damage and tell us what needs fixing. Takes 2 minutes.",
   },
   {
-    icon: Search,
-    title: "We Assess & Repair",
-    description:
-      "Our experts review the AI assessment, confirm the repair plan, and get to work restoring your kit.",
+    number: "02",
+    title: "Get a Quote",
+    description: "We assess the damage and send you a fixed-price quote within 24 hours.",
   },
   {
-    icon: Truck,
+    number: "03",
+    title: "We Repair It",
+    description: "Our technicians restore your jersey with matching materials and techniques.",
+  },
+  {
+    number: "04",
     title: "Track & Receive",
-    description:
-      "Follow every stage with real-time photo updates. Your restored jersey ships back to you, good as new.",
+    description: "Real-time tracking from our workshop to your door. Free SA delivery.",
+    highlighted: true,
   },
 ];
 
-/* ─── Page ─── */
+const products = [
+  {
+    category: "Soccer",
+    title: "Kaizer Chiefs 2024 Home",
+    price: "R899",
+    sizes: ["S", "M", "L", "XL", "2XL"],
+    badge: "New",
+  },
+  {
+    category: "Soccer",
+    title: "Orlando Pirates 2024 Away",
+    price: "R849",
+    sizes: ["S", "M", "L", "XL", "2XL"],
+  },
+  {
+    category: "Rugby",
+    title: "Springbok 2023 RWC",
+    price: "R1,299",
+    sizes: ["S", "M", "L", "XL", "2XL"],
+    badge: "Best Seller",
+    goldBadge: true,
+  },
+  {
+    category: "Soccer",
+    title: "Bafana Bafana 2024 Home",
+    price: "R799",
+    sizes: ["S", "M", "L", "XL", "2XL"],
+  },
+];
+
+const footerLinks = {
+  Services: ["Jersey Repair", "Customisation", "Vintage Restoration", "Bulk Team Orders"],
+  Shop: ["All Jerseys", "Soccer", "Rugby", "Custom Blanks"],
+  Company: ["About Us", "How It Works", "Track Repair", "Contact"],
+};
 
 export default function Home() {
   return (
     <div className="min-h-screen overflow-x-hidden">
-      <CustomCursor />
-      <GlassmorphismNav />
       <main id="main-content">
-
-      {/* ── Hero ── */}
-      <section className="relative isolate flex min-h-screen flex-col items-center justify-center overflow-hidden">
-        {/* Animated gradient mesh background */}
-        <div
-          className="pointer-events-none absolute inset-0 -z-20 animate-[gradient-mesh_12s_ease-in-out_infinite]"
-          aria-hidden="true"
-          style={{
-            background: [
-              "radial-gradient(ellipse 80% 60% at 20% 40%, oklch(0.65 0.22 260 / 0.15), transparent)",
-              "radial-gradient(ellipse 60% 80% at 80% 30%, oklch(0.55 0.22 290 / 0.12), transparent)",
-              "radial-gradient(ellipse 70% 50% at 60% 80%, oklch(0.65 0.20 25 / 0.10), transparent)",
-              "radial-gradient(ellipse 50% 70% at 30% 70%, oklch(0.65 0.22 260 / 0.08), transparent)",
-            ].join(", "),
-          }}
-        />
-
-        {/* Dot grid overlay */}
-        <div
-          className="pointer-events-none absolute inset-0 -z-10 opacity-30"
-          aria-hidden="true"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle, oklch(0.50 0.03 260 / 0.3) 1px, transparent 1px)",
-            backgroundSize: "24px 24px",
-          }}
-        />
-
-        {/* Floating shapes behind content */}
-        <FloatingShapes count={8} className="-z-10" />
-
-        {/* Hero content */}
-        <div className="mx-auto max-w-4xl px-6 pt-24 pb-16 text-center">
-          {/* Badge */}
-          <motion.div
-            className="mb-8 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/60 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-muted-foreground backdrop-blur-sm"
-            initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <Wrench className="size-3.5" aria-hidden="true" />
-            Professional Jersey Repair
-          </motion.div>
-
-          {/* Headline */}
-          <AnimatedText
-            text="We Fix What Matters"
-            as="h1"
-            delay={0.5}
-            stagger={0.08}
-            className="justify-center text-5xl font-bold leading-[1.05] tracking-tight [text-wrap:balance] sm:text-6xl lg:text-7xl"
+        {/* ── Hero ── */}
+        <section className="relative isolate flex min-h-screen flex-col items-center justify-center overflow-hidden bg-bg-deep">
+          <div
+            className="pointer-events-none absolute inset-0 -z-20"
+            aria-hidden="true"
+            style={{
+              background: [
+                "radial-gradient(ellipse 80% 60% at 50% -20%, rgba(0,119,73,0.15) 0%, transparent 60%)",
+                "radial-gradient(ellipse 60% 50% at 80% 80%, rgba(200,169,81,0.08) 0%, transparent 50%)",
+                "radial-gradient(ellipse 70% 50% at 20% 80%, rgba(200,169,81,0.06) 0%, transparent 50%)",
+              ].join(", "),
+            }}
+          />
+          <div
+            className="pointer-events-none absolute inset-0 -z-10"
+            aria-hidden="true"
+            style={{
+              backgroundImage: [
+                "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px)",
+                "linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
+              ].join(", "),
+              backgroundSize: "60px 60px",
+            }}
           />
 
-          {/* Subheadline */}
-          <motion.p
-            className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground sm:text-xl"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.1 }}
-          >
-            Expert jersey repair powered by{" "}
-            <GradientText>AI damage assessment</GradientText>, real-time photo
-            tracking, and a transparent five-stage pipeline.
-          </motion.p>
+          <div className="mx-auto max-w-5xl px-6 pt-24 pb-16 text-center">
+            <motion.div
+              className="mb-8 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-widest"
+              style={{
+                borderColor: "rgba(200,169,81,0.25)",
+                background: "rgba(200,169,81,0.08)",
+                color: "var(--brand-gold)",
+              }}
+              initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              ✦ Trusted by 500+ SA Clubs
+            </motion.div>
 
-          {/* CTAs */}
-          <motion.div
-            className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.4 }}
-          >
-            <Link href="/sign-up">
-              <MagneticButton
-                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl px-8 text-sm font-semibold text-primary-foreground shadow-lg transition-shadow hover:shadow-[var(--glow-primary)] sm:w-auto"
-                style={{ background: "var(--gradient-primary)" }}
+            <motion.h1
+              className="font-display mx-auto max-w-4xl text-5xl font-extrabold leading-[0.95] tracking-[-3px] [text-wrap:balance] sm:text-7xl lg:text-8xl"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              We Fix{" "}
+              <span
+                className="bg-gradient-to-r from-brand-gold to-brand-gold-light bg-clip-text text-transparent"
               >
-                Get Started
+                What Matters
+              </span>
+            </motion.h1>
+
+            <motion.p
+              className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-text-secondary sm:text-xl"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+            >
+              South Africa&apos;s premier jersey repair service. From match-day
+              tears to vintage restoration — we bring your kit back to life.
+            </motion.p>
+
+            <motion.div
+              className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 1.1 }}
+            >
+              <Link href="/sign-up" className="btn-primary">
+                Start a Repair
                 <ArrowRight className="size-4" aria-hidden="true" />
-              </MagneticButton>
-            </Link>
+              </Link>
+              <Link href="/shop" className="btn-secondary">
+                Browse Shop
+              </Link>
+            </motion.div>
+          </div>
 
-            <Link
-              href="/sign-in"
-              className="inline-flex h-12 w-full items-center justify-center rounded-xl border border-border/60 bg-background/60 px-8 text-sm font-medium backdrop-blur-sm transition-colors hover:bg-muted sm:w-auto"
-            >
-              Sign In
-            </Link>
-          </motion.div>
-        </div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2, duration: 0.6 }}
-        >
           <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
+            className="absolute bottom-8 left-1/2 -translate-x-1/2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.8, duration: 0.6 }}
           >
-            <ChevronDown className="size-5 text-muted-foreground/50" aria-hidden="true" />
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* ── How It Works ── */}
-      <section id="how-it-works" className="border-b border-border/40">
-        <div className="mx-auto max-w-5xl px-6 py-24 sm:py-32">
-          <div className="mx-auto max-w-lg text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              How It Works
-            </p>
-            <AnimatedText
-              text="Three Simple Steps"
-              as="h2"
-              delay={0.1}
-              stagger={0.06}
-              className="mt-3 justify-center text-3xl font-bold tracking-tight [text-wrap:balance] sm:text-4xl"
-            />
-          </div>
-
-          <div className="relative mt-16 grid gap-8 md:grid-cols-3 md:gap-0">
-            {/* Connecting line — horizontal on desktop, vertical on mobile */}
-            <div
-              className="pointer-events-none absolute left-8 top-[72px] hidden h-px w-[calc(100%-64px)] border-t-2 border-dashed border-border/60 md:block"
-              aria-hidden="true"
-            />
-            <div
-              className="pointer-events-none absolute left-8 top-[72px] h-[calc(100%-72px)] border-l-2 border-dashed border-border/60 md:hidden"
-              aria-hidden="true"
-            />
-
-            {steps.map((step, i) => (
-              <ScrollReveal
-                key={step.title}
-                direction="up"
-                delay={0.15 * i}
-                className="relative md:px-6"
-              >
-                <div className="flex flex-col items-center text-center">
-                  {/* Number + icon */}
-                  <div className="relative mb-6">
-                    <div
-                      className="flex size-16 items-center justify-center rounded-2xl text-primary-foreground shadow-lg"
-                      style={{ background: "var(--gradient-primary)" }}
-                    >
-                      <step.icon className="size-7" aria-hidden="true" />
-                    </div>
-                    <span className="absolute -right-2 -top-2 flex size-7 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground shadow-sm">
-                      {i + 1}
-                    </span>
-                  </div>
-                  <h3 className="text-lg font-semibold">{step.title}</h3>
-                  <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
-                    {step.description}
-                  </p>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Features Bento Grid ── */}
-      <section id="features" className="border-b border-border/40">
-        <div className="mx-auto max-w-5xl px-6 py-24 sm:py-32">
-          <div className="mx-auto max-w-lg text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              Features
-            </p>
-            <AnimatedText
-              text="Everything You Need"
-              as="h2"
-              delay={0.1}
-              stagger={0.06}
-              className="mt-3 justify-center text-3xl font-bold tracking-tight [text-wrap:balance] sm:text-4xl"
-            />
-          </div>
-
-          <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature, i) => (
-              <ScrollReveal
-                key={feature.title}
-                direction="up"
-                delay={0.08 * i}
-                className={feature.wide ? "sm:col-span-2 lg:col-span-1" : ""}
-              >
-                <div className="group relative h-full rounded-2xl border border-border/60 bg-card p-7 transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
-                  {/* Left accent line on hover */}
-                  <div className="absolute left-0 top-4 bottom-4 w-0.5 rounded-full bg-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-                  <div className="mb-4 flex size-12 items-center justify-center rounded-xl text-primary-foreground" style={{ background: "var(--gradient-primary)" }}>
-                    <feature.icon className="size-5" aria-hidden="true" />
-                  </div>
-
-                  <h3 className="text-base font-semibold leading-snug">
-                    {feature.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                    {feature.description}
-                  </p>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Stats ── */}
-      <section
-        className="relative overflow-hidden"
-        style={{ background: "var(--gradient-primary)" }}
-      >
-        <div className="mx-auto max-w-5xl px-6 py-20 sm:py-24">
-          <div className="grid grid-cols-2 gap-y-10 sm:grid-cols-4 sm:gap-8">
-            {stats.map((stat) => (
-              <ScrollReveal key={stat.label} direction="up" delay={0.1}>
-                <div className="text-center">
-                  <p className="flex items-center justify-center gap-1 text-4xl font-bold tracking-tight text-primary-foreground sm:text-5xl">
-                    <AnimatedCounter
-                      value={stat.value}
-                      suffix={stat.suffix}
-                      duration={2.5}
-                      className="tabular-nums"
-                    />
-                    {stat.showStar && (
-                      <Star
-                        className="size-6 fill-current text-primary-foreground/70"
-                        aria-hidden="true"
-                      />
-                    )}
-                  </p>
-                  <p className="mt-2 text-sm font-medium text-primary-foreground/70">
-                    {stat.label}
-                  </p>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA ── */}
-      <section className="border-b border-border/40">
-        <div className="mx-auto max-w-5xl px-6 py-24 sm:py-32">
-          <ScrollReveal direction="up">
-            <div className="mx-auto max-w-lg text-center">
-              <Scissors
-                className="mx-auto mb-6 size-8 text-muted-foreground/40"
-                aria-hidden="true"
-              />
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                <GradientText as="span">
-                  Ready to Restore Your Jersey?
-                </GradientText>
-              </h2>
-              <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Submit your repair request in minutes. We handle the rest.
-              </p>
-              <div className="mt-8">
-                <Link href="/sign-up">
-                  <MagneticButton
-                    className="inline-flex h-12 items-center justify-center gap-2 rounded-xl px-8 text-sm font-semibold text-primary-foreground shadow-lg transition-shadow hover:shadow-[var(--glow-primary)]"
-                    style={{ background: "var(--gradient-cta)" }}
-                  >
-                    Get Started — It&apos;s Free
-                    <ArrowRight className="size-4" aria-hidden="true" />
-                  </MagneticButton>
-                </Link>
-              </div>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
-
-      {/* ── Footer ── */}
-      <footer>
-        <ScrollReveal direction="up" delay={0.1}>
-          <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-6 py-10 sm:flex-row">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Scissors className="size-4" aria-hidden="true" />
-              <span>&copy; {new Date().getFullYear()} KitFix</span>
-            </div>
-            <nav
-              className="flex gap-6 text-sm text-muted-foreground"
-              aria-label="Footer navigation"
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
             >
-              <Link
-                href="/sign-in"
-                className="transition-colors hover:text-foreground"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/sign-up"
-                className="transition-colors hover:text-foreground"
-              >
-                Get Started
-              </Link>
-            </nav>
+              <ChevronDown className="size-5 text-text-tertiary/50" aria-hidden="true" />
+            </motion.div>
+          </motion.div>
+        </section>
+
+        {/* ── Stats Bar ── */}
+        <section className="border-t border-border bg-bg">
+          <div className="mx-auto max-w-5xl px-6 py-16 sm:py-20">
+            <div className="grid grid-cols-2 gap-y-10 sm:grid-cols-4 sm:gap-8">
+              {stats.map((stat) => (
+                <ScrollReveal key={stat.label} direction="up" delay={0.1}>
+                  <div className="text-center">
+                    <p className="font-display flex items-center justify-center gap-1 text-4xl font-extrabold tracking-tight text-brand-gold sm:text-5xl">
+                      {stat.hasStar ? (
+                        <>
+                          <AnimatedCounter
+                            value={4.9}
+                            duration={2.5}
+                            className="tabular-nums"
+                          />
+                          <Star
+                            className="size-6 fill-brand-gold"
+                            aria-hidden="true"
+                          />
+                        </>
+                      ) : (
+                        <AnimatedCounter
+                          value={stat.value}
+                          suffix={stat.suffix}
+                          duration={2.5}
+                          className="tabular-nums"
+                        />
+                      )}
+                    </p>
+                    <p className="mt-2 text-sm font-medium text-text-tertiary">
+                      {stat.label}
+                    </p>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
           </div>
-        </ScrollReveal>
-      </footer>
+        </section>
+
+        {/* ── How It Works ── */}
+        <section id="how-it-works" className="border-t border-border bg-bg-deep">
+          <div className="mx-auto max-w-6xl px-6 py-24 sm:py-32">
+            <div className="mb-16">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold">
+                ✦ Process
+              </p>
+              <AnimatedText
+                text="How It Works"
+                as="h2"
+                delay={0.1}
+                stagger={0.06}
+                className="mt-3 text-4xl font-extrabold tracking-[-2px] sm:text-5xl"
+              />
+              <p className="mt-4 text-lg text-text-secondary">
+                From sideline to spotlight
+              </p>
+            </div>
+
+            <div className="relative grid gap-6 md:grid-cols-4 md:gap-4">
+              {steps.map((step, i) => (
+                <ScrollReveal key={step.title} direction="up" delay={0.1 * i}>
+                  <div
+                    className="card-base relative p-8"
+                    style={
+                      step.highlighted
+                        ? { borderColor: "rgba(200,169,81,0.35)" }
+                        : undefined
+                    }
+                  >
+                    {i < steps.length - 1 && (
+                      <div
+                        className="pointer-events-none absolute -right-3 top-1/2 hidden -translate-y-1/2 text-xl text-text-tertiary md:block"
+                        aria-hidden="true"
+                      >
+                        →
+                      </div>
+                    )}
+                    <p
+                      className="font-display text-5xl font-extrabold leading-none"
+                      style={{
+                        color: step.highlighted
+                          ? "rgba(200,169,81,0.25)"
+                          : "rgba(200,169,81,0.12)",
+                      }}
+                    >
+                      {step.number}
+                    </p>
+                    <h3
+                      className="mt-4 text-base font-bold"
+                      style={
+                        step.highlighted
+                          ? { color: "var(--brand-gold)" }
+                          : undefined
+                      }
+                    >
+                      {step.title}
+                    </h3>
+                    <p
+                      className="mt-2 text-sm leading-relaxed"
+                      style={
+                        step.highlighted
+                          ? { color: "var(--text-primary)" }
+                          : { color: "var(--text-secondary)" }
+                      }
+                    >
+                      {step.description}
+                    </p>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Product Showcase ── */}
+        <section id="shop" className="border-t border-border bg-bg">
+          <div className="mx-auto max-w-6xl px-6 py-24 sm:py-32">
+            <div className="mb-16">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold">
+                ✦ Shop
+              </p>
+              <AnimatedText
+                text="Premium Jerseys"
+                as="h2"
+                delay={0.1}
+                stagger={0.06}
+                className="mt-3 text-4xl font-extrabold tracking-[-2px] sm:text-5xl"
+              />
+              <p className="mt-4 text-lg text-text-secondary">
+                Built for SA Teams
+              </p>
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {products.map((product, i) => (
+                <ScrollReveal key={product.title} direction="up" delay={0.08 * i}>
+                  <div className="card-base overflow-hidden">
+                    <div className="relative flex aspect-[3/4] items-center justify-center bg-gradient-to-br from-bg-elevated to-surface">
+                      {product.badge && (
+                        <span
+                          className={`badge absolute left-3 top-3 ${
+                            product.goldBadge
+                              ? "badge-gold"
+                              : "badge-success"
+                          }`}
+                        >
+                          {product.badge}
+                        </span>
+                      )}
+                      <span className="text-5xl opacity-50" aria-hidden="true">
+                        👕
+                      </span>
+                    </div>
+                    <div className="p-5">
+                      <p className="text-[11px] font-semibold uppercase tracking-[1px] text-text-tertiary">
+                        {product.category}
+                      </p>
+                      <h3 className="font-display mt-2 text-lg font-bold tracking-[-0.3px]">
+                        {product.title}
+                      </h3>
+                      <p className="mt-2 text-xl font-bold text-brand-gold">
+                        {product.price}
+                      </p>
+                      <div className="mt-3 flex flex-wrap gap-1.5">
+                        {product.sizes.map((size) => (
+                          <span
+                            key={size}
+                            className="rounded-md bg-bg-elevated px-2.5 py-1 text-[11px] font-semibold text-text-secondary"
+                          >
+                            {size}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Footer ── */}
+        <footer className="border-t border-border bg-bg-deep">
+          <div className="mx-auto max-w-6xl px-6 py-16">
+            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+              <div>
+                <div className="font-display flex items-center gap-2.5 text-2xl font-extrabold tracking-[-0.5px]">
+                  <span className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-gold to-brand-gold-light text-sm text-text-inverse">
+                    ✦
+                  </span>
+                  Kit<span className="text-brand-gold">Fix</span>
+                </div>
+                <p className="mt-4 max-w-xs text-sm leading-relaxed text-text-secondary">
+                  South Africa&apos;s trusted jersey repair and customisation
+                  service. We bring your kit back to life.
+                </p>
+              </div>
+              {Object.entries(footerLinks).map(([heading, links]) => (
+                <div key={heading}>
+                  <h4 className="text-[11px] font-semibold uppercase tracking-[1px] text-text-tertiary">
+                    {heading}
+                  </h4>
+                  <nav
+                    className="mt-5 flex flex-col gap-3"
+                    aria-label={heading}
+                  >
+                    {links.map((item) => (
+                      <Link
+                        key={item}
+                        href="#"
+                        className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+                      >
+                        {item}
+                      </Link>
+                    ))}
+                  </nav>
+                </div>
+              ))}
+            </div>
+            <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-sm text-text-tertiary sm:flex-row">
+              <span>
+                &copy; {new Date().getFullYear()} KitFix. All rights reserved.
+              </span>
+              <span>Proudly South African 🇿🇦</span>
+            </div>
+          </div>
+        </footer>
       </main>
     </div>
   );
 }
-

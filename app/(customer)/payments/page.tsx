@@ -1,7 +1,5 @@
 import { requireAuth } from "@/lib/auth-utils";
 import { getPaymentsByCustomer } from "@/lib/db/queries/payments";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { formatCurrency, formatDateSAST } from "@/lib/utils";
 import { CreditCard } from "lucide-react";
@@ -14,45 +12,42 @@ export default async function PaymentsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Payment History</h1>
-        <p className="text-muted-foreground">View all your payments.</p>
+        <h1 className="font-display text-2xl font-bold text-text-primary">Payment History</h1>
+        <p className="text-text-secondary">View all your payments.</p>
       </div>
 
       {payments.length > 0 ? (
         <div className="space-y-3">
           {payments.map((payment) => (
-            <Card key={payment.id}>
-              <CardContent className="flex items-center justify-between p-4">
-                <div className="space-y-1">
-                  <p className="font-medium">
-                    {formatCurrency(payment.amount)}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatDateSAST(payment.createdAt)}
-                  </p>
-                  {payment.repairRequest && (
-                    <Link
-                      href={`/repairs/${payment.repairRequestId}`}
-                      className="text-xs text-primary hover:underline"
-                    >
-                      View repair →
-                    </Link>
-                  )}
-                </div>
-                <Badge
-                  variant={
-                    payment.status === "completed"
-                      ? "default"
-                      : payment.status === "failed"
-                        ? "destructive"
-                        : "secondary"
-                  }
-                  className="capitalize"
-                >
-                  {payment.status}
-                </Badge>
-              </CardContent>
-            </Card>
+            <div key={payment.id} className="card-base flex items-center justify-between p-4">
+              <div className="space-y-1">
+                <p className="font-medium text-text-primary">
+                  {formatCurrency(payment.amount)}
+                </p>
+                <p className="text-xs text-text-tertiary">
+                  {formatDateSAST(payment.createdAt)}
+                </p>
+                {payment.repairRequest && (
+                  <Link
+                    href={`/repairs/${payment.repairRequestId}`}
+                    className="text-xs text-text-link hover:underline"
+                  >
+                    View repair →
+                  </Link>
+                )}
+              </div>
+              <span
+                className={`badge ${
+                  payment.status === "completed"
+                    ? "badge-success"
+                    : payment.status === "failed"
+                      ? "badge-error"
+                      : "badge-outline"
+                } capitalize`}
+              >
+                {payment.status}
+              </span>
+            </div>
           ))}
         </div>
       ) : (

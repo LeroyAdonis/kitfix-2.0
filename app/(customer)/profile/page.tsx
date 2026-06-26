@@ -1,7 +1,5 @@
 import { requireAuth } from "@/lib/auth-utils";
 import { ProfileForm } from "@/components/forms/profile-form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { formatDateSAST } from "@/lib/utils";
 
 export default async function ProfilePage() {
@@ -11,40 +9,34 @@ export default async function ProfilePage() {
   return (
     <div className="mx-auto max-w-lg space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Profile Settings</h1>
-        <p className="text-muted-foreground">Manage your account information.</p>
+        <h1 className="font-display text-2xl font-bold text-text-primary">Profile Settings</h1>
+        <p className="text-text-secondary">Manage your account information.</p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Account Info</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2 text-sm">
+      <div className="card-base p-5">
+        <h2 className="mb-4 text-base font-semibold text-text-primary">Account Info</h2>
+        <div className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Email</span>
-            <span>{user.email}</span>
+            <span className="text-text-secondary">Email</span>
+            <span className="text-text-primary">{user.email}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Role</span>
-            <span className="capitalize">{user.role}</span>
+            <span className="text-text-secondary">Role</span>
+            <span className="text-text-primary capitalize">{user.role}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Member since</span>
-            <span>{formatDateSAST(user.createdAt)}</span>
+            <span className="text-text-secondary">Member since</span>
+            <span className="text-text-primary">{formatDateSAST(user.createdAt)}</span>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      <Separator />
+      <hr className="border-color-border" />
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Edit Profile</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ProfileForm currentName={user.name} />
-        </CardContent>
-      </Card>
+      <div className="card-base p-5">
+        <h2 className="mb-4 text-base font-semibold text-text-primary">Edit Profile</h2>
+        <ProfileForm currentName={user.name} />
+      </div>
     </div>
   );
 }

@@ -30,7 +30,7 @@ const navItemVariants = {
     transition: {
       delay: i * 0.06,
       duration: 0.4,
-      ease: [0.25, 0.46, 0.45, 0.94] as const,
+      ease: [0.16, 1, 0.3, 1] as const,
     },
   }),
 };
@@ -58,7 +58,7 @@ export function CustomerNav() {
             {isActive && (
               <motion.div
                 layoutId="activeNav"
-                className="absolute inset-0 rounded-md bg-primary/10"
+                className="absolute inset-0 rounded-md bg-brand-gold/10"
                 transition={{
                   type: "spring",
                   stiffness: 350,
@@ -71,11 +71,11 @@ export function CustomerNav() {
               className={cn(
                 "relative flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-[color,background-color,transform] duration-200",
                 isActive
-                  ? "text-primary"
-                  : "text-muted-foreground hover:translate-x-1 hover:bg-muted hover:text-foreground",
+                  ? "text-brand-gold"
+                  : "text-text-secondary hover:translate-x-1 hover:bg-surface hover:text-text-primary",
               )}
             >
-              <item.icon className="h-4 w-4" />
+              <item.icon className={cn("h-4 w-4", isActive && "text-brand-gold")} />
               {item.label}
             </Link>
           </motion.div>

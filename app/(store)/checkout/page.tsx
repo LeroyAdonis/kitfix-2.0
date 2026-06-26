@@ -4,8 +4,6 @@ import { ShoppingCart, ArrowLeft } from "lucide-react";
 
 import { getSession } from "@/lib/auth-utils";
 import { getEnrichedCart } from "@/actions/cart-enriched";
-import { EmptyState } from "@/components/shared/empty-state";
-import { Button } from "@/components/ui/button";
 import { CheckoutForm } from "./checkout-form";
 
 export const dynamic = "force-dynamic";
@@ -18,16 +16,14 @@ export default async function CheckoutPage() {
 
   if (!result.success) {
     return (
-      <EmptyState
-        icon={<ShoppingCart className="h-12 w-12" />}
-        title="Something went wrong"
-        description={result.error}
-        action={
-          <Button asChild>
-            <Link href="/shop">Back to Shop</Link>
-          </Button>
-        }
-      />
+      <div className="empty-state">
+        <ShoppingCart className="empty-icon" />
+        <h2 className="empty-heading">Something went wrong</h2>
+        <p className="empty-description">{result.error}</p>
+        <Link href="/shop" className="btn-primary">
+          Back to Shop
+        </Link>
+      </div>
     );
   }
 
@@ -35,19 +31,15 @@ export default async function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <EmptyState
-        icon={<ShoppingCart className="h-12 w-12" />}
-        title="Your cart is empty"
-        description="Add some jerseys before checking out."
-        action={
-          <Button asChild>
-            <Link href="/shop">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Browse Products
-            </Link>
-          </Button>
-        }
-      />
+      <div className="empty-state">
+        <ShoppingCart className="empty-icon" />
+        <h2 className="empty-heading">Your cart is empty</h2>
+        <p className="empty-description">Add some jerseys before checking out.</p>
+        <Link href="/shop" className="btn-primary">
+          <ArrowLeft className="h-4 w-4" />
+          Browse Products
+        </Link>
+      </div>
     );
   }
 

@@ -3,7 +3,7 @@ import { desc, eq } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import { orders, user } from "@/lib/db/schema";
-import { Badge } from "@/components/ui/badge";
+
 import {
   Table,
   TableBody,
@@ -16,12 +16,12 @@ import { formatCurrency, formatDateSAST } from "@/lib/utils";
 
 const STATUSES = ["pending", "paid", "shipped", "delivered", "cancelled"] as const;
 
-const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-  pending: "outline",
-  paid: "default",
-  shipped: "secondary",
-  delivered: "default",
-  cancelled: "destructive",
+const BADGE_CLASS: Record<string, string> = {
+  pending: "badge-outline",
+  paid: "badge-gold",
+  shipped: "badge-outline",
+  delivered: "badge-success",
+  cancelled: "badge-error",
 };
 
 export default async function AdminOrdersPage({
@@ -54,7 +54,7 @@ export default async function AdminOrdersPage({
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight">Orders</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-text-primary">Orders</h1>
 
       {/* Status filter tabs */}
       <div className="flex flex-wrap gap-2">
@@ -63,7 +63,7 @@ export default async function AdminOrdersPage({
           className={`inline-flex items-center rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
             !isValidStatus
               ? "bg-primary text-primary-foreground"
-              : "bg-muted text-muted-foreground hover:bg-muted/80"
+              : "bg-surface text-text-secondary hover:bg-surface-hover"
           }`}
         >
           All
@@ -75,18 +75,18 @@ export default async function AdminOrdersPage({
             className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
               statusFilter === s
                 ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:bg-muted/80"
+                : "bg-surface text-text-secondary hover:bg-surface-hover"
             }`}
           >
             {s}
-            <Badge variant="outline" className="ml-1 text-[10px]">
-              {STATUS_VARIANT[s] === "outline" ? "○" : "●"}
-            </Badge>
+            <span className="ml-1 text-[10px] text-text-tertiary">
+              {BADGE_CLASS[s] === "badge-outline" ? "○" : "●"}
+            </span>
           </Link>
         ))}
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border border-border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -107,9 +107,9 @@ export default async function AdminOrdersPage({
                 <TableCell className="font-medium">{o.customerName}</TableCell>
                 <TableCell>{formatCurrency(o.grandTotalCents)}</TableCell>
                 <TableCell>
-                  <Badge variant={STATUS_VARIANT[o.status] ?? "outline"}>
+                  <span className={`badge ${BADGE_CLASS[o.status] ?? "badge-outline"}`}>
                     {o.status}
-                  </Badge>
+                  </span>
                 </TableCell>
                 <TableCell>
                   {formatDateSAST(new Date(o.createdAt))}
@@ -117,7 +117,7 @@ export default async function AdminOrdersPage({
                 <TableCell>
                   <Link
                     href={`/admin/orders/${o.id}`}
-                    className="text-sm font-medium text-primary hover:underline"
+                    className="text-sm font-medium text-text-link hover:underline"
                   >
                     View
                   </Link>
@@ -126,8 +126,10 @@ export default async function AdminOrdersPage({
             ))}
             {result.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
-                  No orders found.
+                <TableCell colSpan={6}>
+                  <div className="empty-state py-8">
+                    <p className="empty-description">No orders found.</p>
+                  </div>
                 </TableCell>
               </TableRow>
             )}

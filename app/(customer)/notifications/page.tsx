@@ -3,8 +3,6 @@ import {
   getAllNotifications,
   getUnreadNotifications,
 } from "@/lib/db/queries/notifications";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { formatDateSAST } from "@/lib/utils";
 import { Bell } from "lucide-react";
@@ -21,8 +19,8 @@ export default async function NotificationsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Notifications</h1>
-          <p className="text-muted-foreground">
+          <h1 className="font-display text-2xl font-bold text-text-primary">Notifications</h1>
+          <p className="text-text-secondary">
             {unreadNotifs.length > 0
               ? `You have ${unreadNotifs.length} unread notification${unreadNotifs.length === 1 ? "" : "s"}.`
               : "You're all caught up!"}
@@ -34,32 +32,30 @@ export default async function NotificationsPage() {
       {allNotifs.items.length > 0 ? (
         <div className="space-y-2">
           {allNotifs.items.map((notif) => (
-            <Card
+            <div
               key={notif.id}
-              className={notif.isRead ? "opacity-60" : ""}
+              className={`card-base flex items-start justify-between gap-4 p-4 ${notif.isRead ? "opacity-60" : ""}`}
             >
-              <CardContent className="flex items-start justify-between gap-4 p-4">
-                <div className="min-w-0 flex-1 space-y-1">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium">{notif.title}</p>
-                    {!notif.isRead && (
-                      <Badge variant="default" className="text-[10px]">
-                        New
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {notif.message}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatDateSAST(notif.createdAt)}
-                  </p>
+              <div className="min-w-0 flex-1 space-y-1">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium text-text-primary">{notif.title}</p>
+                  {!notif.isRead && (
+                    <span className="badge badge-gold text-[10px]">
+                      New
+                    </span>
+                  )}
                 </div>
-                {!notif.isRead && (
-                  <NotificationActions notificationId={notif.id} />
-                )}
-              </CardContent>
-            </Card>
+                <p className="text-sm text-text-secondary">
+                  {notif.message}
+                </p>
+                <p className="text-xs text-text-tertiary">
+                  {formatDateSAST(notif.createdAt)}
+                </p>
+              </div>
+              {!notif.isRead && (
+                <NotificationActions notificationId={notif.id} />
+              )}
+            </div>
           ))}
         </div>
       ) : (

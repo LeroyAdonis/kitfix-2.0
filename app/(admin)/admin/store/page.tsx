@@ -3,8 +3,7 @@ import { Plus } from "lucide-react";
 
 import { db } from "@/lib/db";
 import { products } from "@/lib/db/schema";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+
 import {
   Table,
   TableBody,
@@ -25,16 +24,14 @@ export default async function AdminProductsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">All Products</h2>
-        <Button asChild>
-          <Link href="/admin/store/new">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Product
-          </Link>
-        </Button>
+        <h2 className="text-xl font-semibold text-text-primary">All Products</h2>
+        <Link href="/admin/store/new" className="btn-primary">
+          <Plus className="h-4 w-4" />
+          Add Product
+        </Link>
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border border-border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -54,14 +51,14 @@ export default async function AdminProductsPage() {
                   <TableCell className="font-medium">{p.name}</TableCell>
                   <TableCell>{formatCurrency(p.basePrice)}</TableCell>
                   <TableCell>
-                    <Badge variant={totalStock > 0 ? "outline" : "destructive"}>
+                    <span className={`badge ${totalStock > 0 ? "badge-outline" : "badge-error"}`}>
                       {totalStock}
-                    </Badge>
+                    </span>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={p.isActive ? "default" : "secondary"}>
+                    <span className={`badge ${p.isActive ? "badge-gold" : "badge-outline"}`}>
                       {p.isActive ? "Active" : "Inactive"}
-                    </Badge>
+                    </span>
                   </TableCell>
                   <TableCell>
                     {formatDateSAST(new Date(p.createdAt))}
@@ -74,8 +71,10 @@ export default async function AdminProductsPage() {
             })}
             {allProducts.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
-                  No products found.
+                <TableCell colSpan={6}>
+                  <div className="empty-state py-8">
+                    <p className="empty-description">No products found.</p>
+                  </div>
                 </TableCell>
               </TableRow>
             )}

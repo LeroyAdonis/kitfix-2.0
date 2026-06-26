@@ -5,9 +5,7 @@ import { desc } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { repairRequests, payments } from "@/lib/db/schema";
 import { StatsCards } from "@/components/admin/stats-cards";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import {
   Table,
   TableBody,
@@ -74,21 +72,19 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-text-primary">Dashboard</h1>
 
       <StatsCards stats={stats} />
 
       {/* Recent requests */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg">Recent Requests</CardTitle>
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/admin/requests">
-              View all <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
-            </Link>
-          </Button>
-        </CardHeader>
-        <CardContent>
+      <div className="card-base overflow-hidden">
+        <div className="flex flex-row items-center justify-between border-b border-border px-6 py-4">
+          <h2 className="text-lg font-semibold text-text-primary">Recent Requests</h2>
+          <Link href="/admin/requests" className="btn-ghost text-sm">
+            View all <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
+          </Link>
+        </div>
+        <div className="p-4">
           <Table>
             <TableHeader>
               <TableRow>
@@ -111,9 +107,9 @@ export default async function AdminDashboardPage() {
                   </TableCell>
                   <TableCell>{r.customer?.name ?? "—"}</TableCell>
                   <TableCell>
-                    <Badge variant="secondary">
+                    <span className="badge badge-outline">
                       {r.currentStatus.replace(/_/g, " ")}
-                    </Badge>
+                    </span>
                   </TableCell>
                   <TableCell>
                     {formatDateSAST(new Date(r.createdAt))}
@@ -122,15 +118,17 @@ export default async function AdminDashboardPage() {
               ))}
               {recentRepairs.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={4} className="h-20 text-center">
-                    No repair requests yet.
+                  <TableCell colSpan={4}>
+                    <div className="empty-state py-8">
+                      <p className="empty-description">No repair requests yet.</p>
+                    </div>
                   </TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Quick links */}
       <div className="grid gap-4 sm:grid-cols-3">
@@ -139,9 +137,9 @@ export default async function AdminDashboardPage() {
           { href: "/admin/technicians", label: "Manage Technicians" },
           { href: "/admin/payments", label: "View Payments" },
         ].map(({ href, label }) => (
-          <Button key={href} variant="outline" className="h-12" asChild>
-            <Link href={href}>{label}</Link>
-          </Button>
+          <Link key={href} href={href} className="btn-secondary flex items-center justify-center">
+            {label}
+          </Link>
         ))}
       </div>
     </div>

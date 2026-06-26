@@ -4,7 +4,7 @@ export default function AdminLoading() {
   return (
     <div className="space-y-6" role="status" aria-label="Loading admin dashboard">
       {/* Heading skeleton */}
-      <div className="h-8 w-48 animate-pulse rounded-md bg-muted" />
+      <div className="h-8 w-48 skeleton" />
 
       {/* Stats cards skeleton */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -15,9 +15,9 @@ export default function AdminLoading() {
       </div>
 
       {/* Recent requests table skeleton */}
-      <div className="rounded-lg border">
-        <div className="border-b p-4">
-          <div className="h-5 w-40 animate-pulse rounded-md bg-muted" />
+      <div className="card-base">
+        <div className="border-b border-border p-4">
+          <div className="h-5 w-40 skeleton" />
         </div>
         <div className="p-4 space-y-1">
           <TableRowSkeleton />

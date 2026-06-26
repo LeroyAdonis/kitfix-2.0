@@ -3,7 +3,6 @@ import { requireAuth } from "@/lib/auth-utils";
 import { getRepairsByCustomer } from "@/lib/db/queries/repairs";
 import { RepairCard } from "@/components/repair/repair-card";
 import { EmptyState } from "@/components/shared/empty-state";
-import { Button } from "@/components/ui/button";
 import { Wrench, PlusCircle } from "lucide-react";
 
 const PAGE_SIZE = 10;
@@ -21,15 +20,13 @@ export default async function RepairsPage(props: {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">My Repairs</h1>
-          <p className="text-muted-foreground">Track all your jersey repair requests.</p>
+          <h1 className="font-display text-2xl font-bold text-text-primary">My Repairs</h1>
+          <p className="text-text-secondary">Track all your jersey repair requests.</p>
         </div>
-        <Button asChild>
-          <Link href="/repairs/new">
-            <PlusCircle className="mr-2 h-4 w-4" aria-hidden="true" />
-            New Request
-          </Link>
-        </Button>
+        <Link href="/repairs/new" className="btn-primary">
+          <PlusCircle className="h-4 w-4" aria-hidden="true" />
+          New Request
+        </Link>
       </div>
 
       {repairs.length > 0 ? (
@@ -49,12 +46,10 @@ export default async function RepairsPage(props: {
           }
           action={
             page <= 1 ? (
-              <Button asChild>
-                <Link href="/repairs/new">
-                  <PlusCircle className="mr-2 h-4 w-4" aria-hidden="true" />
-                  Submit Your First Request
-                </Link>
-              </Button>
+              <Link href="/repairs/new" className="btn-primary">
+                <PlusCircle className="h-4 w-4" aria-hidden="true" />
+                Submit Your First Request
+              </Link>
             ) : undefined
           }
         />
@@ -63,14 +58,10 @@ export default async function RepairsPage(props: {
       {(page > 1 || hasMore) && (
         <nav aria-label="Pagination" className="flex justify-center gap-2">
           {page > 1 && (
-            <Button asChild variant="outline">
-              <Link href={`/repairs?page=${page - 1}`}>Previous</Link>
-            </Button>
+            <Link href={`/repairs?page=${page - 1}`} className="btn-secondary">Previous</Link>
           )}
           {hasMore && (
-            <Button asChild variant="outline">
-              <Link href={`/repairs?page=${page + 1}`}>Next</Link>
-            </Button>
+            <Link href={`/repairs?page=${page + 1}`} className="btn-secondary">Next</Link>
           )}
         </nav>
       )}

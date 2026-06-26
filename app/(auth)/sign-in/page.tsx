@@ -8,9 +8,6 @@ import { Loader2 } from "lucide-react";
 import { signIn } from "@/lib/auth-client";
 import { AnimatedText, PageTransition } from "@/components/motion";
 
-const INPUT_CLASSES =
-  "flex h-12 w-full rounded-xl border border-input bg-background px-4 py-2 text-sm ring-offset-background transition-[color,border-color,box-shadow] placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50";
-
 export default function SignInPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -42,97 +39,99 @@ export default function SignInPage() {
 
   return (
     <PageTransition>
-      <div className="mb-8 text-center">
-        <AnimatedText
-          text="Welcome back"
-          as="h1"
-          className="justify-center text-3xl font-bold tracking-tight"
-        />
-        <p className="mt-2 text-sm text-muted-foreground">
-          Sign in to your KitFix account
-        </p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="rounded-xl border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive"
-            role="alert"
-          >
-            {error}
-          </motion.div>
-        )}
-
-        <div className="space-y-2">
-          <label htmlFor="email" className="text-sm font-medium leading-none">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            required
-            autoComplete="email"
-            name="email"
-            spellCheck={false}
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={INPUT_CLASSES}
+      <div className="card-base bg-surface p-8">
+        <div className="mb-8 text-center">
+          <AnimatedText
+            text="Welcome back"
+            as="h1"
+            className="justify-center text-3xl font-bold tracking-tight text-text-primary"
           />
+          <p className="mt-2 text-sm text-text-secondary">
+            Sign in to your KitFix account
+          </p>
         </div>
 
-        <div className="space-y-2">
-          <label htmlFor="password" className="text-sm font-medium leading-none">
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            required
-            autoComplete="current-password"
-            name="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={INPUT_CLASSES}
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-secondary text-sm font-semibold text-primary-foreground transition-[filter,opacity] hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-              Signing in…
-            </>
-          ) : (
-            "Sign in"
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: "auto" }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="rounded-xl border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive"
+              role="alert"
+            >
+              {error}
+            </motion.div>
           )}
-        </button>
-      </form>
 
-      <div className="mt-8 space-y-3 text-center text-sm">
-        <Link
-          href="/forgot-password"
-          className="block text-muted-foreground transition-colors hover:text-primary"
-        >
-          Forgot your password?
-        </Link>
-        <p className="text-muted-foreground">
-          Don&apos;t have an account?{" "}
-          <Link
-            href="/sign-up"
-            className="font-medium text-primary underline-offset-4 transition-colors hover:text-primary/80 hover:underline"
+          <div className="space-y-2">
+            <label htmlFor="email" className="text-sm font-medium leading-none text-text-primary">
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              required
+              autoComplete="email"
+              name="email"
+              spellCheck={false}
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="input-field w-full"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="password" className="text-sm font-medium leading-none text-text-primary">
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              required
+              autoComplete="current-password"
+              name="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input-field w-full"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary w-full"
           >
-            Sign up
+            {loading ? (
+              <>
+                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                Signing in...
+              </>
+            ) : (
+              "Sign in"
+            )}
+          </button>
+        </form>
+
+        <div className="mt-8 space-y-3 text-center text-sm">
+          <Link
+            href="/forgot-password"
+            className="block text-text-secondary transition-colors hover:text-brand-gold"
+          >
+            Forgot your password?
           </Link>
-        </p>
+          <p className="text-text-secondary">
+            Don&apos;t have an account?{" "}
+            <Link
+              href="/sign-up"
+              className="font-medium text-brand-gold underline-offset-4 transition-colors hover:text-brand-gold-light hover:underline"
+            >
+              Sign up
+            </Link>
+          </p>
+        </div>
       </div>
     </PageTransition>
   );

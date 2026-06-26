@@ -4,15 +4,6 @@ import { ShoppingBag, Package } from "lucide-react";
 
 import { getSession } from "@/lib/auth-utils";
 import { getOrders } from "@/actions/orders";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { EmptyState } from "@/components/shared/empty-state";
 import { formatCurrency, formatDateSAST } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -25,11 +16,11 @@ export default async function OrdersPage() {
 
   if (!result.success) {
     return (
-      <EmptyState
-        icon={<Package className="h-12 w-12" />}
-        title="Something went wrong"
-        description={result.error}
-      />
+      <div className="empty-state">
+        <Package className="empty-icon" />
+        <h2 className="empty-heading">Something went wrong</h2>
+        <p className="empty-description">{result.error}</p>
+      </div>
     );
   }
 
@@ -37,67 +28,65 @@ export default async function OrdersPage() {
 
   if (orders.length === 0) {
     return (
-      <EmptyState
-        icon={<ShoppingBag className="h-12 w-12" />}
-        title="No orders yet"
-        description="You haven't placed any orders yet."
-        action={
-          <Button asChild>
-            <Link href="/shop">Browse Products</Link>
-          </Button>
-        }
-      />
+      <div className="empty-state">
+        <ShoppingBag className="empty-icon" />
+        <h2 className="empty-heading">No orders yet</h2>
+        <p className="empty-description">You haven&apos;t placed any orders yet.</p>
+        <Link href="/shop" className="btn-primary">
+          Browse Products
+        </Link>
+      </div>
     );
   }
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">My Orders</h1>
-        <p className="mt-1 text-muted-foreground">
+        <h1 className="text-3xl font-bold tracking-tight font-display">My Orders</h1>
+        <p className="mt-1 text-text-secondary">
           {orders.length} order{orders.length !== 1 ? "s" : ""}
         </p>
       </div>
 
       <div className="space-y-4">
         {orders.map((order) => (
-          <Link key={order.id} href={`/orders/${order.id}`}>
-            <Card className="transition-colors hover:bg-accent/50">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-base">
-                      Order #{order.id.slice(0, 8)}
-                    </CardTitle>
-                    <CardDescription>
-                      {formatDateSAST(new Date(order.createdAt))}
-                    </CardDescription>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        order.status === "paid"
-                          ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                          : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
-                      }`}
-                    >
-                      {order.status === "paid" ? "Paid" : order.status}
-                    </span>
-                    <span className="text-sm font-semibold">
-                      {formatCurrency(order.grandTotalCents)}
-                    </span>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  {order.items.length} item{order.items.length !== 1 ? "s" : ""}
-                  {order.items.length > 0 && (
-                    <> &mdash; {order.items.map((i) => i.productName || "Product").join(", ")}</>
-                  )}
+          <Link
+            key={order.id}
+            href={`/orders/${order.id}`}
+            className="card-base block p-4 sm:p-5"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-text-primary">
+                  Order #{order.id.slice(0, 8)}
                 </p>
-              </CardContent>
-            </Card>
+                <p className="mt-0.5 text-xs text-text-secondary">
+                  {formatDateSAST(new Date(order.createdAt))}
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span
+                  className={
+                    order.status === "paid"
+                      ? "badge badge-gold"
+                      : order.status === "shipped"
+                        ? "badge badge-success"
+                        : "badge badge-outline"
+                  }
+                >
+                  {order.status === "paid" ? "Paid" : order.status}
+                </span>
+                <span className="text-sm font-semibold text-text-primary">
+                  {formatCurrency(order.grandTotalCents)}
+                </span>
+              </div>
+            </div>
+            <p className="mt-2 text-xs text-text-secondary">
+              {order.items.length} item{order.items.length !== 1 ? "s" : ""}
+              {order.items.length > 0 && (
+                <> &mdash; {order.items.map((i) => i.productName || "Product").join(", ")}</>
+              )}
+            </p>
           </Link>
         ))}
       </div>

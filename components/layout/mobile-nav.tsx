@@ -37,11 +37,13 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="left" className="w-64">
+      <SheetContent side="left" className="w-64 bg-bg-deep border-border">
         <SheetHeader>
-          <SheetTitle className="flex items-center gap-2">
-            <Wrench className="h-5 w-5" />
-            KitFix
+          <SheetTitle className="flex items-center gap-2 font-display font-extrabold tracking-tight">
+            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-brand-gold to-brand-gold-light text-xs text-text-inverse">
+              ✦
+            </span>
+            Kit<span className="text-brand-gold">Fix</span>
           </SheetTitle>
         </SheetHeader>
         <nav className="mt-6 flex flex-col gap-1">
@@ -58,11 +60,11 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
                 className={cn(
                   "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    ? "bg-brand-gold/10 text-brand-gold"
+                    : "text-text-secondary hover:bg-surface hover:text-text-primary",
                 )}
               >
-                <item.icon className="h-4 w-4" />
+                <item.icon className={cn("h-4 w-4", isActive && "text-brand-gold")} />
                 {item.label}
               </Link>
             );

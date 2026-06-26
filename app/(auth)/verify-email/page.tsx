@@ -3,8 +3,61 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import { Loader2, CheckCircle2, XCircle, Mail } from "lucide-react";
+import { PageTransition } from "@/components/motion";
 
 type VerificationStatus = "loading" | "success" | "error" | "missing-token";
+
+interface StateConfig {
+  icon: typeof Loader2;
+  color: string;
+  bgClass: string;
+  iconClass: string;
+  title: string;
+  description: string;
+  action?: { label: string; href: string };
+}
+
+const STATE_CONFIG: Record<VerificationStatus, StateConfig> = {
+  loading: {
+    icon: Loader2,
+    color: "text-brand-gold",
+    bgClass: "bg-brand-gold/10",
+    iconClass: "animate-spin",
+    title: "Verifying your email...",
+    description: "Please wait while we confirm your email address.",
+  },
+  success: {
+    icon: CheckCircle2,
+    color: "text-success",
+    bgClass: "bg-success/10",
+    iconClass: "",
+    title: "Email verified!",
+    description: "Your email has been verified. You can now sign in.",
+    action: { label: "Sign in", href: "/sign-in" },
+  },
+  error: {
+    icon: XCircle,
+    color: "text-destructive",
+    bgClass: "bg-destructive/10",
+    iconClass: "",
+    title: "Verification failed",
+    description:
+      "The verification link is invalid or has expired. Please request a new one.",
+    action: { label: "Back to sign in", href: "/sign-in" },
+  },
+  "missing-token": {
+    icon: Mail,
+    color: "text-brand-gold",
+    bgClass: "bg-brand-gold/10",
+    iconClass: "",
+    title: "Verify your email",
+    description:
+      "Check your inbox for a verification link. If you didn't receive one, try signing in and requesting a new link.",
+    action: { label: "Sign in", href: "/sign-in" },
+  },
+};
 
 export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
@@ -34,124 +87,60 @@ export default function VerifyEmailPage() {
   }, [token]);
 
   return (
-    <div className="rounded-xl border bg-card p-8 shadow-sm">
-      <div className="text-center">
-        {status === "loading" && (
-          <>
-            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Verifying your email…
-            </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Please wait while we confirm your email address.
-            </p>
-          </>
-        )}
+    <PageTransition>
+      <div className="card-base bg-surface p-8">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={status}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="text-center"
+          >
+            {(() => {
+              const config = STATE_CONFIG[status];
+              const Icon = config.icon;
 
-        {status === "success" && (
-          <>
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-green-600 dark:text-green-400"
-              >
-                <path d="M20 6 9 17l-5-5" />
-              </svg>
-            </div>
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Email verified!
-            </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Your email has been verified. You can now sign in.
-            </p>
-            <Link
-              href="/sign-in"
-              className="mt-6 inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              Sign in
-            </Link>
-          </>
-        )}
+              return (
+                <>
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 200,
+                      damping: 15,
+                      delay: status === "loading" ? 0 : 0.1,
+                    }}
+                    className={`mx-auto mb-6 flex size-14 items-center justify-center rounded-full ${config.bgClass}`}
+                  >
+                    <Icon
+                      className={`size-7 ${config.color} ${config.iconClass}`}
+                    />
+                  </motion.div>
 
-        {status === "error" && (
-          <>
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-destructive"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <line x1="15" x2="9" y1="9" y2="15" />
-                <line x1="9" x2="15" y1="9" y2="15" />
-              </svg>
-            </div>
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Verification failed
-            </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              The verification link is invalid or has expired. Please request a
-              new one.
-            </p>
-            <Link
-              href="/sign-in"
-              className="mt-6 inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              Back to sign in
-            </Link>
-          </>
-        )}
+                  <h1 className="text-2xl font-bold tracking-tight text-text-primary">
+                    {config.title}
+                  </h1>
+                  <p className="mt-3 text-sm text-text-secondary">
+                    {config.description}
+                  </p>
 
-        {status === "missing-token" && (
-          <>
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-muted-foreground"
-              >
-                <rect width="20" height="16" x="2" y="4" rx="2" />
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-              </svg>
-            </div>
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Verify your email
-            </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Check your inbox for a verification link. If you didn&apos;t
-              receive one, try signing in and requesting a new link.
-            </p>
-            <Link
-              href="/sign-in"
-              className="mt-6 inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              Sign in
-            </Link>
-          </>
-        )}
+                  {config.action && (
+                    <Link
+                      href={config.action.href}
+                      className="btn-primary mt-8 inline-flex"
+                    >
+                      {config.action.label}
+                    </Link>
+                  )}
+                </>
+              );
+            })()}
+          </motion.div>
+        </AnimatePresence>
       </div>
-    </div>
+    </PageTransition>
   );
 }

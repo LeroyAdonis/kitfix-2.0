@@ -55,7 +55,7 @@ export function AdminSidebar() {
       {/* Backdrop */}
       {open && (
         <div
-          className="fixed inset-0 z-40 bg-black/40 md:hidden"
+          className="fixed inset-0 z-40 bg-black/60 md:hidden"
           onClick={() => setOpen(false)}
         />
       )}
@@ -67,9 +67,11 @@ export function AdminSidebar() {
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className="flex h-14 items-center gap-2 px-4 font-semibold">
-          <Wrench className="h-5 w-5 text-primary" />
-          <span className="text-lg">KitFix Admin</span>
+        <div className="flex h-14 items-center gap-2 px-4 font-display font-extrabold tracking-tight">
+          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-brand-gold to-brand-gold-light text-xs text-text-inverse">
+            ✦
+          </span>
+          <span className="text-lg">Kit<span className="text-brand-gold">Fix</span> Admin</span>
         </div>
         <Separator />
 
@@ -82,17 +84,17 @@ export function AdminSidebar() {
               className={cn(
                 "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 isActive(href)
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground",
+                  ? "bg-brand-gold/10 text-brand-gold font-semibold"
+                  : "text-text-secondary hover:bg-surface hover:text-text-primary",
               )}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className={cn("h-4 w-4", isActive(href) && "text-brand-gold")} />
               {label}
             </Link>
           ))}
         </nav>
 
-        <div className="p-4 text-xs text-muted-foreground">
+        <div className="p-4 text-xs text-text-tertiary">
           KitFix 2.0 · Admin Panel
         </div>
       </aside>
