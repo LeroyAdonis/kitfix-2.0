@@ -42,6 +42,7 @@ export const repairStatusEnum = pgEnum("repair_status", [
   "in_repair",
   "quality_check",
   "shipped",
+  "cancelled",
 ]);
 
 export const photoTypeEnum = pgEnum("photo_type", [
