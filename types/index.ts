@@ -85,7 +85,8 @@ export type RepairStatus =
   | "quote_accepted"
   | "in_repair"
   | "quality_check"
-  | "shipped";
+  | "shipped"
+  | "cancelled";
 
 /** Damage type categories */
 export type DamageType =
