@@ -47,6 +47,7 @@ const STATUS_VARIANTS: Record<RepairStatus, "default" | "secondary" | "destructi
   in_repair: "default",
   quality_check: "secondary",
   shipped: "default",
+  cancelled: "destructive",
 };
 
 const ALL_STATUSES: RepairStatus[] = [
@@ -57,6 +58,7 @@ const ALL_STATUSES: RepairStatus[] = [
   "in_repair",
   "quality_check",
   "shipped",
+  "cancelled",
 ];
 
 export function RequestTable({

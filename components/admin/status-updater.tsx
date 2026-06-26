@@ -28,6 +28,7 @@ const STATUS_FLOW: Record<RepairStatus, RepairStatus[]> = {
   in_repair: ["quality_check"],
   quality_check: ["shipped"],
   shipped: [],
+  cancelled: [],
 };
 
 const STATUS_LABELS: Record<RepairStatus, string> = {
@@ -38,6 +39,7 @@ const STATUS_LABELS: Record<RepairStatus, string> = {
   in_repair: "In Repair",
   quality_check: "Quality Check",
   shipped: "Shipped",
+  cancelled: "Cancelled",
 };
 
 export function StatusUpdater({
