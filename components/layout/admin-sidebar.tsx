@@ -10,6 +10,8 @@ import {
   UserCog,
   CreditCard,
   Star,
+  Package,
+  ShoppingCart,
   Menu,
   X,
 } from "lucide-react";
@@ -22,6 +24,8 @@ const NAV_ITEMS = [
   { href: "/admin/requests", label: "Requests", icon: Wrench },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/technicians", label: "Technicians", icon: UserCog },
+  { href: "/admin/store", label: "Products", icon: Package },
+  { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { href: "/admin/payments", label: "Payments", icon: CreditCard },
   { href: "/admin/reviews", label: "Reviews", icon: Star },
 ] as const;
