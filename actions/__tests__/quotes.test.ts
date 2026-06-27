@@ -46,7 +46,7 @@ import { sendQuoteAction, acceptQuoteAction, declineQuoteAction } from "../quote
 // ---------------------------------------------------------------------------
 
 // Helper: mock session
-function mockSession(role = "customer", userId = "user-1", name = "Test") {
+function mockSession(role: "customer" | "admin" | "technician" = "customer", userId = "user-1", name = "Test") {
   return {
     user: {
       id: userId,

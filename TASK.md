@@ -1,11 +1,11 @@
-# TDD Task Spec: Fix WAF & Auth Redirects (proxy.ts)
+# TDD Task Spec: Upgrade Better Auth v1.6.20 → v1.8.1+
 
 ## Project Context
-- Repo: `/root/kitfix-waf-proxy` (git worktree, branch `fix/waf-proxy-redirects`)
+- Repo: `/root/kitfix-upgrade-auth` (git worktree, branch `fix/upgrade-better-auth`)
 - Framework: Next.js 16 App Router
-- Auth: Better Auth v1.6.20 with Drizzle adapter
-- Current state: NO proxy.ts or middleware.ts — auth is done per-page via requireAuth() in each server component
-- Problem: Vercel WAF blocks headless browser requests to protected routes. Unauthenticated users should be redirected to /sign-in BEFORE hitting the page component.
+- Current: better-auth@1.6.20 (core) + @polar-sh/better-auth@1.8.1 (polar wrapper)
+- Problem: Version mismatch between core auth (1.6.20) and polar wrapper (1.8.1). Better Auth 1.6.20 has a known Drizzle adapter getSession() null bug.
+- Goal: Upgrade better-auth core to match polar wrapper (1.8.1+), ideally to latest 1.9.x
 
 ## TDD Mandate
 - RED: Write failing test FIRST
@@ -13,41 +13,32 @@
 - REFACTOR: Clean up after green
 - NEVER write production code before the test fails
 - Run `npm run test:run` after each cycle
-- Run `npx next build` at end to verify no build errors
 
-## Task: Create proxy.ts with Auth Guard
+## Task: Upgrade better-auth
 
-### What to build
-Create `/root/kitfix-waf-proxy/proxy.ts` that:
-1. Checks if request path matches protected routes: `/dashboard`, `/repairs`, `/payments`, `/profile`, `/notifications`, `/admin`
-2. Reads the session cookie (`better-auth.session_token`)
-3. If no valid session → redirects to `/sign-in?callbackUrl=<original_path>`
-4. If valid session → continues (NextResponse.next())
-5. Uses narrow matcher — NOT `/(.*)` which triggers Vercel WAF more aggressively
+### What to do
+1. `npm install better-auth@latest` in the worktree
+2. Check for breaking changes in the changelog
+3. Update auth.ts config if API changed
+4. Update auth-client.ts if client API changed
+5. Verify all existing tests still pass
+6. Check if the Drizzle adapter `getSession()` bug is fixed in the new version
+7. If fixed, consider removing the direct DB workaround (auth-utils.ts getSession) in favor of auth.api.getSession()
 
 ### Technical notes
-- Next.js 16 renamed `middleware.ts` → `proxy.ts` with named export `proxy`
-- Uses `NextRequest` and `NextResponse` from `next/server`
-- Session check: parse cookie header, call DB directly (same pattern as lib/auth-utils.ts getSession())
-- The proxy runs on Vercel Edge — cannot use `auth.api.getSession()` directly (edge compatibility)
-- Must import from `@/lib/db` and `@/lib/db/schema` for DB access
-- Cookie name: `better-auth.session_token`
+- Better Auth 1.8+ changed some config structure
+- Check if `advanced.useSecureCookies` still works or moved
+- Check if `nextCookies()` plugin is still needed
+- The `@polar-sh/better-auth` package wraps better-auth — verify they're compatible after upgrade
+- Drizzle adapter may have changed — check `better-auth/adapters/drizzle` import
 
-### Test Order (Vertical Slices)
-1. **Test: proxy redirects unauthenticated /dashboard to /sign-in** — Mock cookie header empty, expect 307 redirect to /sign-in?callbackUrl=%2Fdashboard
-2. **Test: proxy allows authenticated /dashboard** — Mock valid session token cookie, expect 200 (NextResponse.next)
-3. **Test: proxy redirects /admin to /sign-in** — Unauthenticated admin route
-4. **Test: proxy does NOT redirect public routes** — /sign-in, /sign-up, / (home) pass through
-5. **Test: proxy handles callbackUrl encoding** — /repairs/new → /sign-in?callbackUrl=%2Frepairs%2Fnew
-
-### Test Framework
-- Use Vitest with `vi.mock` for DB calls
-- Mock `@/lib/db` and `@/lib/db/schema`
-- Test the proxy function directly: `import { proxy } from '../../proxy'`
-- Use Next.js test utilities: create a mock NextRequest with `.nextUrl.pathname` and `.headers.get('cookie')`
+### Test Order
+1. **Test: auth.api.getSession() returns session for valid cookie** — The key bug fix test. Mock headers with valid cookie, verify getSession returns user+session (not null)
+2. **Test: signUp.email() works with upgraded version** — Verify sign-up flow still works
+3. **Test: existing tests pass** — Run `npm run test:run` and ensure no regressions
+4. **Test: build succeeds** — Run `npx next build`
 
 ### Constraints
-- No real DB calls in tests — mock everything
-- Keep matcher narrow: `['/dashboard', '/repairs/(.*)', '/payments', '/profile', '/notifications', '/admin/(.*)']`
-- Run `npm run test:run` after each RED→GREEN cycle
-- Run `npx next build` at end
+- Do NOT remove the direct DB workaround until VERIFIED that getSession() bug is fixed
+- Keep the custom auth-session route as fallback
+- Run `npm run typecheck` to verify no type errors after upgrade
