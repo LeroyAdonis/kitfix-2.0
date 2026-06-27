@@ -148,7 +148,13 @@ async function handleSignIn(request: NextRequest): Promise<NextResponse> {
       // Try legacy Better Auth scrypt format
       const legacy = verifyLegacyPassword(accounts[0].password, password);
       if (!legacy.valid) {
-        return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
+        // DEBUG: include hash format in error
+        const hashPreview = accounts[0].password.slice(0, 20) + "...";
+        const isLegacyFormat = accounts[0].password.includes(":");
+        return NextResponse.json({ 
+          error: "Invalid email or password",
+          _debug: { hashPreview, isLegacyFormat, hashLen: accounts[0].password.length }
+        }, { status: 401 });
       }
       // Migrate to bcrypt
       if (legacy.newHash) {
