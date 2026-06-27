@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * Postinstall script — patches lightningcss/node/index.js to use lightningcss-wasm
  * via proper module resolution instead of a relative ../pkg/ path.

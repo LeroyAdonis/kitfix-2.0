@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Ambient type declarations for packages that export type paths in their
  * package.json but don't ship the actual .d.ts files in the npm tarball.

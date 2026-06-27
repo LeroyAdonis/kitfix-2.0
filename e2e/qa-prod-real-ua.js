@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 // KitFix 2.0 QA — Browser check with realistic UA to bypass Vercel WAF
 
 const { chromium } = require('@playwright/test');

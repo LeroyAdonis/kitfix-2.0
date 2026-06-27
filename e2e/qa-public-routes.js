@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 // KitFix 2.0 QA — Public & Store Routes
 // Tests against production: https://kitfix-2-0.vercel.app
 
