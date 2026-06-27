@@ -9,7 +9,7 @@
 
 import "dotenv/config";
 import { eq } from "drizzle-orm";
-import { hashPassword } from "better-auth/crypto";
+import bcrypt from "bcryptjs";
 import { db } from "../lib/db";
 import {
   user,
@@ -292,8 +292,8 @@ async function upsertUser(
     return false;
   }
 
-  // Hash the password using Better Auth's own hashing (scrypt)
-  const hashedPassword = await hashPassword(plainPassword);
+  // Hash the password using bcrypt
+  const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
   // Insert the user row
   await db.insert(user).values({
@@ -306,7 +306,7 @@ async function upsertUser(
     updatedAt: new Date(),
   });
 
-  // Insert the credential account row (how Better Auth stores email/password)
+  // Insert the credential account row
   await db.insert(account).values({
     id: `${id}-credential`,
     userId: id,
