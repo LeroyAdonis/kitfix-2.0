@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import { DM_Sans, Inter } from "next/font/google";
 import { ServiceWorkerRegistrar } from "@/components/pwa/service-worker-registrar";
 import { NavigationProgress } from "@/components/navigation-progress";

@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CheckCircle, CreditCard } from "lucide-react";
 
-import { getSession } from "@/lib/auth-utils";
 import { getOrderById } from "@/actions/orders";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { EmptyState } from "@/components/shared/empty-state";
 import { formatCurrency, formatDateSAST } from "@/lib/utils";
 import { OrderPaymentButton } from "./order-payment-button";
 
@@ -23,7 +21,6 @@ interface Props {
 }
 
 export default async function OrderDetailPage({ params }: Props) {
-  const session = await getSession();
   const { id } = await params;
 
   const result = await getOrderById(id);

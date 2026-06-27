@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Sparkles, AlertTriangle, Cpu } from "lucide-react";
+import { Loader2, AlertTriangle, Cpu } from "lucide-react";
 import { analyzeDamageAction } from "@/actions/ai-damage";
 import type { AIDamageAssessment } from "@/types/ai";
 import { useRouter } from "next/navigation";
