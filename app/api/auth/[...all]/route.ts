@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { randomBytes } from "crypto";
+import { randomBytes, scryptSync, timingSafeEqual } from "crypto";
 import bcrypt from "bcryptjs";
 import { eq, and, gt } from "drizzle-orm";
 import { db } from "@/lib/db";
@@ -8,8 +8,44 @@ import { createSessionToken, verifySessionToken } from "@/lib/auth-jwt";
 
 const SALT_ROUNDS = 10;
 
+// Better Auth scrypt config (for migrating existing passwords)
+const BA_SCRYPT = { N: 16384, r: 16, p: 1, dkLen: 64 } as const;
+
 function generateId(): string {
   return randomBytes(16).toString("hex");
+}
+
+/**
+ * Verify a password that may use the old Better Auth scrypt format.
+ * Format: "salt:hash" (both hex-encoded).
+ * If it matches, re-hash with bcrypt and return the new hash.
+ * Returns { valid: true, newHash?: string } or { valid: false }.
+ */
+function verifyLegacyPassword(storedHash: string, password: string): { valid: boolean; newHash?: string } {
+  // Better Auth format: hexSalt:hexKey
+  const parts = storedHash.split(":");
+  if (parts.length !== 2) return { valid: false };
+  
+  const [saltHex, keyHex] = parts;
+  if (!saltHex || !keyHex || saltHex.length !== 32 || !/^[0-9a-f]+$/i.test(saltHex)) {
+    return { valid: false };
+  }
+  
+  try {
+    const salt = Buffer.from(saltHex, "hex");
+    const derived = scryptSync(password.normalize("NFKC"), salt, BA_SCRYPT.dkLen, BA_SCRYPT);
+    const expectedKey = Buffer.from(keyHex, "hex");
+    if (derived.length !== expectedKey.length) return { valid: false };
+    
+    if (timingSafeEqual(derived, expectedKey)) {
+      const newHash = bcrypt.hashSync(password, SALT_ROUNDS);
+      return { valid: true, newHash };
+    }
+  } catch {
+    // scrypt failed — not a valid legacy password
+  }
+  
+  return { valid: false };
 }
 
 function getCookieToken(request: NextRequest): string | null {
@@ -109,7 +145,17 @@ async function handleSignIn(request: NextRequest): Promise<NextResponse> {
 
     const passwordValid = await bcrypt.compare(password, accounts[0].password);
     if (!passwordValid) {
-      return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
+      // Try legacy Better Auth scrypt format
+      const legacy = verifyLegacyPassword(accounts[0].password, password);
+      if (!legacy.valid) {
+        return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
+      }
+      // Migrate to bcrypt
+      if (legacy.newHash) {
+        await db.update(account)
+          .set({ password: legacy.newHash })
+          .where(eq(account.id, accounts[0].id));
+      }
     }
 
     const sessions = await db

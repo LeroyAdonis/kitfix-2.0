@@ -69,7 +69,12 @@ export function useSession(): UseSessionResult {
   return { data, isPending };
 }
 
-export async function signIn(input: { email: string; password: string }): Promise<{ error?: string; data?: Session }> {
+export interface SignInResult {
+  error?: string;
+  data?: { token: string; user: SessionUser };
+}
+
+export async function signIn(input: { email: string; password: string }): Promise<SignInResult> {
   try {
     const res = await fetch(`${BASE_URL}/api/auth/sign-in/email`, {
       method: "POST",
@@ -79,15 +84,19 @@ export async function signIn(input: { email: string; password: string }): Promis
     });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Sign in failed" };
-
-    const session = await fetchSession();
-    return { data: session ?? undefined };
+    // Return token directly from API — cookie may not be committed yet
+    return { data: { token: data.token, user: data.user } };
   } catch {
     return { error: "Network error" };
   }
 }
 
-export async function signUp(input: { email: string; password: string; name: string }): Promise<{ error?: string; data?: Session }> {
+export interface SignUpResult {
+  error?: string;
+  data?: { token: string; user: SessionUser };
+}
+
+export async function signUp(input: { email: string; password: string; name: string }): Promise<SignUpResult> {
   try {
     const res = await fetch(`${BASE_URL}/api/auth/sign-up/email`, {
       method: "POST",
@@ -97,9 +106,7 @@ export async function signUp(input: { email: string; password: string; name: str
     });
     const data = await res.json();
     if (!res.ok) return { error: data.error || "Sign up failed" };
-
-    const session = await fetchSession();
-    return { data: session ?? undefined };
+    return { data: { token: data.token, user: data.user } };
   } catch {
     return { error: "Network error" };
   }
