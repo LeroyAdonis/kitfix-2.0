@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { repairRequests } from "@/lib/db/schema";
-import { getSession } from "@/lib/auth-utils";
+import { authenticatedAction, authenticatedAdminAction } from "@/lib/auth-utils";
 import { getRepairById, updateRepairStatus } from "@/lib/db/queries/repairs";
 import { createNotification } from "@/lib/db/queries/notifications";
 import { sendEstimateReadyEmail } from "@/lib/email";
@@ -14,17 +14,13 @@ import type { z } from "zod";
 import { eq } from "drizzle-orm";
 import type { ActionResult } from "@/types";
 
-export async function sendQuoteAction(
+export const sendQuoteAction = authenticatedAdminAction(async (
+  session,
   repairId: string,
   estimatedCost: number,
   adminNotes?: string,
   pickupRequired?: boolean,
-): Promise<ActionResult<{ repairRequestId: string }>> {
-  const session = await getSession();
-  if (!session || session.user.role !== "admin") {
-    return { success: false, error: "Only admin users can send quotes." };
-  }
-
+): Promise<ActionResult<{ repairRequestId: string }>> => {
   const parsed = sendQuoteSchema.safeParse({
     repairId,
     estimatedCost,
@@ -144,17 +140,13 @@ export async function sendQuoteAction(
   revalidatePath("/admin/requests");
 
   return { success: true, data: { repairRequestId: repairId } };
-}
+});
 
-export async function acceptQuoteAction(
+export const acceptQuoteAction = authenticatedAction(async (
+  session,
   repairId: string,
   pickupAddress?: z.infer<typeof pickupAddressSchema>,
-): Promise<ActionResult<{ repairRequestId: string; totalCost: number; depositAmount: number }>> {
-  const session = await getSession();
-  if (!session) {
-    return { success: false, error: "Authentication required." };
-  }
-
+): Promise<ActionResult<{ repairRequestId: string; totalCost: number; depositAmount: number }>> => {
   const parsed = acceptQuoteSchema.safeParse({ repairId, pickupAddress });
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid input." };
@@ -209,17 +201,13 @@ export async function acceptQuoteAction(
   revalidatePath("/repairs");
 
   return { success: true, data: { repairRequestId: repairId, totalCost, depositAmount } };
-}
+});
 
-export async function declineQuoteAction(
+export const declineQuoteAction = authenticatedAction(async (
+  session,
   repairId: string,
   reason: string,
-): Promise<ActionResult<{ repairRequestId: string }>> {
-  const session = await getSession();
-  if (!session) {
-    return { success: false, error: "Authentication required." };
-  }
-
+): Promise<ActionResult<{ repairRequestId: string }>> => {
   const parsed = declineQuoteSchema.safeParse({ repairId, reason });
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid input." };
@@ -258,4 +246,4 @@ export async function declineQuoteAction(
   revalidatePath("/repairs");
 
   return { success: true, data: { repairRequestId: repairId } };
-}
+});

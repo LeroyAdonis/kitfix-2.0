@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireAuth } from "@/lib/auth-utils";
+import { getSession } from "@/lib/auth-utils";
 import { getRepairsByCustomer } from "@/lib/db/queries/repairs";
 import { RepairCard } from "@/components/repair/repair-card";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -11,7 +11,7 @@ export default async function RepairsPage(props: {
   searchParams: Promise<{ page?: string }>;
 }) {
   const searchParams = await props.searchParams;
-  const session = await requireAuth();
+  const session = (await getSession())!;
   const page = Math.max(1, Number(searchParams.page) || 1);
   const repairs = await getRepairsByCustomer(session.user.id, page, PAGE_SIZE);
   const hasMore = repairs.length === PAGE_SIZE;

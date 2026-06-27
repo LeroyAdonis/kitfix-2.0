@@ -2,7 +2,7 @@
 
 import { eq } from "drizzle-orm";
 
-import { getSession } from "@/lib/auth-utils";
+import { authenticatedAction } from "@/lib/auth-utils";
 import { db } from "@/lib/db";
 import { orders, orderItems, cartItems } from "@/lib/db/schema";
 import {
@@ -28,14 +28,10 @@ interface ShippingData {
   };
 }
 
-export async function createOrderFromCart(
+export const createOrderFromCart = authenticatedAction(async (
+  session,
   shippingData?: ShippingData,
-): Promise<ActionResult<OrderResponse>> {
-  const session = await getSession();
-  if (!session) {
-    return { success: false, error: "You must be signed in." };
-  }
-
+): Promise<ActionResult<OrderResponse>> => {
   const cartRows = await db
     .select()
     .from(cartItems)
@@ -132,14 +128,11 @@ export async function createOrderFromCart(
       })),
     },
   };
-}
+});
 
-export async function getOrders(): Promise<ActionResult<OrderResponse[]>> {
-  const session = await getSession();
-  if (!session) {
-    return { success: false, error: "You must be signed in." };
-  }
-
+export const getOrders = authenticatedAction(async (
+  session,
+): Promise<ActionResult<OrderResponse[]>> => {
   const orderRows = await db
     .select()
     .from(orders)
@@ -164,16 +157,12 @@ export async function getOrders(): Promise<ActionResult<OrderResponse[]>> {
   );
 
   return { success: true, data: enriched };
-}
+});
 
-export async function getOrderById(
+export const getOrderById = authenticatedAction(async (
+  session,
   orderId: string,
-): Promise<ActionResult<OrderResponse>> {
-  const session = await getSession();
-  if (!session) {
-    return { success: false, error: "You must be signed in." };
-  }
-
+): Promise<ActionResult<OrderResponse>> => {
   const [order] = await db
     .select()
     .from(orders)
@@ -204,16 +193,12 @@ export async function getOrderById(
       })),
     },
   };
-}
+});
 
-export async function initiateOrderCheckout(
+export const initiateOrderCheckout = authenticatedAction(async (
+  session,
   orderId: string,
-): Promise<ActionResult<{ checkoutUrl: string }>> {
-  const session = await getSession();
-  if (!session) {
-    return { success: false, error: "You must be signed in." };
-  }
-
+): Promise<ActionResult<{ checkoutUrl: string }>> => {
   const [order] = await db
     .select()
     .from(orders)
@@ -278,4 +263,4 @@ export async function initiateOrderCheckout(
       error: "Failed to initiate payment. Please try again.",
     };
   }
-}
+});

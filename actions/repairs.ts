@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 
-import { getSession } from "@/lib/auth-utils";
+import { authenticatedAction } from "@/lib/auth-utils";
 import { db } from "@/lib/db";
 import { repairRequests, user } from "@/lib/db/schema";
 import { createRepair, getRepairById } from "@/lib/db/queries/repairs";
@@ -27,14 +27,10 @@ function parseAIAssessment(raw: string | null): AIDamageAssessment | null {
   }
 }
 
-export async function createRepairAction(
+export const createRepairAction = authenticatedAction(async (
+  session,
   formData: FormData,
-): Promise<ActionResult<RepairRequest>> {
-  const session = await getSession();
-  if (!session) {
-    return { success: false, error: "You must be signed in to submit a repair request." };
-  }
-
+): Promise<ActionResult<RepairRequest>> => {
   const raw = {
     jerseyDescription: formData.get("jerseyDescription") as string,
     jerseyBrand: (formData.get("jerseyBrand") as string) || undefined,
@@ -102,16 +98,12 @@ export async function createRepairAction(
   revalidatePath("/repairs");
   revalidatePath("/dashboard");
   return { success: true, data: repair };
-}
+});
 
-export async function cancelRepairAction(
+export const cancelRepairAction = authenticatedAction(async (
+  session,
   repairRequestId: string,
-): Promise<ActionResult<null>> {
-  const session = await getSession();
-  if (!session) {
-    return { success: false, error: "You must be signed in." };
-  }
-
+): Promise<ActionResult<null>> => {
   const repair = await getRepairById(repairRequestId);
   if (!repair) {
     return { success: false, error: "Repair request not found." };
@@ -131,4 +123,4 @@ export async function cancelRepairAction(
   revalidatePath("/repairs");
   revalidatePath("/dashboard");
   return { success: true, data: null };
-}
+});

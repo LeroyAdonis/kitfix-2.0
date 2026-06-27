@@ -4,9 +4,31 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 // Module mocks
 // ---------------------------------------------------------------------------
 
-vi.mock("@/lib/auth-utils", () => ({
-  getSession: vi.fn(),
-}));
+vi.mock("@/lib/auth-utils", () => {
+  const getSession = vi.fn();
+  const authenticatedAction = (fn: unknown) => {
+    return async (...args: unknown[]) => {
+      const session = await getSession();
+      if (!session) return { success: false, error: "You must be signed in." };
+      return (fn as (...args: unknown[]) => unknown)(session, ...args);
+    };
+  };
+  const authenticatedAdminAction = (fn: unknown) => {
+    return async (...args: unknown[]) => {
+      const session = await getSession();
+      if (!session || session.user.role !== "admin") return { success: false, error: "Unauthorized" };
+      return (fn as (...args: unknown[]) => unknown)(session, ...args);
+    };
+  };
+  const authenticatedRoleAction = (roles: string[], fn: unknown) => {
+    return async (...args: unknown[]) => {
+      const session = await getSession();
+      if (!session || !roles.includes(session.user.role)) return { success: false, error: "Unauthorized" };
+      return (fn as (...args: unknown[]) => unknown)(session, ...args);
+    };
+  };
+  return { getSession, authenticatedAction, authenticatedAdminAction, authenticatedRoleAction };
+});
 
 vi.mock("@/lib/db/queries/repairs", () => ({
   getRepairById: vi.fn(),

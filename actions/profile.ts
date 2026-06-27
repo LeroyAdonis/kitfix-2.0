@@ -3,20 +3,16 @@
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 
-import { getSession } from "@/lib/auth-utils";
+import { authenticatedAction } from "@/lib/auth-utils";
 import { db } from "@/lib/db";
 import { user } from "@/lib/db/schema";
 import { updateProfileSchema } from "@/lib/validators/profile";
 import type { ActionResult } from "@/types";
 
-export async function updateProfileAction(
+export const updateProfileAction = authenticatedAction(async (
+  session,
   formData: FormData,
-): Promise<ActionResult<{ name: string }>> {
-  const session = await getSession();
-  if (!session) {
-    return { success: false, error: "You must be signed in." };
-  }
-
+): Promise<ActionResult<{ name: string }>> => {
   const raw = {
     name: formData.get("name") as string,
     image: (formData.get("image") as string) || undefined,
@@ -42,4 +38,4 @@ export async function updateProfileAction(
   revalidatePath("/profile");
   revalidatePath("/dashboard");
   return { success: true, data: { name: data.name } };
-}
+});

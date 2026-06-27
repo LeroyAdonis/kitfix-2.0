@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { getSession } from "@/lib/auth-utils";
+import { authenticatedAction } from "@/lib/auth-utils";
 import { getRepairById } from "@/lib/db/queries/repairs";
 import { createReview, getReviewByRepair } from "@/lib/db/queries/reviews";
 import { createNotification } from "@/lib/db/queries/notifications";
@@ -10,14 +10,10 @@ import { createReviewSchema } from "@/lib/validators/review";
 import type { ActionResult } from "@/types";
 import type { Review } from "@/lib/db/schema";
 
-export async function submitReviewAction(
+export const submitReviewAction = authenticatedAction(async (
+  session,
   formData: FormData,
-): Promise<ActionResult<Review>> {
-  const session = await getSession();
-  if (!session) {
-    return { success: false, error: "You must be signed in." };
-  }
-
+): Promise<ActionResult<Review>> => {
   const raw = {
     repairRequestId: formData.get("repairRequestId") as string,
     rating: Number(formData.get("rating")),
@@ -78,4 +74,4 @@ export async function submitReviewAction(
   revalidatePath(`/repairs/${data.repairRequestId}`);
   revalidatePath("/repairs");
   return { success: true, data: review };
-}
+});

@@ -1,4 +1,4 @@
-import { requireAuth } from "@/lib/auth-utils";
+import { getSession } from "@/lib/auth-utils";
 import { getPaymentsByCustomer } from "@/lib/db/queries/payments";
 import { EmptyState } from "@/components/shared/empty-state";
 import { formatCurrency, formatDateSAST } from "@/lib/utils";
@@ -6,7 +6,7 @@ import { CreditCard } from "lucide-react";
 import Link from "next/link";
 
 export default async function PaymentsPage() {
-  const session = await requireAuth();
+  const session = (await getSession())!;
   const payments = await getPaymentsByCustomer(session.user.id);
 
   return (

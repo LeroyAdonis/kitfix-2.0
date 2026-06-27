@@ -1,9 +1,9 @@
-import { requireAuth } from "@/lib/auth-utils";
+import { getSession } from "@/lib/auth-utils";
 import { ProfileForm } from "@/components/forms/profile-form";
 import { formatDateSAST } from "@/lib/utils";
 
 export default async function ProfilePage() {
-  const session = await requireAuth();
+  const session = (await getSession())!;
   const { user } = session;
 
   return (

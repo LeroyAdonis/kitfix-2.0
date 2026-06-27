@@ -1,6 +1,6 @@
 "use server";
 
-import { getSession } from "@/lib/auth-utils";
+import { authenticatedAction } from "@/lib/auth-utils";
 import { db } from "@/lib/db";
 import { cartItems, products, productVariants } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -21,12 +21,9 @@ export interface EnrichedCartData {
   itemTotal: number;
 }
 
-export async function getEnrichedCart(): Promise<ActionResult<EnrichedCartData>> {
-  const session = await getSession();
-  if (!session) {
-    return { success: false, error: "You must be signed in." };
-  }
-
+export const getEnrichedCart = authenticatedAction(async (
+  session,
+): Promise<ActionResult<EnrichedCartData>> => {
   const items = await db
     .select({
       id: cartItems.id,
@@ -63,4 +60,4 @@ export async function getEnrichedCart(): Promise<ActionResult<EnrichedCartData>>
     success: true,
     data: { items: enriched, itemTotal },
   };
-}
+});

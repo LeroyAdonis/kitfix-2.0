@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { requireAuth } from "@/lib/auth-utils";
+import { getSession } from "@/lib/auth-utils";
 import { getRepairById } from "@/lib/db/queries/repairs";
 import { getPaymentsByRepair } from "@/lib/db/queries/payments";
 import { StatusTracker } from "@/components/repair/status-tracker";
@@ -17,7 +17,7 @@ export default async function RepairDetailPage(props: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await props.params;
-  const session = await requireAuth();
+  const session = (await getSession())!;
   const repair = await getRepairById(id);
 
   if (!repair) notFound();

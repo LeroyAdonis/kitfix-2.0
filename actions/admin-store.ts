@@ -3,21 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 
-import { getSession } from "@/lib/auth-utils";
+import { authenticatedAdminAction } from "@/lib/auth-utils";
 import { db } from "@/lib/db";
 import { products, productVariants, personalizationOptions, orders, orderItems, user } from "@/lib/db/schema";
 import type { ActionResult } from "@/types";
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-async function requireAdminSession() {
-  const session = await getSession();
-  if (!session) return null;
-  if (session.user.role !== "admin") return null;
-  return session;
-}
 
 // ---------------------------------------------------------------------------
 // Types
@@ -57,12 +46,10 @@ const VALID_TRANSITIONS: Record<string, string[]> = {
 // Product actions
 // ---------------------------------------------------------------------------
 
-export async function createProduct(
+export const createProduct = authenticatedAdminAction(async (
+  session,
   input: CreateProductInput,
-): Promise<ActionResult<{ id: string }>> {
-  const session = await requireAdminSession();
-  if (!session) return { success: false, error: "Unauthorized" };
-
+): Promise<ActionResult<{ id: string }>> => {
   if (input.basePrice <= 0) {
     return { success: false, error: "basePrice must be greater than 0" };
   }
@@ -109,15 +96,13 @@ export async function createProduct(
   } catch {
     return { success: false, error: "Failed to create product" };
   }
-}
+});
 
-export async function updateProduct(
+export const updateProduct = authenticatedAdminAction(async (
+  session,
   id: string,
   input: UpdateProductInput,
-): Promise<ActionResult<{ id: string }>> {
-  const session = await requireAdminSession();
-  if (!session) return { success: false, error: "Unauthorized" };
-
+): Promise<ActionResult<{ id: string }>> => {
   try {
     const updateData: Record<string, unknown> = {};
     if (input.name !== undefined) updateData.name = input.name;
@@ -162,14 +147,12 @@ export async function updateProduct(
   } catch {
     return { success: false, error: "Failed to update product" };
   }
-}
+});
 
-export async function deleteProduct(
+export const deleteProduct = authenticatedAdminAction(async (
+  session,
   id: string,
-): Promise<ActionResult<{ id: string }>> {
-  const session = await requireAdminSession();
-  if (!session) return { success: false, error: "Unauthorized" };
-
+): Promise<ActionResult<{ id: string }>> => {
   try {
     await db.update(products).set({ isActive: false }).where(eq(products.id, id));
 
@@ -179,9 +162,10 @@ export async function deleteProduct(
   } catch {
     return { success: false, error: "Failed to delete product" };
   }
-}
+});
 
-export async function getProductForEdit(
+export const getProductForEdit = authenticatedAdminAction(async (
+  session,
   id: string,
 ): Promise<ActionResult<{
   id: string;
@@ -196,10 +180,7 @@ export async function getProductForEdit(
   updatedAt: Date;
   variants: { id: string; size: string; stock: number; priceModifier: number }[];
   personalizationOptions: { id: string; fieldName: string; fieldType: string; isRequired: boolean; maxLength: number | null; options: unknown }[];
-}>> {
-  const session = await requireAdminSession();
-  if (!session) return { success: false, error: "Unauthorized" };
-
+}>> => {
   try {
     const [product] = await db
       .select()
@@ -230,13 +211,14 @@ export async function getProductForEdit(
   } catch {
     return { success: false, error: "Failed to get product" };
   }
-}
+});
 
 // ---------------------------------------------------------------------------
 // Order actions
 // ---------------------------------------------------------------------------
 
-export async function getAdminOrders(
+export const getAdminOrders = authenticatedAdminAction(async (
+  session,
   filters: { status?: string },
 ): Promise<ActionResult<Array<{
   id: string;
@@ -250,10 +232,7 @@ export async function getAdminOrders(
   createdAt: Date;
   updatedAt: Date;
   customerName: string;
-}>>> {
-  const session = await requireAdminSession();
-  if (!session) return { success: false, error: "Unauthorized" };
-
+}>>> => {
   try {
     const orderRows = await db
       .select()
@@ -276,9 +255,10 @@ export async function getAdminOrders(
   } catch {
     return { success: false, error: "Failed to get orders" };
   }
-}
+});
 
-export async function getAdminOrderById(
+export const getAdminOrderById = authenticatedAdminAction(async (
+  session,
   id: string,
 ): Promise<ActionResult<{
   id: string;
@@ -304,10 +284,7 @@ export async function getAdminOrderById(
     productName: string;
     variantSize: string;
   }>;
-}>> {
-  const session = await requireAdminSession();
-  if (!session) return { success: false, error: "Unauthorized" };
-
+}>> => {
   try {
     const [order] = await db
       .select({
@@ -350,15 +327,13 @@ export async function getAdminOrderById(
   } catch {
     return { success: false, error: "Failed to get order" };
   }
-}
+});
 
-export async function updateOrderStatusAction(
+export const updateOrderStatusAction = authenticatedAdminAction(async (
+  session,
   orderId: string,
   newStatus: string,
-): Promise<ActionResult<{ orderId: string }>> {
-  const session = await requireAdminSession();
-  if (!session) return { success: false, error: "Unauthorized" };
-
+): Promise<ActionResult<{ orderId: string }>> => {
   try {
     const [order] = await db
       .select({ status: orders.status })
@@ -388,4 +363,4 @@ export async function updateOrderStatusAction(
   } catch {
     return { success: false, error: "Failed to update order status" };
   }
-}
+});

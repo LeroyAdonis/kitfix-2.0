@@ -20,10 +20,31 @@ const { mocks, mockDb } = vi.hoisted(() => {
 // Module mocks
 // ---------------------------------------------------------------------------
 
-vi.mock("@/lib/auth-utils", () => ({
-  getSession: vi.fn(),
-  requireAuth: vi.fn(),
-}));
+vi.mock("@/lib/auth-utils", () => {
+  const getSession = vi.fn();
+  const authenticatedAction = (fn: unknown) => {
+    return async (...args: unknown[]) => {
+      const session = await getSession();
+      if (!session) return { success: false, error: "You must be signed in." };
+      return (fn as (...args: unknown[]) => unknown)(session, ...args);
+    };
+  };
+  const authenticatedAdminAction = (fn: unknown) => {
+    return async (...args: unknown[]) => {
+      const session = await getSession();
+      if (!session || session.user.role !== "admin") return { success: false, error: "Unauthorized" };
+      return (fn as (...args: unknown[]) => unknown)(session, ...args);
+    };
+  };
+  const authenticatedRoleAction = (roles: string[], fn: unknown) => {
+    return async (...args: unknown[]) => {
+      const session = await getSession();
+      if (!session || !roles.includes(session.user.role)) return { success: false, error: "Unauthorized" };
+      return (fn as (...args: unknown[]) => unknown)(session, ...args);
+    };
+  };
+  return { getSession, authenticatedAction, authenticatedAdminAction, authenticatedRoleAction };
+});
 
 vi.mock("@/lib/db", () => ({
   db: mockDb,
@@ -62,7 +83,7 @@ vi.mock("@/lib/logger", () => ({
 // Imports
 // ---------------------------------------------------------------------------
 
-import { requireAuth } from "@/lib/auth-utils";
+import { getSession } from "@/lib/auth-utils";
 import { getRepairById } from "@/lib/db/queries/repairs";
 import { getPaymentsByRepair, createPayment } from "@/lib/db/queries/payments";
 import { createNotification } from "@/lib/db/queries/notifications";
@@ -141,18 +162,18 @@ beforeEach(() => {
 
 describe("initiateCheckout", () => {
   it("returns error when user is not authenticated", async () => {
-    vi.mocked(requireAuth).mockRejectedValueOnce(new Error("NEXT_REDIRECT"));
+    vi.mocked(getSession).mockResolvedValueOnce(null as unknown as ReturnType<typeof mockSession>);
 
     const result = await initiateCheckout("repair-1");
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error).toContain("unexpected error");
+      expect(result.error).toBe("You must be signed in.");
     }
   });
 
   it("returns error when repair is not found", async () => {
-    vi.mocked(requireAuth).mockResolvedValueOnce(mockSession());
+    vi.mocked(getSession).mockResolvedValueOnce(mockSession());
     vi.mocked(getRepairById).mockResolvedValueOnce(null);
 
     const result = await initiateCheckout("nonexistent");
@@ -164,7 +185,7 @@ describe("initiateCheckout", () => {
   });
 
   it("returns error when customer does not own the repair", async () => {
-    vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
+    vi.mocked(getSession).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
       mockRepair({ customerId: "user-other" }),
     );
@@ -178,7 +199,7 @@ describe("initiateCheckout", () => {
   });
 
   it("allows admin to checkout for any repair", async () => {
-    vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("admin", "admin-1"));
+    vi.mocked(getSession).mockResolvedValueOnce(mockSession("admin", "admin-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
       mockRepair({ customerId: "user-other", currentStatus: "quote_accepted", estimatedCost: 15000 }),
     );
@@ -210,7 +231,7 @@ describe("initiateCheckout", () => {
   });
 
   it("returns error when repair status is not quote_accepted", async () => {
-    vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
+    vi.mocked(getSession).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
       mockRepair({ customerId: "user-1", currentStatus: "submitted" }),
     );
@@ -224,7 +245,7 @@ describe("initiateCheckout", () => {
   });
 
   it("returns error when repair status is reviewed (quote not yet accepted)", async () => {
-    vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
+    vi.mocked(getSession).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
       mockRepair({ customerId: "user-1", currentStatus: "reviewed" }),
     );
@@ -238,7 +259,7 @@ describe("initiateCheckout", () => {
   });
 
   it("returns error when repair status is quote_sent (quote not yet accepted)", async () => {
-    vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
+    vi.mocked(getSession).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
       mockRepair({ customerId: "user-1", currentStatus: "quote_sent" }),
     );
@@ -252,7 +273,7 @@ describe("initiateCheckout", () => {
   });
 
   it("returns error when no estimated cost is set", async () => {
-    vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
+    vi.mocked(getSession).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
       mockRepair({ customerId: "user-1", currentStatus: "quote_accepted", estimatedCost: null }),
     );
@@ -266,7 +287,7 @@ describe("initiateCheckout", () => {
   });
 
   it("returns error when estimated cost is zero", async () => {
-    vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
+    vi.mocked(getSession).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
       mockRepair({ customerId: "user-1", currentStatus: "quote_accepted", estimatedCost: 0 }),
     );
@@ -280,7 +301,7 @@ describe("initiateCheckout", () => {
   });
 
   it("returns error when repair already has a completed payment", async () => {
-    vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
+    vi.mocked(getSession).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
       mockRepair({ customerId: "user-1", currentStatus: "quote_accepted", estimatedCost: 15000 }),
     );
@@ -312,7 +333,7 @@ describe("initiateCheckout", () => {
   });
 
   it("allows checkout when existing payment is pending (not completed)", async () => {
-    vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
+    vi.mocked(getSession).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
       mockRepair({ customerId: "user-1", currentStatus: "quote_accepted", estimatedCost: 15000 }),
     );
@@ -363,7 +384,7 @@ describe("initiateCheckout", () => {
   it("returns error when POLAR_PRODUCT_ID is not configured", async () => {
     delete process.env.POLAR_PRODUCT_ID;
 
-    vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
+    vi.mocked(getSession).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
       mockRepair({ customerId: "user-1", currentStatus: "quote_accepted", estimatedCost: 15000 }),
     );
@@ -378,7 +399,7 @@ describe("initiateCheckout", () => {
   });
 
   it("creates checkout session and payment record on success", async () => {
-    vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
+    vi.mocked(getSession).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
       mockRepair({ customerId: "user-1", currentStatus: "quote_accepted", estimatedCost: 25000 }),
     );
@@ -434,7 +455,7 @@ describe("initiateCheckout", () => {
   });
 
   it("notifies admin users after checkout initiation", async () => {
-    vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
+    vi.mocked(getSession).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
       mockRepair({ customerId: "user-1", currentStatus: "quote_accepted", estimatedCost: 15000 }),
     );
@@ -484,7 +505,7 @@ describe("initiateCheckout", () => {
   });
 
   it("returns error when Polar checkout creation fails", async () => {
-    vi.mocked(requireAuth).mockResolvedValueOnce(mockSession("customer", "user-1"));
+    vi.mocked(getSession).mockResolvedValueOnce(mockSession("customer", "user-1"));
     vi.mocked(getRepairById).mockResolvedValueOnce(
       mockRepair({ customerId: "user-1", currentStatus: "quote_accepted", estimatedCost: 15000 }),
     );

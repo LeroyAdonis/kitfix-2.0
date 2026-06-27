@@ -18,7 +18,31 @@ const { mocks, mockDb } = vi.hoisted(() => {
 // Module mocks
 // ---------------------------------------------------------------------------
 
-vi.mock("@/lib/auth-utils", () => ({ getSession: vi.fn() }));
+vi.mock("@/lib/auth-utils", () => {
+  const getSession = vi.fn();
+  const authenticatedAction = (fn: unknown) => {
+    return async (...args: unknown[]) => {
+      const session = await getSession();
+      if (!session) return { success: false, error: "You must be signed in." };
+      return (fn as (...args: unknown[]) => unknown)(session, ...args);
+    };
+  };
+  const authenticatedAdminAction = (fn: unknown) => {
+    return async (...args: unknown[]) => {
+      const session = await getSession();
+      if (!session || session.user.role !== "admin") return { success: false, error: "Unauthorized" };
+      return (fn as (...args: unknown[]) => unknown)(session, ...args);
+    };
+  };
+  const authenticatedRoleAction = (roles: string[], fn: unknown) => {
+    return async (...args: unknown[]) => {
+      const session = await getSession();
+      if (!session || !roles.includes(session.user.role)) return { success: false, error: "Unauthorized" };
+      return (fn as (...args: unknown[]) => unknown)(session, ...args);
+    };
+  };
+  return { getSession, authenticatedAction, authenticatedAdminAction, authenticatedRoleAction };
+});
 vi.mock("@/lib/db", () => ({ db: mockDb }));
 vi.mock("@/lib/db/queries/repairs", () => ({
   getRepairById: vi.fn(),
@@ -156,7 +180,7 @@ describe("sendQuoteAction", () => {
   it("returns error if not admin", async () => {
     vi.mocked(getSession).mockResolvedValueOnce(mockSession("customer"));
     const result = await sendQuoteAction("repair-1", 450);
-    expect(result).toEqual({ success: false, error: expect.stringContaining("admin") });
+    expect(result).toEqual({ success: false, error: "Unauthorized" });
   });
 
   it("returns error if repair not in reviewed status", async () => {
@@ -188,7 +212,7 @@ describe("acceptQuoteAction", () => {
   it("returns error if not authenticated", async () => {
     vi.mocked(getSession).mockResolvedValueOnce(null as unknown as ReturnType<typeof mockSession>);
     const result = await acceptQuoteAction("repair-1");
-    expect(result).toEqual({ success: false, error: expect.stringContaining("Auth") });
+    expect(result).toEqual({ success: false, error: "You must be signed in." });
   });
 
   it("returns error if not repair owner", async () => {

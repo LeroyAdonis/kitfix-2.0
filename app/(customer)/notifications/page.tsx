@@ -1,4 +1,4 @@
-import { requireAuth } from "@/lib/auth-utils";
+import { getSession } from "@/lib/auth-utils";
 import {
   getAllNotifications,
   getUnreadNotifications,
@@ -9,7 +9,7 @@ import { Bell } from "lucide-react";
 import { NotificationActions } from "./notification-actions";
 
 export default async function NotificationsPage() {
-  const session = await requireAuth();
+  const session = (await getSession())!;
   const [allNotifs, unreadNotifs] = await Promise.all([
     getAllNotifications(session.user.id, 1, 50),
     getUnreadNotifications(session.user.id),

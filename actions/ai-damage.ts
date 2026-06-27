@@ -1,6 +1,6 @@
 "use server";
 
-import { getSession } from "@/lib/auth-utils";
+import { authenticatedAction } from "@/lib/auth-utils";
 import type { AIDamageAssessment } from "@/types/ai";
 
 interface NVidiaVisionResponse {
@@ -22,12 +22,10 @@ const SYSTEM_PROMPT = `You are a jersey repair damage assessment expert. Analyze
 - "repairability": one of "easy", "moderate", "difficult"
 - "description": a brief 1-2 sentence description of the damage seen`;
 
-export async function analyzeDamageAction(
+export const analyzeDamageAction = authenticatedAction(async (
+  session,
   imageUrl: string,
-): Promise<{ success: true; data: AIDamageAssessment } | { success: false; error: string }> {
-  const session = await getSession();
-  if (!session) return { success: false, error: "You must be signed in." };
-
+): Promise<{ success: true; data: AIDamageAssessment } | { success: false; error: string }> => {
   if (!NVIDIA_API_KEY) {
     return { success: false, error: "AI analysis is not configured. Please set NVIDIA_API_KEY." };
   }
@@ -95,4 +93,4 @@ export async function analyzeDamageAction(
     const message = err instanceof Error ? err.message : String(err);
     return { success: false, error: message };
   }
-}
+});

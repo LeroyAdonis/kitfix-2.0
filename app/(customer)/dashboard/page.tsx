@@ -1,9 +1,9 @@
-import { requireAuth } from "@/lib/auth-utils";
+import { getSession } from "@/lib/auth-utils";
 import { getRepairsByCustomer } from "@/lib/db/queries/repairs";
 import { AnimatedDashboard } from "@/components/customer/animated-dashboard";
 
 export default async function CustomerDashboardPage() {
-  const session = await requireAuth();
+  const session = (await getSession())!;
   const repairs = await getRepairsByCustomer(session.user.id, 1, 100);
 
   const activeRepairs = repairs.filter(

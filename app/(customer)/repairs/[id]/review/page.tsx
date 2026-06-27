@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { requireAuth } from "@/lib/auth-utils";
+import { getSession } from "@/lib/auth-utils";
 import { getRepairById } from "@/lib/db/queries/repairs";
 import { getReviewByRepair } from "@/lib/db/queries/reviews";
 import { ReviewForm } from "@/components/forms/review-form";
@@ -8,7 +8,7 @@ export default async function ReviewPage(props: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await props.params;
-  const session = await requireAuth();
+  const session = (await getSession())!;
   const repair = await getRepairById(id);
 
   if (!repair) notFound();

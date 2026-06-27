@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { requireAuth } from "@/lib/auth-utils";
+import { getSession } from "@/lib/auth-utils";
 import { getRepairById } from "@/lib/db/queries/repairs";
 import { getPaymentsByRepair } from "@/lib/db/queries/payments";
 import { formatCurrency } from "@/lib/utils";
@@ -11,7 +11,7 @@ interface PaymentPageProps {
 
 export default async function PaymentPage({ params }: PaymentPageProps) {
   const { id } = await params;
-  const session = await requireAuth();
+  const session = (await getSession())!;
 
   const repair = await getRepairById(id);
   if (!repair) {

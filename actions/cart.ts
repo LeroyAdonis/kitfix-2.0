@@ -2,7 +2,7 @@
 
 import { and, eq } from "drizzle-orm";
 
-import { getSession } from "@/lib/auth-utils";
+import { authenticatedAction } from "@/lib/auth-utils";
 import { db } from "@/lib/db";
 import { cartItems } from "@/lib/db/schema";
 import { checkStock, getProductById } from "@/lib/db/queries/products";
@@ -21,15 +21,11 @@ async function getCartItemOrError(itemId: string, userId: string): Promise<{ err
   return { item: items[0] };
 }
 
-export async function updateCartItem(
+export const updateCartItem = authenticatedAction(async (
+  session,
   itemId: string,
   quantity: number,
-): Promise<ActionResult<{ id: string; quantity: number }>> {
-  const session = await getSession();
-  if (!session) {
-    return { success: false, error: "You must be signed in." };
-  }
-
+): Promise<ActionResult<{ id: string; quantity: number }>> => {
   const result = await getCartItemOrError(itemId, session.user.id);
   if ("error" in result) {
     return { success: false, error: result.error };
@@ -46,14 +42,11 @@ export async function updateCartItem(
     .where(eq(cartItems.id, itemId));
 
   return { success: true, data: { id: itemId, quantity } };
-}
+});
 
-export async function getCartTotal(): Promise<ActionResult<{ itemTotal: number; shippingTotal: number; grandTotal: number }>> {
-  const session = await getSession();
-  if (!session) {
-    return { success: false, error: "You must be signed in." };
-  }
-
+export const getCartTotal = authenticatedAction(async (
+  session,
+): Promise<ActionResult<{ itemTotal: number; shippingTotal: number; grandTotal: number }>> => {
   const items = await db
     .select()
     .from(cartItems)
@@ -71,16 +64,13 @@ export async function getCartTotal(): Promise<ActionResult<{ itemTotal: number; 
   const grandTotal = itemTotal + shippingTotal;
 
   return { success: true, data: { itemTotal, shippingTotal, grandTotal } };
-}
+});
 
-export async function getCart(): Promise<
+export const getCart = authenticatedAction(async (
+  session,
+): Promise<
   ActionResult<{ items: Array<{ id: string; productId: string; variantId: string; quantity: number; personalization: Record<string, string> | null }> }>
-> {
-  const session = await getSession();
-  if (!session) {
-    return { success: false, error: "You must be signed in." };
-  }
-
+> => {
   const items = await db
     .select()
     .from(cartItems)
@@ -98,16 +88,12 @@ export async function getCart(): Promise<
       })),
     },
   };
-}
+});
 
-export async function removeFromCart(
+export const removeFromCart = authenticatedAction(async (
+  session,
   itemId: string,
-): Promise<ActionResult<null>> {
-  const session = await getSession();
-  if (!session) {
-    return { success: false, error: "You must be signed in." };
-  }
-
+): Promise<ActionResult<null>> => {
   const result = await getCartItemOrError(itemId, session.user.id);
   if ("error" in result) {
     return { success: false, error: result.error };
@@ -115,19 +101,17 @@ export async function removeFromCart(
 
   await db.delete(cartItems).where(eq(cartItems.id, itemId));
   return { success: true, data: null };
-}
+});
 
-export async function addToCart(input: {
-  productId: string;
-  variantId: string;
-  quantity: number;
-  personalization?: Record<string, string>;
-}): Promise<ActionResult<{ id: string; productId: string; variantId: string; quantity: number; personalization: Record<string, string> | null }>> {
-  const session = await getSession();
-  if (!session) {
-    return { success: false, error: "You must be signed in." };
-  }
-
+export const addToCart = authenticatedAction(async (
+  session,
+  input: {
+    productId: string;
+    variantId: string;
+    quantity: number;
+    personalization?: Record<string, string>;
+  },
+): Promise<ActionResult<{ id: string; productId: string; variantId: string; quantity: number; personalization: Record<string, string> | null }>> => {
   const product = await getProductById(input.productId);
   if (!product || !product.isActive) {
     return { success: false, error: "Product is not available." };
@@ -195,4 +179,4 @@ export async function addToCart(input: {
       personalization: item.personalization as Record<string, string> | null,
     },
   };
-}
+});

@@ -3,7 +3,7 @@
 import { eq } from "drizzle-orm";
 
 import { polar } from "@/lib/polar";
-import { requireAuth } from "@/lib/auth-utils";
+import { authenticatedAction } from "@/lib/auth-utils";
 import { db } from "@/lib/db";
 import { user } from "@/lib/db/schema";
 import { getRepairById } from "@/lib/db/queries/repairs";
@@ -21,12 +21,11 @@ import type { ActionResult } from "@/types";
  *  - Repair has an estimatedCost (set by admin during review)
  *  - No completed payment already exists for this repair
  */
-export async function initiateCheckout(
+export const initiateCheckout = authenticatedAction(async (
+  session,
   repairRequestId: string,
-): Promise<ActionResult<{ checkoutUrl: string }>> {
+): Promise<ActionResult<{ checkoutUrl: string }>> => {
   try {
-    // 1. Authenticate
-    const session = await requireAuth();
     const userId = session.user.id;
     const userRole = session.user.role;
 
@@ -135,4 +134,4 @@ export async function initiateCheckout(
       error: "An unexpected error occurred while creating the checkout session.",
     };
   }
-}
+});

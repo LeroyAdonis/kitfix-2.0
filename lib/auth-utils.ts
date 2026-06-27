@@ -1,4 +1,3 @@
-import { auth } from "./auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "./db";
@@ -82,4 +81,56 @@ export async function requireOwnership(resourceOwnerId: string) {
     redirect("/");
   }
   return session;
+}
+
+type AuthSession = NonNullable<Awaited<ReturnType<typeof getSession>>>;
+
+/**
+ * Wraps a server action with authentication.
+ * The wrapped function receives the session as the first argument.
+ * Returns { success: false, error: "You must be signed in." } if no session.
+ */
+export function authenticatedAction<TArgs extends unknown[], TReturn extends { success: boolean }>(
+  fn: (session: AuthSession, ...args: TArgs) => Promise<TReturn>,
+) {
+  return async (...args: TArgs): Promise<TReturn> => {
+    const session = await getSession();
+    if (!session) {
+      return { success: false, error: "You must be signed in." } as unknown as TReturn;
+    }
+    return fn(session, ...args);
+  };
+}
+
+/**
+ * Wraps a server action with admin authentication.
+ * Returns { success: false, error: "Unauthorized" } if not admin.
+ */
+export function authenticatedAdminAction<TArgs extends unknown[], TReturn extends { success: boolean }>(
+  fn: (session: AuthSession, ...args: TArgs) => Promise<TReturn>,
+) {
+  return async (...args: TArgs): Promise<TReturn> => {
+    const session = await getSession();
+    if (!session || session.user.role !== "admin") {
+      return { success: false, error: "Unauthorized" } as unknown as TReturn;
+    }
+    return fn(session, ...args);
+  };
+}
+
+/**
+ * Wraps a server action with role-based authentication.
+ * Returns { success: false, error: "Unauthorized" } if the user's role is not in the allowed list.
+ */
+export function authenticatedRoleAction<TArgs extends unknown[], TReturn extends { success: boolean }>(
+  roles: string[],
+  fn: (session: AuthSession, ...args: TArgs) => Promise<TReturn>,
+) {
+  return async (...args: TArgs): Promise<TReturn> => {
+    const session = await getSession();
+    if (!session || !roles.includes(session.user.role)) {
+      return { success: false, error: "Unauthorized" } as unknown as TReturn;
+    }
+    return fn(session, ...args);
+  };
 }

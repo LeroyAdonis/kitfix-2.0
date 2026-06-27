@@ -4,9 +4,31 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 // Mocks
 // ---------------------------------------------------------------------------
 
-vi.mock("@/lib/auth-utils", () => ({
-  getSession: vi.fn(),
-}));
+vi.mock("@/lib/auth-utils", () => {
+  const getSession = vi.fn();
+  const authenticatedAction = (fn: unknown) => {
+    return async (...args: unknown[]) => {
+      const session = await getSession();
+      if (!session) return { success: false, error: "You must be signed in." };
+      return (fn as (...args: unknown[]) => unknown)(session, ...args);
+    };
+  };
+  const authenticatedAdminAction = (fn: unknown) => {
+    return async (...args: unknown[]) => {
+      const session = await getSession();
+      if (!session || session.user.role !== "admin") return { success: false, error: "Unauthorized" };
+      return (fn as (...args: unknown[]) => unknown)(session, ...args);
+    };
+  };
+  const authenticatedRoleAction = (roles: string[], fn: unknown) => {
+    return async (...args: unknown[]) => {
+      const session = await getSession();
+      if (!session || !roles.includes(session.user.role)) return { success: false, error: "Unauthorized" };
+      return (fn as (...args: unknown[]) => unknown)(session, ...args);
+    };
+  };
+  return { getSession, authenticatedAction, authenticatedAdminAction, authenticatedRoleAction };
+});
 
 vi.mock("@/lib/db/queries/notifications", () => ({
   markAsRead: vi.fn(),
@@ -77,7 +99,7 @@ describe("markNotificationReadAction", () => {
 
     const result = await markNotificationReadAction("notif-1");
 
-    expect(result).toEqual({ success: false, error: "Unauthorized" });
+    expect(result).toEqual({ success: false, error: "You must be signed in." });
     expect(markAsRead).not.toHaveBeenCalled();
   });
 
@@ -119,7 +141,7 @@ describe("markAllNotificationsReadAction", () => {
 
     const result = await markAllNotificationsReadAction();
 
-    expect(result).toEqual({ success: false, error: "Unauthorized" });
+    expect(result).toEqual({ success: false, error: "You must be signed in." });
     expect(markAllAsRead).not.toHaveBeenCalled();
   });
 
@@ -152,7 +174,7 @@ describe("getUnreadNotificationsAction", () => {
 
     const result = await getUnreadNotificationsAction();
 
-    expect(result).toEqual({ success: false, error: "Unauthorized" });
+    expect(result).toEqual({ success: false, error: "You must be signed in." });
     expect(getUnreadNotifications).not.toHaveBeenCalled();
   });
 
