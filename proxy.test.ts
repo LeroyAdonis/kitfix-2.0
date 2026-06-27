@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -23,7 +24,7 @@ describe("proxy", () => {
     return {
       nextUrl: { pathname },
       url: url.toString(),
-      headers: new Map([cookie ? ["cookie", cookie] : []]),
+      headers: new Map<string, string>(cookie ? [["cookie", cookie]] : []),
     } as unknown as NextRequest;
   };
 

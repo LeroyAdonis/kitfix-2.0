@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // ---------------------------------------------------------------------------
@@ -107,6 +108,7 @@ function mockSession(role: "customer" | "admin" | "technician" = "customer", use
       updatedAt: new Date(),
       impersonatedBy: null,
     },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any;
 }
 

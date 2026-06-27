@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const { mocks, mockDb } = vi.hoisted(() => {
@@ -78,6 +79,7 @@ function mockSession(userId = "user-1") {
       ipAddress: null, userAgent: null,
       createdAt: new Date(), updatedAt: new Date(), impersonatedBy: null,
     },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any;
 }
 
