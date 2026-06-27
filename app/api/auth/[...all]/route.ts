@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { randomBytes, scryptSync, timingSafeEqual } from "crypto";
+import { randomBytes, scrypt, timingSafeEqual } from "crypto";
+import { promisify } from "util";
 import bcrypt from "bcryptjs";
+
+const scryptAsync = promisify(scrypt);
 import { eq, and, gt } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { user, session as sessionTable, account } from "@/lib/db/schema";
@@ -21,31 +24,29 @@ function generateId(): string {
  * If it matches, re-hash with bcrypt and return the new hash.
  * Returns { valid: true, newHash?: string } or { valid: false }.
  */
-function verifyLegacyPassword(storedHash: string, password: string): { valid: boolean; newHash?: string } {
-  // Better Auth format: hexSalt:hexKey
+async function verifyLegacyPassword(storedHash: string, password: string): Promise<{ valid: boolean; newHash?: string; debug?: string }> {
   const parts = storedHash.split(":");
-  if (parts.length !== 2) return { valid: false };
+  if (parts.length !== 2) return { valid: false, debug: `split failed: ${parts.length} parts` };
   
   const [saltHex, keyHex] = parts;
-  if (!saltHex || !keyHex || saltHex.length !== 32 || !/^[0-9a-f]+$/i.test(saltHex)) {
-    return { valid: false };
-  }
+  if (!saltHex || !keyHex) return { valid: false, debug: "empty salt or key" };
   
   try {
     const salt = Buffer.from(saltHex, "hex");
-    const derived = scryptSync(password.normalize("NFKC"), salt, BA_SCRYPT.dkLen, BA_SCRYPT);
+    const derived = await scryptAsync(password.normalize("NFKC"), salt, BA_SCRYPT.dkLen, BA_SCRYPT) as Buffer;
     const expectedKey = Buffer.from(keyHex, "hex");
-    if (derived.length !== expectedKey.length) return { valid: false };
+    if (derived.length !== expectedKey.length) {
+      return { valid: false, debug: `length mismatch: ${derived.length} vs ${expectedKey.length}` };
+    }
     
     if (timingSafeEqual(derived, expectedKey)) {
-      const newHash = bcrypt.hashSync(password, SALT_ROUNDS);
+      const newHash = await bcrypt.hash(password, SALT_ROUNDS);
       return { valid: true, newHash };
     }
-  } catch {
-    // scrypt failed — not a valid legacy password
+    return { valid: false, debug: "hash mismatch" };
+  } catch (e: any) {
+    return { valid: false, debug: `scrypt error: ${e.message || e}` };
   }
-  
-  return { valid: false };
 }
 
 function getCookieToken(request: NextRequest): string | null {
@@ -146,14 +147,11 @@ async function handleSignIn(request: NextRequest): Promise<NextResponse> {
     const passwordValid = await bcrypt.compare(password, accounts[0].password);
     if (!passwordValid) {
       // Try legacy Better Auth scrypt format
-      const legacy = verifyLegacyPassword(accounts[0].password, password);
+      const legacy = await verifyLegacyPassword(accounts[0].password, password);
       if (!legacy.valid) {
-        // DEBUG: include hash format in error
-        const hashPreview = accounts[0].password.slice(0, 20) + "...";
-        const isLegacyFormat = accounts[0].password.includes(":");
         return NextResponse.json({ 
           error: "Invalid email or password",
-          _debug: { hashPreview, isLegacyFormat, hashLen: accounts[0].password.length }
+          _debug: { hashPreview: accounts[0].password.slice(0, 20) + "...", legacyError: legacy.debug }
         }, { status: 401 });
       }
       // Migrate to bcrypt
