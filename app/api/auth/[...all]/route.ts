@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomBytes, scrypt, timingSafeEqual } from "crypto";
-import { promisify } from "util";
 import bcrypt from "bcryptjs";
-
-const scryptAsync = promisify(scrypt);
 import { eq, and, gt } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { user, session as sessionTable, account } from "@/lib/db/schema";
@@ -33,7 +30,16 @@ async function verifyLegacyPassword(storedHash: string, password: string): Promi
   
   try {
     const salt = Buffer.from(saltHex, "hex");
-    const derived = await scryptAsync(password.normalize("NFKC"), salt, BA_SCRYPT.dkLen, BA_SCRYPT) as Buffer;
+    const derived = await new Promise<Buffer>((resolve, reject) => {
+      scrypt(password.normalize("NFKC"), salt, BA_SCRYPT.dkLen, {
+        N: BA_SCRYPT.N,
+        r: BA_SCRYPT.r,
+        p: BA_SCRYPT.p,
+      }, (err, key) => {
+        if (err) reject(err);
+        else resolve(key as Buffer);
+      });
+    });
     const expectedKey = Buffer.from(keyHex, "hex");
     if (derived.length !== expectedKey.length) {
       return { valid: false, debug: `length mismatch: ${derived.length} vs ${expectedKey.length}` };
