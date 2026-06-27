@@ -64,10 +64,11 @@ import { checkStock, getActiveProducts, getProductBySlug, getProductById, getPro
 import { addToCart, getCart, removeFromCart, updateCartItem } from "../cart";
 
 function mockSession(userId = "user-1") {
+  const role = "customer" as const;
   return {
     user: {
       id: userId, name: "Test User", email: "test@example.com",
-      role: "customer", emailVerified: true, image: null,
+      role, emailVerified: true, image: null,
       banned: false, banReason: null, banExpires: null,
       createdAt: new Date(), updatedAt: new Date(),
     },
@@ -77,7 +78,7 @@ function mockSession(userId = "user-1") {
       ipAddress: null, userAgent: null,
       createdAt: new Date(), updatedAt: new Date(), impersonatedBy: null,
     },
-  };
+  } as any;
 }
 
 const mockProduct = {

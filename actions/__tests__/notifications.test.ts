@@ -34,7 +34,7 @@ import {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function mockSession(role = "customer", userId = "user-1") {
+function mockSession(role: "customer" | "admin" | "technician" = "customer", userId = "user-1") {
   return {
     user: {
       id: userId,

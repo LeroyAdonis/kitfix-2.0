@@ -66,7 +66,7 @@ import { addToCart } from "../cart";
 // Helpers
 // ---------------------------------------------------------------------------
 
-function mockSession(userId = "user-1") {
+function mockSession(role: "customer" | "admin" | "technician" = "customer", userId = "user-1") {
   return {
     user: {
       id: userId,
@@ -92,7 +92,7 @@ function mockSession(userId = "user-1") {
       updatedAt: new Date(),
       impersonatedBy: null,
     },
-  };
+  } as any;
 }
 
 // ---------------------------------------------------------------------------

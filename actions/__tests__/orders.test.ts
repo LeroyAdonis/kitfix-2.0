@@ -81,7 +81,7 @@ import { checkStock, decrementStock, getProductById } from "@/lib/db/queries/pro
 // Helpers
 // ---------------------------------------------------------------------------
 
-function mockSession(userId = "user-1") {
+function mockSession(role: "customer" | "admin" | "technician" = "customer", userId = "user-1") {
   return {
     user: {
       id: userId,
@@ -107,7 +107,7 @@ function mockSession(userId = "user-1") {
       updatedAt: new Date(),
       impersonatedBy: null,
     },
-  };
+  } as any;
 }
 
 function mockCartItem(overrides: Record<string, unknown> = {}) {
@@ -310,7 +310,7 @@ describe("getOrderById", () => {
   });
 
   it("returns error for another user's order", async () => {
-    vi.mocked(getSession).mockResolvedValueOnce(mockSession("user-2"));
+    vi.mocked(getSession).mockResolvedValueOnce(mockSession("customer", "user-2"));
     mocks.selectData.mockResolvedValueOnce([]);
 
     const { getOrderById } = await import("../orders");

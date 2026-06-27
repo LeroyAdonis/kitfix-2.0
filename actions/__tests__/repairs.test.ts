@@ -54,7 +54,7 @@ import { createRepairAction, cancelRepairAction } from "../repairs";
 // Helpers
 // ---------------------------------------------------------------------------
 
-function mockSession(role = "customer", userId = "user-1", name = "Test User") {
+function mockSession(role: "customer" | "admin" | "technician" = "customer", userId = "user-1", name = "Test User") {
   return {
     user: {
       id: userId,
