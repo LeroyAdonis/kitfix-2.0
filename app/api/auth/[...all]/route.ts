@@ -44,8 +44,9 @@ async function verifyLegacyPassword(storedHash: string, password: string): Promi
       return { valid: true, newHash };
     }
     return { valid: false, debug: "hash mismatch" };
-  } catch (e: any) {
-    return { valid: false, debug: `scrypt error: ${e.message || e}` };
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return { valid: false, debug: `scrypt error: ${msg}` };
   }
 }
 
