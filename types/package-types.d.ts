@@ -6,7 +6,6 @@
  * framer-motion v12.34.4  — declares types: dist/types/index.d.ts → not shipped
  * better-auth  v1.5.0     — declares types: ./dist/...d.mts → not shipped
  */
-
 // ---------------------------------------------------------------------------
 // framer-motion
 // ---------------------------------------------------------------------------
@@ -36,68 +35,6 @@ declare module "framer-motion" {
   export type MotionValue<T> = any;
   export function useMotionValueEvent(value: any, event: string, callback: any): void;
   export default any;
-}
-
-// ---------------------------------------------------------------------------
-// better-auth — server
-// ---------------------------------------------------------------------------
-declare module "better-auth" {
-  export function betterAuth(config?: any): any;
-  export type BetterAuthOptions = any;
-}
-
-declare module "better-auth/adapters/drizzle" {
-  export function drizzleAdapter(db: any, schema: any): any;
-}
-
-declare module "better-auth/plugins" {
-  export const admin: any;
-  export const bearer: any;
-  export const apiKey: any;
-  export const twoFactor: any;
-  export const username: any;
-  export const magicLink: any;
-  export const emailOTP: any;
-  export const phoneNumber: any;
-  export const anonymous: any;
-  export const multiSession: any;
-  export const organization: any;
-}
-
-declare module "better-auth/next-js" {
-  export function nextCookies(): any;
-  export function toNextJsHandler(auth: any): any;
-}
-
-declare module "better-auth/crypto" {
-  export function generateId(length?: number): string;
-  export function generateSecret(length?: number): string;
-  export function hashPassword(password: string): Promise<string>;
-  export function verifyPassword(password: string, hash: string): Promise<boolean>;
-}
-
-// ---------------------------------------------------------------------------
-// better-auth — client
-// ---------------------------------------------------------------------------
-declare module "better-auth/react" {
-  export function createAuthClient(config?: any): any;
-  export type AuthClient = any;
-}
-
-declare module "better-auth/client/plugins" {
-  export const adminClient: any;
-  export const polarClient: any;
-}
-
-// ---------------------------------------------------------------------------
-// @polar-sh/better-auth
-// ---------------------------------------------------------------------------
-declare module "@polar-sh/better-auth" {
-  export const polar: any;
-  export const checkout: any;
-  export const portal: any;
-  export const webhooks: any;
-  export const polarClient: any;
 }
 
 // ---------------------------------------------------------------------------

@@ -23,16 +23,16 @@ export default function SignInPage() {
     setLoading(true);
 
     try {
-      const result = await signIn.email({ email, password });
+      const result = await signIn({ email, password });
       if (result.error) {
-        setError(result.error.message ?? "Sign-in failed. Check your credentials.");
+        setError(result.error ?? "Sign-in failed. Check your credentials.");
       } else {
         // Set the session cookie synchronously via JavaScript before redirecting.
         // This avoids the race condition where HTTP Set-Cookie from fetch
         // doesn't commit in time for the subsequent full-page navigation.
-        const token = result.data?.token;
-        if (token) {
-          document.cookie = `better-auth.session_token=${token};path=/;max-age=604800;SameSite=Lax`;
+        const sessionToken = result.data?.session?.token;
+        if (sessionToken) {
+          document.cookie = `better-auth.session_token=${sessionToken};path=/;max-age=604800;SameSite=Lax`;
         }
         window.location.href = callbackUrl;
       }

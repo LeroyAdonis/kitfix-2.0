@@ -52,16 +52,16 @@ export default function SignUpPage() {
     setLoading(true);
 
     try {
-      const result = await signUp.email({ name, email, password });
+      const result = await signUp({ name, email, password });
       if (result.error) {
-        setError(result.error.message ?? "Sign-up failed. Please try again.");
+        setError(result.error ?? "Sign-up failed. Please try again.");
       } else {
         // Set the session cookie synchronously via JavaScript before redirecting.
         // This avoids the race condition where HTTP Set-Cookie from fetch
         // doesn't commit in time for the subsequent full-page navigation.
-        const token = result.data?.token;
-        if (token) {
-          document.cookie = `better-auth.session_token=${token};path=/;max-age=604800;SameSite=Lax`;
+        const sessionToken = result.data?.session?.token;
+        if (sessionToken) {
+          document.cookie = `better-auth.session_token=${sessionToken};path=/;max-age=604800;SameSite=Lax`;
         }
         window.location.href = "/dashboard";
       }
