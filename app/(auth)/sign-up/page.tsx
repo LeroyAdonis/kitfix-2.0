@@ -63,7 +63,7 @@ export default function SignUpPage() {
         if (token) {
           document.cookie = `better-auth.session_token=${token};path=/;max-age=604800;SameSite=Lax`;
         }
-        window.location.href = "/";
+        window.location.href = "/dashboard";
       }
     } catch {
       setError("An unexpected error occurred. Please try again.");
