@@ -77,10 +77,12 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/dashboard",
+    "/repairs",
     "/repairs/(.*)",
     "/payments",
     "/profile",
     "/notifications",
+    "/admin",
     "/admin/(.*)",
   ],
 };
