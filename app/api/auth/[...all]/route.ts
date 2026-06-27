@@ -9,7 +9,7 @@ import { createSessionToken, verifySessionToken } from "@/lib/auth-jwt";
 const SALT_ROUNDS = 10;
 
 // Better Auth scrypt config (for migrating existing passwords)
-const BA_SCRYPT = { N: 16384, r: 16, p: 1, dkLen: 64 } as const;
+const BA_SCRYPT = { N: 16384, r: 16, p: 1, dkLen: 64, maxmem: 128 * 16384 * 16 * 2 } as const;
 
 function generateId(): string {
   return randomBytes(16).toString("hex");
@@ -35,6 +35,7 @@ async function verifyLegacyPassword(storedHash: string, password: string): Promi
         N: BA_SCRYPT.N,
         r: BA_SCRYPT.r,
         p: BA_SCRYPT.p,
+        maxmem: BA_SCRYPT.maxmem,
       }, (err, key) => {
         if (err) reject(err);
         else resolve(key as Buffer);
