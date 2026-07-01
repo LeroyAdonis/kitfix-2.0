@@ -1,8 +1,10 @@
 # KitFix 2.0 — Copilot Instructions
 
+> **Note:** This project uses Next.js 16 — APIs and conventions may differ from your training data. Check `node_modules/next/dist/docs/` before writing any code.
+
 ## What is this?
 
-KitFix 2.0 is a jersey repair service PWA. Customers submit repair requests with photos, track orders through a 5-stage pipeline (submitted → reviewed → in_repair → quality_check → shipped), and pay via Polar.sh. Admins and technicians manage work via a dashboard. AI damage assessment runs client-side via Puter.js.
+KitFix 2.0 is a jersey repair service PWA. Customers submit repair requests with photos, track orders through a **7-stage pipeline** (`submitted → reviewed → quote_sent → quote_accepted → in_repair → quality_check → shipped`), and pay via Polar.sh. Admins and technicians manage work via a dashboard. AI damage assessment runs client-side via Puter.js.
 
 ## Stack
 
@@ -19,16 +21,21 @@ KitFix 2.0 is a jersey repair service PWA. Customers submit repair requests with
 
 ```bash
 npm run dev          # Start dev server
-npm run build        # Production build (clean .next first if ENOENT pages-manifest.json)
+npm run build        # Production build (uses CSS_TRANSFORMER_WASM=true internally)
 npm run lint         # ESLint (next/core-web-vitals + typescript)
 npm run typecheck    # tsc --noEmit
-npm run test:run     # Run all tests (vitest)
+npm run test:run     # Run all Vitest tests once
 npx vitest run path/to/file.test.ts          # Run a single test file
 npx vitest run -t "test name"                # Run a single test by name
+npm run test:e2e     # Run Playwright E2E tests
 npm run db:generate  # Generate Drizzle migrations
-npm run db:push      # Push schema to database
+npm run db:migrate   # Apply migrations
+npm run db:push      # Push schema to database (dev only)
+npm run db:seed      # Seed test data (admin + customer + repairs)
 npm run db:studio    # Open Drizzle Studio
 ```
+
+CI runs lint → typecheck → test → build on every push to `main`.
 
 ## Architecture
 
@@ -39,6 +46,7 @@ The app uses Next.js route groups for role-based layouts:
 - `(auth)/` — Sign-in, sign-up, forgot-password, verify-email (split-panel layout, no auth required)
 - `(customer)/` — Dashboard, repairs, payments, profile, notifications (requires auth via `requireAuth()`)
 - `(admin)/admin/` — Admin dashboard with sidebar (requires admin role via `requireRole(["admin"])`)
+- `(store)/` — E-commerce storefront — products, cart, checkout, orders (**under construction**)
 
 Both `(customer)` and `(admin)` layouts export `dynamic = "force-dynamic"` to prevent static prerendering.
 
@@ -68,9 +76,19 @@ type ActionResult<T> =
 
 ### Environment variables
 
-Validated lazily via Zod in `lib/env.ts`. Validation is skipped when `SKIP_ENV_VALIDATION=1` or `NODE_ENV=test`. Required vars: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, `POLAR_PRODUCT_ID`, `BLOB_READ_WRITE_TOKEN`, `NEXT_PUBLIC_APP_URL`.
+Validated lazily via Zod in `lib/env.ts`. Validation is skipped when `SKIP_ENV_VALIDATION=1` or `NODE_ENV=test`. Required vars: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, `POLAR_PRODUCT_ID`, `BLOB_READ_WRITE_TOKEN`, `NEXT_PUBLIC_APP_URL`, `TCG_API_KEY` (Courier Guy).
 
-## Conventions
+### Domain types
+
+Import inferred Drizzle types from `@/types` (not directly from `@/lib/db/schema`). `types/index.ts` re-exports all `$inferSelect`/`$inferInsert` types plus `ActionResult<T>`, `RepairStatus`, `UserRole`, etc.
+
+```typescript
+import type { RepairRequest, ActionResult, RepairStatus } from "@/types";
+```
+
+### PWA
+
+The service worker lives in `public/sw.js` and is registered by `ServiceWorkerRegistrar` (client component) in production. The project does **not** use `next-pwa` (incompatible with Next.js 16 / Turbopack).
 
 ### Path alias
 
