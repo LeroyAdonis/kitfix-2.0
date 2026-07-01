@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { db } from "@/lib/db";
-import { session as sessionTable } from "@/lib/db/schema";
-import { eq, and, gt } from "drizzle-orm";
+import { jwtVerify } from "jose";
 
 const PROTECTED_PATTERNS = [
   "/dashboard",
@@ -33,6 +31,10 @@ function getSessionToken(request: NextRequest): string | null {
   return cookies["better-auth.session_token"] ?? null;
 }
 
+const SECRET = new TextEncoder().encode(
+  process.env.BETTER_AUTH_SECRET || "kitfix-dev-secret-change-in-production",
+);
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -49,28 +51,13 @@ export async function proxy(request: NextRequest) {
   }
 
   try {
-    const sessions = await db
-      .select()
-      .from(sessionTable)
-      .where(
-        and(
-          eq(sessionTable.token, token),
-          gt(sessionTable.expiresAt, new Date())
-        )
-      )
-      .limit(1);
-
-    if (sessions.length === 0) {
-      const callbackUrl = encodeURIComponent(pathname);
-      return NextResponse.redirect(
-        new URL(`/sign-in?callbackUrl=${callbackUrl}`, request.url)
-      );
-    }
-
+    await jwtVerify(token, SECRET);
     return NextResponse.next();
   } catch {
-    // DB error — let request through to the page (page-level auth will handle)
-    return NextResponse.next();
+    const callbackUrl = encodeURIComponent(pathname);
+    return NextResponse.redirect(
+      new URL(`/sign-in?callbackUrl=${callbackUrl}`, request.url)
+    );
   }
 }
 
