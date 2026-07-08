@@ -11,6 +11,11 @@ const PROTECTED_PATTERNS = [
   "/notifications",
   "/admin",
   "/admin/(.*)",
+  "/shop",
+  "/shop/(.*)",
+  "/checkout",
+  "/cart",
+  "/orders",
 ];
 
 function isProtected(pathname: string): boolean {
@@ -51,8 +56,13 @@ export async function proxy(request: NextRequest) {
   }
 
   try {
-    await jwtVerify(token, SECRET);
-    return NextResponse.next();
+    const { payload } = await jwtVerify(token, SECRET);
+    const response = NextResponse.next();
+    if (payload.userId) response.headers.set("x-user-id", payload.userId as string);
+    if (payload.name) response.headers.set("x-user-name", payload.name as string);
+    if (payload.role) response.headers.set("x-user-role", payload.role as string);
+    if (payload.sessionId) response.headers.set("x-session-id", payload.sessionId as string);
+    return response;
   } catch {
     const callbackUrl = encodeURIComponent(pathname);
     return NextResponse.redirect(
@@ -71,5 +81,10 @@ export const config = {
     "/notifications",
     "/admin",
     "/admin/(.*)",
+    "/shop",
+    "/shop/(.*)",
+    "/checkout",
+    "/cart",
+    "/orders",
   ],
 };

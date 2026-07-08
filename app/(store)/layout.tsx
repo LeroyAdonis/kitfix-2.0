@@ -1,13 +1,18 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Store } from "lucide-react";
 
 import { CartBadge } from "@/components/store/CartBadge";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AccentPicker } from "@/components/accent-picker";
+import { getSessionFromHeaders } from "@/lib/auth-utils";
 
 export const dynamic = "force-dynamic";
 
-export default function StoreLayout({ children }: { children: React.ReactNode }) {
+export default async function StoreLayout({ children }: { children: React.ReactNode }) {
+  const session = await getSessionFromHeaders();
+  if (!session) redirect("/sign-in");
+
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 border-b border-color-border bg-bg-deep/90 backdrop-blur-md">

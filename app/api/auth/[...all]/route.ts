@@ -101,11 +101,12 @@ async function handleSignUp(request: NextRequest): Promise<NextResponse> {
     });
 
     const sessionId = generateId();
-    const jwtToken = await createSessionToken({ userId, role: "customer", sessionId });
+    const userName = name || email.split("@")[0];
+    const jwtToken = await createSessionToken({ userId, role: "customer", sessionId, name: userName });
 
     const response = NextResponse.json({
       token: jwtToken,
-      user: { id: userId, name: name || email.split("@")[0], email, role: "customer" },
+      user: { id: userId, name: userName, email, role: "customer" },
     });
     response.cookies.set("better-auth.session_token", jwtToken, {
       httpOnly: true,
@@ -184,6 +185,7 @@ async function handleSignIn(request: NextRequest): Promise<NextResponse> {
       userId: userRecord.id,
       role: userRecord.role,
       sessionId,
+      name: userRecord.name || userRecord.email.split("@")[0],
     });
 
     const response = NextResponse.json({

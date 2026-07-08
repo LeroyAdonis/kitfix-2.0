@@ -74,17 +74,13 @@ describe("proxy", () => {
   });
 
   it("ALLOWS /dashboard when valid session cookie exists", async () => {
-    // Mock the DB chain: db.select().from().where().limit()
-    const mockWhere = vi.fn().mockReturnValue([{ userId: "u1", token: "abc" }]);
-    const mockFrom = vi.fn().mockReturnValue({ where: mockWhere });
-    const mockSelect = vi.fn().mockReturnValue({ from: mockFrom });
-
-    const { db } = await import("@/lib/db");
-    (db as any).select = mockSelect;
+    // Create a real signed JWT for the test
+    const { createSessionToken } = await import("@/lib/auth-jwt");
+    const token = await createSessionToken({ userId: "u1", role: "customer", sessionId: "s1", name: "Test User" });
 
     const req = makeRequest(
       "/dashboard",
-      "better-auth.session_token=abc"
+      `better-auth.session_token=${token}`
     );
     const res = await proxy(req);
 

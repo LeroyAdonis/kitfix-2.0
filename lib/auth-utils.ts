@@ -48,6 +48,19 @@ export async function getSession() {
   }
 }
 
+export async function getSessionFromHeaders() {
+  const hdrs = await headers();
+  const userId = hdrs.get("x-user-id");
+  const userName = hdrs.get("x-user-name");
+  const userRole = hdrs.get("x-user-role");
+  const sessionId = hdrs.get("x-session-id");
+  if (!userId) return null;
+  return {
+    user: { id: userId, name: userName, role: userRole } as any,
+    session: { userId, id: sessionId } as any,
+  };
+}
+
 export async function requireAuth() {
   const session = await getSession();
   if (!session) redirect("/sign-in");

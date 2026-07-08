@@ -12,6 +12,7 @@ export interface JWTPayload {
   userId: string;
   role: string;
   sessionId: string;
+  name?: string;
 }
 
 export async function createSessionToken(payload: JWTPayload): Promise<string> {
@@ -29,6 +30,7 @@ export async function verifySessionToken(token: string): Promise<JWTPayload | nu
       userId: payload.userId as string,
       role: payload.role as string,
       sessionId: payload.sessionId as string,
+      name: payload.name as string | undefined,
     };
   } catch {
     return null;
