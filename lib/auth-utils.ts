@@ -55,8 +55,10 @@ export async function getSessionFromHeaders() {
   const userRole = hdrs.get("x-user-role");
   const sessionId = hdrs.get("x-session-id");
   if (!userId) return null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return {
     user: { id: userId, name: userName, role: userRole } as any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     session: { userId, id: sessionId } as any,
   };
 }
