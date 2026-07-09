@@ -77,8 +77,8 @@ export default function SignUpPage() {
       <div className="card-base bg-surface p-8 shadow-xl">
         <div className="mb-8 text-center">
           {/* Brand accent mark */}
-          <div className="mx-auto mb-5 flex size-10 items-center justify-center rounded-full bg-accent/10">
-            <div className="size-2 rounded-full bg-accent" />
+          <div className="mx-auto mb-5 flex size-10 items-center justify-center rounded-full bg-brand-green-bright/10">
+            <div className="size-2 rounded-full bg-brand-green-bright" />
           </div>
           <AnimatedText
             text="Create an account"
@@ -228,7 +228,7 @@ export default function SignUpPage() {
           Already have an account?{" "}
           <Link
             href="/sign-in"
-            className="font-semibold text-accent underline-offset-4 transition-colors hover:text-accent/80 hover:underline"
+            className="font-semibold text-brand-green-bright underline-offset-4 transition-colors hover:text-brand-green-bright/80 hover:underline"
           >
             Sign in
           </Link>

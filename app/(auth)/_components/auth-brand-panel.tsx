@@ -8,7 +8,7 @@ export function AuthBrandPanel() {
     <div className="relative hidden w-[45%] shrink-0 overflow-hidden md:flex md:flex-col md:items-center md:justify-center">
       <div
         className="absolute inset-0"
-        style={{ background: "var(--gradient-primary)" }}
+        style={{ background: "var(--gradient-sport)" }}
       />
 
       <div

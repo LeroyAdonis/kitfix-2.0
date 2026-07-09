@@ -22,8 +22,8 @@ interface StateConfig {
 const STATE_CONFIG: Record<VerificationStatus, StateConfig> = {
   loading: {
     icon: Loader2,
-    color: "text-accent",
-    bgClass: "bg-accent/10",
+    color: "text-brand-green-bright",
+    bgClass: "bg-brand-green-bright/10",
     iconClass: "animate-spin",
     title: "Verifying your email...",
     description: "Please wait while we confirm your email address.",
@@ -49,8 +49,8 @@ const STATE_CONFIG: Record<VerificationStatus, StateConfig> = {
   },
   "missing-token": {
     icon: Mail,
-    color: "text-accent",
-    bgClass: "bg-accent/10",
+    color: "text-brand-green-bright",
+    bgClass: "bg-brand-green-bright/10",
     iconClass: "",
     title: "Verify your email",
     description:

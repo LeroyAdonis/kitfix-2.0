@@ -64,7 +64,7 @@
   --color-text-secondary: var(--text-secondary);
   --color-text-tertiary: var(--text-tertiary);
   --color-text-disabled: var(--text-disabled);
-  --color-text-link: var(--brand-gold);
+  --color-text-link: var(--brand-green-vibrant);
   --color-success: var(--success);
   --color-error: var(--error);
   --color-warning: var(--warning);
@@ -150,8 +150,8 @@ html {
   --card-foreground: var(--text-primary);
   --popover: var(--surface-elevated);
   --popover-foreground: var(--text-primary);
-  --primary: var(--brand-gold);
-  --primary-foreground: var(--text-inverse);
+  --primary: var(--brand-green-vibrant);
+  --primary-foreground: #0A0A0B;
   --secondary: var(--brand-green);
   --secondary-foreground: #FFFFFF;
   --muted: var(--surface-hover);
@@ -161,29 +161,29 @@ html {
   --destructive: var(--error);
   --border: var(--color-border);
   --input: var(--color-border);
-  --ring: var(--brand-gold);
+  --ring: var(--brand-green-vibrant);
 
   /* Charts */
-  --chart-1: var(--brand-gold);
+  --chart-1: var(--brand-green-vibrant);
   --chart-2: var(--brand-green-bright);
   --chart-3: var(--brand-gold-light);
   --chart-4: var(--brand-green);
-  --chart-5: var(--brand-gold-dark);
+  --chart-5: var(--brand-green-dark);
 
   /* Sidebar */
   --sidebar: var(--bg-deep);
   --sidebar-foreground: var(--text-primary);
-  --sidebar-primary: var(--brand-gold);
-  --sidebar-primary-foreground: var(--text-inverse);
+  --sidebar-primary: var(--brand-green-vibrant);
+  --sidebar-primary-foreground: #0A0A0B;
   --sidebar-accent: var(--surface-hover);
   --sidebar-accent-foreground: var(--text-primary);
   --sidebar-border: var(--color-border);
-  --sidebar-ring: var(--brand-gold);
+  --sidebar-ring: var(--brand-green-vibrant);
 
   /* Custom effects */
-  --gradient-primary: linear-gradient(135deg, var(--brand-gold), var(--brand-gold-light));
-  --gradient-cta: linear-gradient(90deg, var(--brand-gold), var(--brand-gold-dark));
-  --glow-gold: 0 0 40px rgba(200, 169, 81, 0.3);
+  --gradient-primary: linear-gradient(135deg, var(--brand-green-vibrant), var(--brand-gold));
+  --gradient-cta: linear-gradient(90deg, var(--brand-green-vibrant), var(--brand-green-vibrant-dark));
+  --glow-gold: 0 0 40px rgba(0, 232, 89, 0.3);
   --glow-green: 0 0 40px rgba(0, 119, 73, 0.3);
 
   /* Sport Energy additions */

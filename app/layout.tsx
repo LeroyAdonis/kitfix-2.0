@@ -50,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="dark" data-accent="gold" suppressHydrationWarning>
+    <html lang="en" data-theme="dark" data-accent="green" suppressHydrationWarning>
       <head>
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
         <link rel="icon" href="/logo-mark.svg" type="image/svg+xml" />
