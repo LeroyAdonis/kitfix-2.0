@@ -61,14 +61,7 @@ export async function verifyLegacyPassword(storedHash: string, password: string)
 }
 
 function getCookieToken(request: NextRequest): string | null {
-  const cookieHeader = request.headers.get("cookie") ?? "";
-  const cookies = Object.fromEntries(
-    cookieHeader.split(";").map((c) => {
-      const [k, ...v] = c.trim().split("=");
-      return [k, v.join("=")];
-    }),
-  );
-  return cookies["better-auth.session_token"] ?? null;
+  return request.cookies.get("better-auth.session_token")?.value ?? null;
 }
 
 async function handleSignUp(request: NextRequest): Promise<NextResponse> {
@@ -120,7 +113,8 @@ async function handleSignUp(request: NextRequest): Promise<NextResponse> {
     });
 
     return response;
-  } catch {
+  } catch (e) {
+    console.error("[auth] handleSignUp error:", e);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -210,7 +204,8 @@ async function handleSignIn(request: NextRequest): Promise<NextResponse> {
     });
 
     return response;
-  } catch {
+  } catch (e) {
+    console.error("[auth] handleSignIn error:", e);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -258,7 +253,8 @@ async function handleGetSession(request: NextRequest): Promise<NextResponse> {
         banExpires: users[0].banExpires,
       },
     });
-  } catch {
+  } catch (e) {
+    console.error("[auth] handleGetSession error:", e);
     return NextResponse.json({ session: null, user: null }, { status: 500 });
   }
 }

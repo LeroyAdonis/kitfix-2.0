@@ -4,6 +4,8 @@ const TEST_EMAIL = `e2e-${Date.now()}@test.co.za`;
 const TEST_PASSWORD = "TestPass123!";
 
 test.describe("Full sign-up flow", () => {
+  test.use({ reducedMotion: "reduce" });
+
   test("signs up and lands on homepage with session cookie", async ({
     page,
   }) => {
@@ -41,13 +43,13 @@ test.describe("Full sign-up flow", () => {
     // Should be 200
     expect(apiResponse.status()).toBe(200);
 
-    // 6. Wait for redirect to homepage
-    await page.waitForURL("/", { timeout: 10000 });
-    console.log("[DEBUG-e2e] Landed on homepage:", page.url());
+    // 6. Wait for redirect to dashboard
+    await page.waitForURL("/dashboard", { timeout: 10000 });
+    console.log("[DEBUG-e2e] Landed on dashboard:", page.url());
 
-    // 7. Check the page loaded (homepage should have content)
+    // 7. Check the page loaded (dashboard shows welcome)
     await expect(
-      page.getByRole("heading", { name: /kitfix/i, level: 1 }),
+      page.getByText(/welcome back/i),
     ).toBeVisible({ timeout: 5000 });
 
     console.log("[DEBUG-e2e] ✅ Test passed!");
