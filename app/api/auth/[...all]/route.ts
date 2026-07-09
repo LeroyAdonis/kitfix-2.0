@@ -9,7 +9,10 @@ import { createSessionToken, verifySessionToken } from "@/lib/auth-jwt";
 const SALT_ROUNDS = 10;
 
 // Better Auth scrypt config (for migrating existing passwords)
-const BA_SCRYPT = { N: 16384, r: 16, p: 1, dkLen: 64, maxmem: 128 * 16384 * 16 * 2 } as const;
+// Uses r=8 to match Better Auth's default scrypt parameters (N=16384, r=8, p=1)
+// Better Auth default scrypt: N=16384, r=8, p=1, dkLen=64
+// WARNING: r=16 was the WRONG value that caused Bug 1 — legacy passwords couldn't be verified
+const BA_SCRYPT = { N: 16384, r: 8, p: 1, dkLen: 64, maxmem: 128 * 16384 * 8 * 2 } as const;
 
 function generateId(): string {
   return randomBytes(16).toString("hex");
@@ -21,7 +24,7 @@ function generateId(): string {
  * If it matches, re-hash with bcrypt and return the new hash.
  * Returns { valid: true, newHash?: string } or { valid: false }.
  */
-async function verifyLegacyPassword(storedHash: string, password: string): Promise<{ valid: boolean; newHash?: string; debug?: string }> {
+export async function verifyLegacyPassword(storedHash: string, password: string): Promise<{ valid: boolean; newHash?: string; debug?: string }> {
   const parts = storedHash.split(":");
   if (parts.length !== 2) return { valid: false, debug: `split failed: ${parts.length} parts` };
   

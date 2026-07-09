@@ -37,7 +37,7 @@ function getSessionToken(request: NextRequest): string | null {
 }
 
 const SECRET = new TextEncoder().encode(
-  process.env.BETTER_AUTH_SECRET || "kitfix-dev-secret-change-in-production",
+  process.env.BETTER_AUTH_SECRET || process.env.JWT_SECRET || "kitfix-dev-secret-change-in-production",
 );
 
 export async function proxy(request: NextRequest) {
