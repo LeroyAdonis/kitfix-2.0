@@ -1,0 +1,30 @@
+APPLY THIS DESIGN LANGUAGE TO ALL FILES:
+
+DESIGN LANGUAGE REFERENCE (GLM-5.2 Premium Editorial):
+
+1. Dark theme: bg-deep (#0A0A0B), bg (#111113), surface (#1C1C1F)
+2. Green accent: #00E859 (use text-green-400, bg-green-400, border-green-400, rise-700)
+3. Typography: DM Sans for display headings (font-display), Inter for body. Labels in 10px uppercase tracking-wider
+4. Atmospheric green glow: radial gradients with rgba(0,232,89,0.04-0.08)
+5. Scroll reveals: ScrollReveal from @/components/motion with staggered delays
+6. Motion on hover: motion.div with whileHover={{ y: -4 }}, green border reveals
+7. Easing: [0.16, 1, 0.3, 1] throughout
+8. Editorial dividers: gold gradient h-px lines flanking labels (use green-400 gradient)
+9. Page transitions: PageTransition wrapper from @/components/motion
+10. Noise texture: SVG-based fractal noise overlay at 0.035 opacity
+11. Glass-morphism: backdrop-blur, border-white/[0.03-0.05]
+
+SPECIFIC CHANGES NEEDED:
+- Replace card-base with editorial surface cards
+- Replace btn-primary with green-bordered button (bg-green-400/10 border-green-400/20 text-green-400)
+- Replace input-field with editorial inputs (bg-bg-elevated border-white/[0.06])
+- Add green glow backgrounds
+- Add editorial dividers before section labels
+- Use PageTransition wrapper
+- Add ScrollReveal or motion animations
+- Replace brand-gold references with green-400
+- Replace brand-green-bright references with green-400
+- Add noise texture backgrounds where appropriate
+- Keep all existing logic/functionality intact
+- Do NOT change form submission logic, auth flows, or data handling
+- Only change visual styling (CSS classes, layout wrappers, animations)

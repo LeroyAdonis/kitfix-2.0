@@ -1,0 +1,37 @@
+APPLY THE KITFIX EDITORIAL DESIGN LANGUAGE to all attached files. Read the full file content from each attached file and rewrite it with the premium editorial styling.
+
+DESIGN LANGUAGE REFERENCE:
+1. Dark theme: bg-deep (#0A0A0B), bg (#111113), surface (#1C1C1F)
+2. Green accent: #00E859 — use green-400 classes (text-green-400, bg-green-400, border-green-400)
+3. Typography: font-display (DM Sans) for headings, Inter for body. Labels in 10px uppercase tracking-[0.2em] or wider
+4. Editorial dividers: h-px w-8/12/16 bg-gradient-to-r from-transparent via-green-400/X to-transparent flanking labels
+5. Green glow backgrounds: radial-gradient(ellipse 60% 50% at 50% 30%, rgba(0,232,89,0.06) 0%, transparent 70%)
+6. Noise texture: SVG fractal noise overlay div at opacity [0.03]
+7. Page transitions: wrapped in <PageTransition>
+8. Motion: ScrollReveal from @/components/motion, motion.div with stagger, whileHover={{ y: -4 }}
+9. Easing: [0.16, 1, 0.3, 1] for all motion transitions
+10. Glass: backdrop-blur-xl bg-bg-deep/85 border-white/[0.03]
+11. Brand accent: Complete replacement of brand-green-bright → green-400, brand-gold → green-400
+
+AUTH PAGES SPECIFIC:
+- Keep ALL form logic, validation, auth calls, error handling IDENTICAL
+- Replace card-base bg-surface p-8 shadow-xl → editorial card styling
+- Replace btn-primary → green accent button (bg-green-400/10 border-green-400/20 text-green-400 hover:bg-green-400/20)
+- Replace input-field → editorial dark input (bg-bg-elevated/60 border-white/[0.06] focus:border-green-400/40)
+- Add atmospheric green glow behind form content
+- Add noise texture overlay
+- Add editorial dividers before headings
+- Replace all text-brand-green-bright → text-green-400
+- Replace all bg-brand-green-bright → bg-green-400
+- Replace all border-brand-green-bright → border-green-400
+- Transform the auth-brand-panel.tsx to be dark-green themed (currently done, just verify it's right)
+
+FILES:
+1. app/(auth)/sign-in/page.tsx - Sign in form
+2. app/(auth)/sign-up/page.tsx - Sign up form
+3. app/(auth)/forgot-password/page.tsx - Forgot password
+4. app/(auth)/verify-email/page.tsx - Email verification
+5. app/(auth)/layout.tsx - Auth layout (already has green glow, check consistency)
+6. app/(auth)/_components/auth-brand-panel.tsx - Brand panel (already updated, verify)
+
+CRITICAL: Do NOT change any form submission logic, authentication flows, data handling, validation logic, or API calls. Only change visual styling - CSS classes, wrapper layouts, animations, colors.

@@ -220,7 +220,7 @@ export const initiateOrderCheckout = authenticatedAction(async (
     };
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
   try {
     const checkout = await polar.checkouts.create({

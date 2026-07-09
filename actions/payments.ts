@@ -78,7 +78,7 @@ export const initiateCheckout = authenticatedAction(async (
       return { success: false, error: "Payment system is not configured. Please contact support." };
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
     const checkout = await polar.checkouts.create({
       products: [productId],

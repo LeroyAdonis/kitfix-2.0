@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   description:
     "AI-powered jersey repair and restoration. Describe the damage, get an instant quote, and track your repair. South Africa's trusted jersey fix.",
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
+    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
   ),
   manifest: "/manifest.json",
   appleWebApp: {
