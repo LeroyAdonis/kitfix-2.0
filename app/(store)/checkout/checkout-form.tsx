@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShoppingCart, Loader2 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -74,9 +73,14 @@ export function CheckoutForm({ items, itemTotal }: CheckoutFormProps) {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Checkout</h1>
-        <p className="mt-1 text-muted-foreground">
+      {/* Editorial header */}
+      <div className="relative">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="h-px w-8 bg-green-400/40" />
+          <p className="text-[10px] font-semibold tracking-[0.3em] text-green-400 uppercase">Payment</p>
+        </div>
+        <h1 className="font-display text-3xl font-bold tracking-[-0.02em] text-text-primary sm:text-4xl">Checkout</h1>
+        <p className="mt-1 text-sm text-text-secondary">
           Review your order and complete payment
         </p>
       </div>
@@ -85,7 +89,7 @@ export function CheckoutForm({ items, itemTotal }: CheckoutFormProps) {
         <form action={handleSubmit} className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Shipping Method</CardTitle>
+              <CardTitle className="text-base">Shipping Method</CardTitle>
               <CardDescription>
                 Choose how you want to receive your order
               </CardDescription>
@@ -104,7 +108,7 @@ export function CheckoutForm({ items, itemTotal }: CheckoutFormProps) {
 
           <Card>
             <CardHeader>
-              <CardTitle>Shipping Address</CardTitle>
+              <CardTitle className="text-base">Shipping Address</CardTitle>
               <CardDescription>
                 Where should we ship your order?
               </CardDescription>
@@ -142,57 +146,61 @@ export function CheckoutForm({ items, itemTotal }: CheckoutFormProps) {
           </Card>
 
           {error && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="rounded-xl border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
               {error}
             </div>
           )}
 
-          <Button type="submit" size="lg" className="w-full" disabled={pending}>
+          <button
+            type="submit"
+            disabled={pending}
+            className="w-full rounded-lg border border-green-400/20 bg-green-400/10 px-6 py-3 text-sm font-semibold text-green-400 transition-all duration-300 hover:bg-green-400/20 disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center gap-2"
+          >
             {pending ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
                 Processing...
               </>
             ) : (
               <>
-                <ShoppingCart className="mr-2 h-4 w-4" />
+                <ShoppingCart className="h-4 w-4" />
                 Place Order &mdash; {formatCurrency(itemTotal + shippingCost)}
               </>
             )}
-          </Button>
+          </button>
         </form>
 
         <div>
           <Card>
             <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
+              <CardTitle className="text-base">Order Summary</CardTitle>
               <CardDescription>{items.length} item{items.length !== 1 ? "s" : ""}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {items.map((item) => (
                 <div key={item.id} className="flex justify-between text-sm">
                   <div className="flex-1">
-                    <p className="font-medium">{item.productName}</p>
-                    <p className="text-muted-foreground">
+                    <p className="font-medium text-text-primary">{item.productName}</p>
+                    <p className="text-text-tertiary text-xs">
                       Size {item.variantSize} &times; {item.quantity}
                     </p>
                   </div>
-                  <p className="font-medium">
+                  <p className="font-medium text-text-primary">
                     {formatCurrency(item.unitPrice * item.quantity)}
                   </p>
                 </div>
               ))}
-              <Separator />
+              <Separator className="bg-white/[0.04]" />
               <div className="flex justify-between text-sm">
-                <span>Subtotal</span>
-                <span>{formatCurrency(itemTotal)}</span>
+                <span className="text-text-secondary">Subtotal</span>
+                <span className="text-text-primary">{formatCurrency(itemTotal)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span>Shipping ({shippingMode})</span>
-                <span>{shippingCost > 0 ? formatCurrency(shippingCost) : "Free"}</span>
+                <span className="text-text-secondary">Shipping ({shippingMode})</span>
+                <span className="text-text-primary">{shippingCost > 0 ? formatCurrency(shippingCost) : "Free"}</span>
               </div>
-              <Separator />
-              <div className="flex justify-between font-semibold">
+              <Separator className="bg-white/[0.04]" />
+              <div className="flex justify-between font-semibold text-text-primary">
                 <span>Total</span>
                 <span>{formatCurrency(itemTotal + shippingCost)}</span>
               </div>

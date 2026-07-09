@@ -41,23 +41,28 @@ export default async function OrdersPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight font-display">My Orders</h1>
-        <p className="mt-1 text-text-secondary">
+      {/* Editorial header */}
+      <div className="relative">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="h-px w-8 bg-green-400/40" />
+          <p className="text-[10px] font-semibold tracking-[0.3em] text-green-400 uppercase">Orders</p>
+        </div>
+        <h1 className="font-display text-3xl font-bold tracking-[-0.02em] text-text-primary sm:text-4xl">My Orders</h1>
+        <p className="mt-1 text-sm text-text-secondary">
           {orders.length} order{orders.length !== 1 ? "s" : ""}
         </p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {orders.map((order) => (
           <Link
             key={order.id}
             href={`/orders/${order.id}`}
-            className="card-base block p-4 sm:p-5"
+            className="block rounded-xl border border-white/[0.04] bg-surface p-5 transition-all duration-300 hover:border-green-400/20 hover:-translate-y-0.5 group"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-text-primary">
+                <p className="text-sm font-medium text-text-primary group-hover:text-green-400 transition-colors duration-300">
                   Order #{order.id.slice(0, 8)}
                 </p>
                 <p className="mt-0.5 text-xs text-text-secondary">
@@ -68,10 +73,10 @@ export default async function OrdersPage() {
                 <span
                   className={
                     order.status === "paid"
-                      ? "badge badge-gold"
+                      ? "inline-flex items-center rounded-full border border-green-400/30 bg-green-400/10 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-green-400"
                       : order.status === "shipped"
-                        ? "badge badge-success"
-                        : "badge badge-outline"
+                        ? "inline-flex items-center rounded-full border border-green-400/30 bg-green-400/10 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-green-400"
+                        : "inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.03] px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-text-tertiary"
                   }
                 >
                   {order.status === "paid" ? "Paid" : order.status}

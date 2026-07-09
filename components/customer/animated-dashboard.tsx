@@ -3,11 +3,10 @@
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Wrench, Package, CheckCircle2, PlusCircle } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { RepairCard } from "@/components/repair/repair-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { AnimatedText, AnimatedCounter, ScrollReveal } from "@/components/motion";
+import { Button } from "@/components/ui/button";
 import type { RepairRequest, RepairPhoto } from "@/lib/db/schema";
 
 type RepairWithPhotos = RepairRequest & { photos: RepairPhoto[] };
@@ -71,13 +70,17 @@ export function AnimatedDashboard({
     <div className="space-y-8">
       {/* Welcome section */}
       <div>
+        <div className="flex items-center gap-3 mb-2">
+          <div className="h-px w-8 bg-green-400/40" />
+          <p className="text-[10px] font-semibold tracking-[0.3em] text-green-400 uppercase">Dashboard</p>
+        </div>
         <AnimatedText
           text={`Welcome back, ${userName}!`}
           as="h1"
-          className="text-2xl font-bold"
+          className="font-display text-3xl font-bold tracking-[-0.02em] sm:text-4xl"
         />
         <motion.p
-          className="text-muted-foreground"
+          className="mt-1 text-sm text-text-secondary"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.4 }}
@@ -96,19 +99,17 @@ export function AnimatedDashboard({
             initial={shouldReduceMotion ? "visible" : "hidden"}
             animate="visible"
           >
-            <Card className="group transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">
+            <div className="group rounded-xl border border-white/[0.04] bg-surface p-5 transition-all duration-300 hover:-translate-y-1 hover:border-green-400/20 hover:shadow-[0_0_30px_rgba(0,232,89,0.04)]">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-text-secondary">
                   {stat.label}
-                </CardTitle>
-                <stat.icon className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" aria-hidden="true" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  <AnimatedCounter value={statsValues[stat.key]} />
-                </div>
-              </CardContent>
-            </Card>
+                </p>
+                <stat.icon className="h-4 w-4 text-text-tertiary transition-colors duration-300 group-hover:text-green-400" aria-hidden="true" />
+              </div>
+              <div className="font-display text-3xl font-bold text-text-primary">
+                <AnimatedCounter value={statsValues[stat.key]} />
+              </div>
+            </div>
           </motion.div>
         ))}
       </div>
@@ -116,11 +117,14 @@ export function AnimatedDashboard({
       {/* Recent repairs */}
       <div>
         <ScrollReveal>
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Recent Repairs</h2>
-            <Button asChild variant="outline" size="sm">
-              <Link href="/repairs">View All</Link>
-            </Button>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display text-lg font-bold text-text-primary">Recent Repairs</h2>
+            <Link
+              href="/repairs"
+              className="text-xs font-semibold tracking-[0.15em] text-green-400 uppercase transition-colors hover:text-green-400/80"
+            >
+              View All
+            </Link>
           </div>
         </ScrollReveal>
 

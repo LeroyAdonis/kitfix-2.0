@@ -16,11 +16,13 @@ export default async function CheckoutPage() {
 
   if (!result.success) {
     return (
-      <div className="empty-state">
-        <ShoppingCart className="empty-icon" />
-        <h2 className="empty-heading">Something went wrong</h2>
-        <p className="empty-description">{result.error}</p>
-        <Link href="/shop" className="btn-primary">
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <div className="flex size-16 items-center justify-center rounded-full bg-green-400/10 mb-6">
+          <ShoppingCart className="h-8 w-8 text-green-400/60" />
+        </div>
+        <h2 className="font-display text-2xl font-bold text-text-primary">Something went wrong</h2>
+        <p className="mt-2 max-w-sm text-sm text-text-secondary">{result.error}</p>
+        <Link href="/shop" className="mt-8 inline-flex rounded-lg border border-green-400/20 bg-green-400/10 px-4 py-2.5 text-sm font-semibold text-green-400 transition-all duration-300 hover:bg-green-400/20">
           Back to Shop
         </Link>
       </div>
@@ -31,11 +33,13 @@ export default async function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="empty-state">
-        <ShoppingCart className="empty-icon" />
-        <h2 className="empty-heading">Your cart is empty</h2>
-        <p className="empty-description">Add some jerseys before checking out.</p>
-        <Link href="/shop" className="btn-primary">
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <div className="flex size-16 items-center justify-center rounded-full bg-green-400/10 mb-6">
+          <ShoppingCart className="h-8 w-8 text-green-400/60" />
+        </div>
+        <h2 className="font-display text-2xl font-bold text-text-primary">Your cart is empty</h2>
+        <p className="mt-2 max-w-sm text-sm text-text-secondary">Add some jerseys before checking out.</p>
+        <Link href="/shop" className="mt-8 inline-flex rounded-lg border border-green-400/20 bg-green-400/10 px-4 py-2.5 text-sm font-semibold text-green-400 transition-all duration-300 hover:bg-green-400/20">
           <ArrowLeft className="h-4 w-4" />
           Browse Products
         </Link>

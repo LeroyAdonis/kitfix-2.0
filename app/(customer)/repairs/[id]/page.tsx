@@ -36,58 +36,64 @@ export default async function RepairDetailPage(props: {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold">Repair Details</h1>
-        <p className="text-sm text-muted-foreground">
-          Request ID: {repair.id.slice(0, 8)}… · Submitted{" "}
+      {/* Editorial header */}
+      <div className="relative">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="h-px w-8 bg-green-400/40" />
+          <p className="text-[10px] font-semibold tracking-[0.3em] text-green-400 uppercase">Repair</p>
+        </div>
+        <h1 className="font-display text-2xl font-bold tracking-[-0.02em] text-text-primary">Repair Details</h1>
+        <p className="mt-1 text-xs text-text-secondary">
+          Request ID: {repair.id.slice(0, 8)}&hellip; &middot; Submitted{" "}
           {formatDateSAST(repair.createdAt)}
         </p>
       </div>
 
       {/* Status Tracker */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Status</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <StatusTracker
-            currentStatus={repair.currentStatus}
-            statusHistory={repair.statusHistory}
-          />
-        </CardContent>
-      </Card>
+      <div className="rounded-xl border border-white/[0.04] bg-surface p-6">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="h-px w-6 bg-green-400/40" />
+          <h2 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-green-400/80">Status</h2>
+        </div>
+        <StatusTracker
+          currentStatus={repair.currentStatus}
+          statusHistory={repair.statusHistory}
+        />
+      </div>
 
       {/* Jersey & Damage Info */}
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Jersey Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            <p>{repair.jerseyDescription}</p>
+        <div className="rounded-xl border border-white/[0.04] bg-surface p-6">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="h-px w-6 bg-green-400/40" />
+            <h2 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-green-400/80">Jersey Information</h2>
+          </div>
+          <div className="space-y-2 text-sm">
+            <p className="text-text-primary">{repair.jerseyDescription}</p>
             {repair.jerseyBrand && (
-              <p className="text-muted-foreground">
+              <p className="text-text-secondary">
                 Brand: {repair.jerseyBrand}
               </p>
             )}
-            <p className="text-muted-foreground">Size: {repair.jerseySize}</p>
-          </CardContent>
-        </Card>
+            <p className="text-text-secondary">Size: {repair.jerseySize}</p>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Damage Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm">
+        <div className="rounded-xl border border-white/[0.04] bg-surface p-6">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="h-px w-6 bg-green-400/40" />
+            <h2 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-green-400/80">Damage Details</h2>
+          </div>
+          <div className="space-y-3 text-sm">
             <div className="flex items-center gap-2">
               <DamageTypeBadge type={repair.damageType} />
-              <Badge variant="outline" className="capitalize">
+              <span className="inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.03] px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-text-tertiary">
                 {repair.urgencyLevel}
-              </Badge>
+              </span>
             </div>
-            <p>{repair.damageDescription}</p>
-          </CardContent>
-        </Card>
+            <p className="text-text-primary">{repair.damageDescription}</p>
+          </div>
+        </div>
       </div>
 
       {/* AI Assessment */}

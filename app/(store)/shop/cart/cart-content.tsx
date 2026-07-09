@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { ShoppingCart } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { CartItemRow } from "@/components/store/CartItemRow";
 import { formatCurrency } from "@/lib/utils";
 
@@ -31,14 +30,19 @@ export function CartContent({ items, itemTotal }: CartContentProps) {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Shopping Cart</h1>
-        <p className="mt-1 text-muted-foreground">
+      {/* Editorial header */}
+      <div className="relative">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="h-px w-8 bg-green-400/40" />
+          <p className="text-[10px] font-semibold tracking-[0.3em] text-green-400 uppercase">Cart</p>
+        </div>
+        <h1 className="font-display text-3xl font-bold tracking-[-0.02em] text-text-primary sm:text-4xl">Shopping Cart</h1>
+        <p className="mt-1 text-sm text-text-secondary">
           {items.length} item{items.length !== 1 ? "s" : ""}
         </p>
       </div>
 
-      <div className="divide-y rounded-lg border">
+      <div className="divide-y divide-white/[0.04] rounded-xl border border-white/[0.04] bg-surface overflow-hidden">
         {items.map((item) => (
           <CartItemRow
             key={item.id}
@@ -48,17 +52,18 @@ export function CartContent({ items, itemTotal }: CartContentProps) {
         ))}
       </div>
 
-      <div className="flex items-center justify-between border-t pt-4">
+      <div className="flex items-center justify-between border-t border-white/[0.04] pt-6">
         <div>
-          <p className="text-lg font-semibold">Total: {formatCurrency(itemTotal)}</p>
-          <p className="text-sm text-muted-foreground">Shipping calculated at checkout</p>
+          <p className="font-display text-lg font-bold text-text-primary">Total: {formatCurrency(itemTotal)}</p>
+          <p className="text-xs text-text-tertiary mt-1">Shipping calculated at checkout</p>
         </div>
-        <Button size="lg" asChild>
-          <a href="/checkout">
-            <ShoppingCart className="mr-2 h-4 w-4" />
-            Proceed to Checkout
-          </a>
-        </Button>
+        <a
+          href="/checkout"
+          className="inline-flex items-center gap-2 rounded-lg border border-green-400/20 bg-green-400/10 px-6 py-3 text-sm font-semibold text-green-400 transition-all duration-300 hover:bg-green-400/20"
+        >
+          <ShoppingCart className="h-4 w-4" />
+          Proceed to Checkout
+        </a>
       </div>
     </div>
   );
