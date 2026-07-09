@@ -3,7 +3,7 @@
 import type { SmartRepairExtraction } from "@/types/ai";
 
 const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY;
-const NVIDIA_MODEL = process.env.NVIDIA_TEXT_MODEL ?? "meta/llama-3.1-8b-instruct";
+const NVIDIA_MODEL = process.env.NVIDIA_TEXT_MODEL ?? "mistralai/ministral-14b-instruct-2512";
 const NVIDIA_ENDPOINT = "https://integrate.api.nvidia.com/v1/chat/completions";
 
 const SYSTEM_PROMPT = `You are a smart jersey repair assistant. Given a user's natural language description of what needs fixing on their jersey, extract structured repair information.
