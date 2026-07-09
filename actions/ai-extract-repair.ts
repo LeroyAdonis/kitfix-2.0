@@ -1,12 +1,14 @@
 "use server";
 
-import { authenticatedAction } from "@/lib/auth-utils";
 import type { SmartRepairExtraction } from "@/types/ai";
 
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY;
+const NVIDIA_MODEL = process.env.NVIDIA_TEXT_MODEL ?? "meta/llama-3.3-70b-instruct";
+const NVIDIA_ENDPOINT = "https://integrate.api.nvidia.com/v1/chat/completions";
+
 const SYSTEM_PROMPT = `You are a smart jersey repair assistant. Given a user's natural language description of what needs fixing on their jersey, extract structured repair information.
 
-Return ONLY a JSON object (no markdown, no extra text) with these exact keys:
+Return ONLY a valid JSON object (no markdown, no code fences, no extra text) with these exact keys:
 - "jerseyDescription": The full description of the jersey (team, year, colors, style)
 - "jerseyBrand": The brand if mentioned (Adidas, Nike, Puma, etc.) or null if not specified
 - "jerseySize": The size if mentioned (XS, S, M, L, XL, 2XL, 3XL) or null if not specified
@@ -19,11 +21,13 @@ Return ONLY a JSON object (no markdown, no extra text) with these exact keys:
 
 const USER_PROMPT_TEMPLATE = `Extract repair information from this user description:
 
-"{{DESCRIPTION}}"
+"""
+{{DESCRIPTION}}
+"""
 
 Photos uploaded: {{HAS_PHOTOS}}
 
-Return the JSON only.`;
+Return the JSON object only — no markdown, no code fences, no explanation.`;
 
 export async function extractRepairAction(
   description: string,
@@ -36,11 +40,10 @@ export async function extractRepairAction(
     return { success: false, error: "Please describe what needs fixing." };
   }
 
-  if (!DEEPSEEK_API_KEY) {
+  if (!NVIDIA_API_KEY) {
     return {
       success: false,
-      error:
-        "AI extraction is not configured. Please contact support.",
+      error: "AI extraction is not configured. Please contact support.",
     };
   }
 
@@ -50,25 +53,22 @@ export async function extractRepairAction(
       description.trim(),
     ).replace("{{HAS_PHOTOS}}", photoCount > 0 ? `Yes (${photoCount} photo(s))` : "No");
 
-    const response = await fetch(
-      "https://api.deepseek.com/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: "deepseek-chat",
-          messages: [
-            { role: "system", content: SYSTEM_PROMPT },
-            { role: "user", content: prompt },
-          ],
-          temperature: 0.15,
-          max_tokens: 600,
-        }),
+    const response = await fetch(NVIDIA_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${NVIDIA_API_KEY}`,
       },
-    );
+      body: JSON.stringify({
+        model: NVIDIA_MODEL,
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          { role: "user", content: prompt },
+        ],
+        temperature: 0.1,
+        max_tokens: 500,
+      }),
+    });
 
     if (!response.ok) {
       const errText = await response.text().catch(() => "Unknown error");
@@ -86,7 +86,7 @@ export async function extractRepairAction(
       return { success: false, error: "AI returned an empty response." };
     }
 
-    // Parse JSON from response
+    // Parse JSON from response — strip any markdown fences first
     const cleaned = rawText
       .replace(/```(?:json)?\s*/g, "")
       .replace(/```\s*/g, "")
@@ -98,22 +98,17 @@ export async function extractRepairAction(
 
     const parsed = JSON.parse(jsonMatch[0]);
 
-    // Validate damage type
+    // Validate values
     const validDamageTypes = [
-      "tear",
-      "hole",
-      "stain",
-      "fading",
-      "logo_damage",
-      "seam_split",
-      "other",
+      "tear", "hole", "stain", "fading",
+      "logo_damage", "seam_split", "other",
     ];
     const validUrgencyLevels = ["standard", "rush", "emergency"];
     const validSizes = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
 
     const extraction: SmartRepairExtraction = {
       jerseyDescription: parsed.jerseyDescription ?? description.trim(),
-      jerseyBrand: validBrand(parsed.jerseyBrand) ?? null,
+      jerseyBrand: validBrand(parsed.jerseyBrand),
       jerseySize: validSizes.includes(parsed.jerseySize)
         ? parsed.jerseySize
         : null,
