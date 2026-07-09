@@ -53,6 +53,7 @@ export default function RootLayout({
     <html lang="en" data-theme="dark" data-accent="gold" suppressHydrationWarning>
       <head>
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <link rel="icon" href="/logo-mark.svg" type="image/svg+xml" />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem("kitfix-theme");if(t)document.documentElement.setAttribute("data-theme",t);else if(window.matchMedia("(prefers-color-scheme:light)").matches)document.documentElement.setAttribute("data-theme","light")}catch(e){}try{var a=localStorage.getItem("kitfix-accent");if(a)document.documentElement.setAttribute("data-accent",a)}catch(e){}})();`,

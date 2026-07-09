@@ -1,0 +1,6 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Shield-like geometric K mark — clean sport minimal -->
+  <path d="M8 4H32L28 20L32 36H8L12 20L8 4Z" stroke="#00E859" stroke-width="1.5" fill="none"/>
+  <path d="M14 14L26 26M26 14L14 26" stroke="#00E859" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M20 8V32" stroke="#00E859" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+</svg>

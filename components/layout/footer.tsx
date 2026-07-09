@@ -6,8 +6,8 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="text-sm font-semibold tracking-wider uppercase text-text-primary">
-              KitFix
+            <Link href="/" className="inline-flex">
+              <img src="/logo.svg" alt="KitFix" className="h-4 w-auto" />
             </Link>
             <p className="mt-3 max-w-xs text-xs text-text-tertiary leading-relaxed">
               South Africa&apos;s trusted jersey repair and customisation service.

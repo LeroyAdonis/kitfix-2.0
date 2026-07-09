@@ -74,8 +74,12 @@ export default function SignUpPage() {
 
   return (
     <PageTransition>
-      <div className="card-base bg-surface p-8">
+      <div className="card-base bg-surface p-8 shadow-xl">
         <div className="mb-8 text-center">
+          {/* Brand accent mark */}
+          <div className="mx-auto mb-5 flex size-10 items-center justify-center rounded-full bg-accent/10">
+            <div className="size-2 rounded-full bg-accent" />
+          </div>
           <AnimatedText
             text="Create an account"
             as="h1"
@@ -100,7 +104,7 @@ export default function SignUpPage() {
           )}
 
           <div className="space-y-2">
-            <label htmlFor="name" className="text-sm font-medium leading-none text-text-primary">
+            <label htmlFor="name" className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
               Full name
             </label>
             <input
@@ -126,7 +130,7 @@ export default function SignUpPage() {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium leading-none text-text-primary">
+            <label htmlFor="email" className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
               Email
             </label>
             <input
@@ -153,7 +157,7 @@ export default function SignUpPage() {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium leading-none text-text-primary">
+            <label htmlFor="password" className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
               Password
             </label>
             <input
@@ -179,7 +183,7 @@ export default function SignUpPage() {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="confirmPassword" className="text-sm font-medium leading-none text-text-primary">
+            <label htmlFor="confirmPassword" className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
               Confirm password
             </label>
             <input
@@ -224,7 +228,7 @@ export default function SignUpPage() {
           Already have an account?{" "}
           <Link
             href="/sign-in"
-            className="font-medium text-brand-gold underline-offset-4 transition-colors hover:text-brand-gold-light hover:underline"
+            className="font-semibold text-accent underline-offset-4 transition-colors hover:text-accent/80 hover:underline"
           >
             Sign in
           </Link>

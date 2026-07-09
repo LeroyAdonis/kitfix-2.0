@@ -22,8 +22,8 @@ interface StateConfig {
 const STATE_CONFIG: Record<VerificationStatus, StateConfig> = {
   loading: {
     icon: Loader2,
-    color: "text-brand-gold",
-    bgClass: "bg-brand-gold/10",
+    color: "text-accent",
+    bgClass: "bg-accent/10",
     iconClass: "animate-spin",
     title: "Verifying your email...",
     description: "Please wait while we confirm your email address.",
@@ -49,8 +49,8 @@ const STATE_CONFIG: Record<VerificationStatus, StateConfig> = {
   },
   "missing-token": {
     icon: Mail,
-    color: "text-brand-gold",
-    bgClass: "bg-brand-gold/10",
+    color: "text-accent",
+    bgClass: "bg-accent/10",
     iconClass: "",
     title: "Verify your email",
     description:
@@ -88,7 +88,7 @@ export default function VerifyEmailPage() {
 
   return (
     <PageTransition>
-      <div className="card-base bg-surface p-8">
+      <div className="card-base bg-surface p-8 shadow-xl">
         <AnimatePresence mode="wait">
           <motion.div
             key={status}

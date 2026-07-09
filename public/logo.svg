@@ -1,0 +1,8 @@
+<svg width="120" height="32" viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo mark -->
+  <path d="M4 2H22L19 16L22 30H4L7 16L4 2Z" stroke="#00E859" stroke-width="1.2" fill="none"/>
+  <path d="M8.5 10L17.5 22M17.5 10L8.5 22" stroke="#00E859" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="13" y1="4" x2="13" y2="28" stroke="#00E859" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
+  <!-- Wordmark -->
+  <text x="30" y="22" font-family="system-ui,-apple-system,sans-serif" font-weight="700" font-size="16" letter-spacing="4" fill="#E8E8E3">KITFIX</text>
+</svg>

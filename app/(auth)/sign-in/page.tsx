@@ -43,8 +43,12 @@ export default function SignInPage() {
 
   return (
     <PageTransition>
-      <div className="card-base bg-surface p-8">
+      <div className="card-base bg-surface p-8 shadow-xl">
         <div className="mb-8 text-center">
+          {/* Brand accent mark */}
+          <div className="mx-auto mb-5 flex size-10 items-center justify-center rounded-full bg-accent/10">
+            <div className="size-2 rounded-full bg-accent" />
+          </div>
           <AnimatedText
             text="Welcome back"
             as="h1"
@@ -69,7 +73,7 @@ export default function SignInPage() {
           )}
 
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium leading-none text-text-primary">
+            <label htmlFor="email" className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
               Email
             </label>
             <input
@@ -87,9 +91,17 @@ export default function SignInPage() {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium leading-none text-text-primary">
-              Password
-            </label>
+            <div className="flex items-center justify-between">
+              <label htmlFor="password" className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
+                Password
+              </label>
+              <Link
+                href="/forgot-password"
+                className="text-xs font-medium text-text-tertiary transition-colors hover:text-accent"
+              >
+                Forgot?
+              </Link>
+            </div>
             <input
               id="password"
               type="password"
@@ -120,17 +132,11 @@ export default function SignInPage() {
         </form>
 
         <div className="mt-8 space-y-3 text-center text-sm">
-          <Link
-            href="/forgot-password"
-            className="block text-text-secondary transition-colors hover:text-brand-gold"
-          >
-            Forgot your password?
-          </Link>
           <p className="text-text-secondary">
             Don&apos;t have an account?{" "}
             <Link
               href="/sign-up"
-              className="font-medium text-brand-gold underline-offset-4 transition-colors hover:text-brand-gold-light hover:underline"
+              className="font-semibold text-accent underline-offset-4 transition-colors hover:text-accent/80 hover:underline"
             >
               Sign up
             </Link>

@@ -39,14 +39,14 @@ export default function ForgotPasswordPage() {
   if (submitted) {
     return (
       <PageTransition>
-        <div className="card-base bg-surface p-8 text-center">
+        <div className="card-base bg-surface p-8 text-center shadow-xl">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 200, damping: 15 }}
-            className="mx-auto mb-6 flex size-14 items-center justify-center rounded-full bg-brand-gold/20"
+            className="mx-auto mb-6 flex size-14 items-center justify-center rounded-full bg-accent/20"
           >
-            <Mail className="size-7 text-brand-gold" />
+            <Mail className="size-7 text-accent" />
           </motion.div>
 
           <h1 className="text-2xl font-bold tracking-tight text-text-primary">
@@ -70,10 +70,11 @@ export default function ForgotPasswordPage() {
 
   return (
     <PageTransition>
-      <div className="card-base bg-surface p-8">
+      <div className="card-base bg-surface p-8 shadow-xl">
         <div className="mb-6 text-center">
-          <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-brand-gold/10">
-            <Mail className="size-6 text-brand-gold" />
+          {/* Brand accent mark */}
+          <div className="mx-auto mb-5 flex size-10 items-center justify-center rounded-full bg-accent/10">
+            <div className="size-2 rounded-full bg-accent" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-text-primary">
             Forgot your password?
@@ -96,7 +97,7 @@ export default function ForgotPasswordPage() {
           )}
 
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium leading-none text-text-primary">
+            <label htmlFor="email" className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
               Email
             </label>
             <input
@@ -131,7 +132,7 @@ export default function ForgotPasswordPage() {
           Remember your password?{" "}
           <Link
             href="/sign-in"
-            className="font-medium text-brand-gold underline-offset-4 transition-colors hover:text-brand-gold-light hover:underline"
+            className="font-semibold text-accent underline-offset-4 transition-colors hover:text-accent/80 hover:underline"
           >
             Sign in
           </Link>

@@ -39,7 +39,9 @@ export function LandingHeader() {
     <motion.header
       className={cn(
         "fixed top-0 left-0 right-0 z-50",
-        scrolled ? "bg-bg-deep/80 backdrop-blur-md" : "mix-blend-difference"
+        scrolled || mobileOpen
+          ? "bg-bg-deep/90 backdrop-blur-md"
+          : "mix-blend-difference"
       )}
       initial={shouldReduceMotion ? undefined : { y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
@@ -49,9 +51,9 @@ export function LandingHeader() {
         {/* Logo */}
         <Link
           href="/"
-          className="text-xs font-semibold tracking-[0.25em] text-white uppercase"
+          className="flex items-center gap-3"
         >
-          KitFix
+          <img src="/logo.svg" alt="KitFix" className="h-5 w-auto" />
         </Link>
 
         {/* Desktop Nav */}
