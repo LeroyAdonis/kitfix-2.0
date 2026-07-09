@@ -1,6 +1,17 @@
-<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Shield-like geometric K mark — clean sport minimal -->
-  <path d="M8 4H32L28 20L32 36H8L12 20L8 4Z" stroke="#00E859" stroke-width="1.5" fill="none"/>
-  <path d="M14 14L26 26M26 14L14 26" stroke="#00E859" stroke-width="1.5" stroke-linecap="round"/>
-  <path d="M20 8V32" stroke="#00E859" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- KitFix Shield Mark (Standalone) -->
+  <defs>
+    <style>
+      .mark-brand { fill: #00E859; }
+      .mark-cutout { fill: #E8E8E3; }
+    </style>
+  </defs>
+  
+  <!-- Shield -->
+  <path class="mark-brand" d="M 100 20 L 178 50 L 178 120 C 178 150 150 170 100 180 C 50 170 22 150 22 120 L 22 50 Z" />
+  
+  <!-- K-F Monogram Cutout -->
+  <path class="mark-cutout" fill-rule="evenodd" d="
+    M 52 48 L 78 48 L 78 90 L 138 48 L 165 48 L 78 115 L 78 152 L 52 152 Z
+    M 175 48 L 142 48 L 90 105 L 110 122 L 142 152 L 175 152 L 130 110 L 175 48 Z" />
 </svg>

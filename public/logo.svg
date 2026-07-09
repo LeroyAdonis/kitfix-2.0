@@ -1,8 +1,21 @@
-<svg width="120" height="32" viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Logo mark -->
-  <path d="M4 2H22L19 16L22 30H4L7 16L4 2Z" stroke="#00E859" stroke-width="1.2" fill="none"/>
-  <path d="M8.5 10L17.5 22M17.5 10L8.5 22" stroke="#00E859" stroke-width="1.2" stroke-linecap="round"/>
-  <line x1="13" y1="4" x2="13" y2="28" stroke="#00E859" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
-  <!-- Wordmark -->
-  <text x="30" y="22" font-family="system-ui,-apple-system,sans-serif" font-weight="700" font-size="16" letter-spacing="4" fill="#E8E8E3">KITFIX</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" width="600" height="200">
+  <defs>
+    <style>
+      .fill-brand { fill: #00E859; }
+      .fill-dark { fill: #E8E8E3; }
+    </style>
+  </defs>
+  
+  <!-- Shield Mark -->
+  <g transform="translate(100, 100)">
+    <path class="fill-brand" d="M 0 -80 L 78 -50 L 78 20 C 78 50 50 70 0 80 C -50 70 -78 50 -78 20 L -78 -50 Z" />
+    <path class="fill-dark" fill-rule="evenodd" d="
+      M -48 -52 L -22 -52 L -22 -10 L 38 -52 L 65 -52 L -22 15 L -22 52 L -48 52 Z
+      M 75 -52 L 42 -52 L -10 5 L 10 22 L 42 52 L 75 52 L 30 10 L 75 -52 Z" />
+  </g>
+  
+  <!-- KITFIX Wordmark -->
+  <g transform="translate(220, 100)">
+    <text class="fill-dark" x="0" y="0" font-family="'DM Sans','Arial Black',sans-serif" font-weight="900" font-size="90" letter-spacing="6" text-anchor="start" dominant-baseline="central">KITF<tspan class="fill-brand">I</tspan>X</text>
+  </g>
 </svg>
