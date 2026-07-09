@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, ChevronDown, Star } from "lucide-react";
+import { ArrowRight, ChevronDown, Star, Camera, Brain, Zap } from "lucide-react";
 import {
   AnimatedText,
   ScrollReveal,
   AnimatedCounter,
 } from "@/components/motion";
+import { Footer } from "@/components/layout/footer";
 
 const stats = [
   { value: 2500, suffix: "+", label: "Jerseys Repaired" },
@@ -19,24 +20,24 @@ const stats = [
 const steps = [
   {
     number: "01",
-    title: "Submit Your Jersey",
-    description: "Snap photos of the damage and tell us what needs fixing. Takes 2 minutes.",
+    title: "Describe Damage",
+    description: "Snap photos of the damage and tell us what needs fixing — or let our AI analyse it for you.",
   },
   {
     number: "02",
-    title: "Get a Quote",
-    description: "We assess the damage and send you a fixed-price quote within 24 hours.",
+    title: "AI Assessment",
+    description: "Our AI engine evaluates the damage and generates a fixed-price quote in seconds.",
+    highlighted: true,
   },
   {
     number: "03",
-    title: "We Repair It",
-    description: "Our technicians restore your jersey with matching materials and techniques.",
+    title: "Expert Repair",
+    description: "Our technicians restore your jersey with matching materials and pro techniques.",
   },
   {
     number: "04",
     title: "Track & Receive",
     description: "Real-time tracking from our workshop to your door. Free SA delivery.",
-    highlighted: true,
   },
 ];
 
@@ -70,11 +71,26 @@ const products = [
   },
 ];
 
-const footerLinks = {
-  Services: ["Jersey Repair", "Customisation", "Vintage Restoration", "Bulk Team Orders"],
-  Shop: ["All Jerseys", "Soccer", "Rugby", "Custom Blanks"],
-  Company: ["About Us", "How It Works", "Track Repair", "Contact"],
-};
+const testimonials = [
+  {
+    quote: "Saved my vintage Kaizer Chiefs jersey. The repair is flawless — you can't even tell it was torn.",
+    author: "Thabo M.",
+    rating: 5,
+    location: "Soweto, Gauteng",
+  },
+  {
+    quote: "Quick turnaround and professional service. Dropped it off Monday, got it back Wednesday. Will definitely use again.",
+    author: "Sarah K.",
+    rating: 5,
+    location: "Cape Town, WC",
+  },
+  {
+    quote: "The AI quote was spot-on. Described the damage, got a price instantly, and the repair was exactly what I needed.",
+    author: "Dumisani N.",
+    rating: 5,
+    location: "Durban, KZN",
+  },
+];
 
 export default function Home() {
   return (
@@ -127,9 +143,7 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.4 }}
             >
               We Fix{" "}
-              <span
-                className="bg-gradient-to-r from-brand-gold to-brand-gold-light bg-clip-text text-transparent"
-              >
+              <span className="gradient-text">
                 What Matters
               </span>
             </motion.h1>
@@ -140,8 +154,8 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
             >
-              South Africa&apos;s premier jersey repair service. From match-day
-              tears to vintage restoration — we bring your kit back to life.
+              AI-powered damage assessment. Expert restoration. Free SA delivery.
+              From match-day tears to vintage heirlooms — we bring your kit back to life.
             </motion.p>
 
             <motion.div
@@ -154,8 +168,8 @@ export default function Home() {
                 Start a Repair
                 <ArrowRight className="size-4" aria-hidden="true" />
               </Link>
-              <Link href="/shop" className="btn-secondary">
-                Browse Shop
+              <Link href="/repairs/new" className="btn-ghost-gold">
+                Get AI Quote
               </Link>
             </motion.div>
           </div>
@@ -175,10 +189,95 @@ export default function Home() {
           </motion.div>
         </section>
 
+        {/* ── AI Smart Repair ── */}
+        <section className="border-t border-border bg-bg section-spacious" id="ai-repair">
+          <div className="container-sm">
+            <div className="mb-16 text-center">
+              <motion.p
+                className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+              >
+                ✦ AI Technology
+              </motion.p>
+              <AnimatedText
+                text="Smart Repairs, Instant Quotes"
+                as="h2"
+                delay={0.1}
+                stagger={0.06}
+                className="mt-3 text-4xl font-extrabold tracking-[-2px] sm:text-5xl"
+              />
+              <motion.p
+                className="mx-auto mt-4 max-w-2xl text-lg text-text-secondary"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+              >
+                Describe your jersey&apos;s damage in plain English. Our AI analyzes photos
+                and descriptions, identifies the issue, and gives you a fixed-price quote
+                in seconds — no waiting, no guesswork.
+              </motion.p>
+            </div>
+
+            <div className="grid gap-8 md:grid-cols-3">
+              {[
+                {
+                  icon: Camera,
+                  title: "Snap & Upload",
+                  desc: "Take photos of the damage and describe what needs fixing. Works for any jersey type.",
+                },
+                {
+                  icon: Brain,
+                  title: "AI Analysis",
+                  desc: "Our engine identifies the damage type, assesses severity, and checks material compatibility.",
+                },
+                {
+                  icon: Zap,
+                  title: "Instant Quote",
+                  desc: "Get a fixed-price quote in seconds. No surprises, no hidden fees — pay only if you approve.",
+                },
+              ].map((feature, i) => (
+                <ScrollReveal key={feature.title} direction="up" delay={0.1 * i}>
+                  <div className="card-base p-8 text-center">
+                    <div
+                      className="mx-auto mb-5 flex size-14 items-center justify-center rounded-xl"
+                      style={{
+                        background: "rgba(200,169,81,0.1)",
+                        color: "var(--brand-gold)",
+                      }}
+                    >
+                      <feature.icon className="size-6" aria-hidden="true" />
+                    </div>
+                    <h3 className="text-lg font-bold">{feature.title}</h3>
+                    <p className="mt-3 text-sm leading-relaxed text-text-secondary">
+                      {feature.desc}
+                    </p>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
+
+            <motion.div
+              className="mt-12 text-center"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+            >
+              <Link href="/repairs/new" className="btn-primary">
+                Try AI Assessment
+                <ArrowRight className="size-4" aria-hidden="true" />
+              </Link>
+            </motion.div>
+          </div>
+        </section>
+
         {/* ── Stats Bar ── */}
-        <section className="border-t border-border bg-bg">
-          <div className="mx-auto max-w-5xl px-6 py-16 sm:py-20">
-            <div className="grid grid-cols-2 gap-y-10 sm:grid-cols-4 sm:gap-8">
+        <section className="border-t border-border bg-bg-deep section-base">
+          <div className="container-sm">
+            <div className="grid grid-cols-2 gap-y-12 sm:grid-cols-4 sm:gap-8">
               {stats.map((stat) => (
                 <ScrollReveal key={stat.label} direction="up" delay={0.1}>
                   <div className="text-center">
@@ -215,8 +314,8 @@ export default function Home() {
         </section>
 
         {/* ── How It Works ── */}
-        <section id="how-it-works" className="border-t border-border bg-bg-deep">
-          <div className="mx-auto max-w-6xl px-6 py-24 sm:py-32">
+        <section id="how-it-works" className="border-t border-border bg-bg section-spacious">
+          <div className="container-sm">
             <div className="mb-16">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold">
                 ✦ Process
@@ -229,7 +328,7 @@ export default function Home() {
                 className="mt-3 text-4xl font-extrabold tracking-[-2px] sm:text-5xl"
               />
               <p className="mt-4 text-lg text-text-secondary">
-                From sideline to spotlight
+                From sideline to spotlight, in four simple steps
               </p>
             </div>
 
@@ -290,8 +389,8 @@ export default function Home() {
         </section>
 
         {/* ── Product Showcase ── */}
-        <section id="shop" className="border-t border-border bg-bg">
-          <div className="mx-auto max-w-6xl px-6 py-24 sm:py-32">
+        <section id="shop" className="border-t border-border bg-bg-deep section-spacious">
+          <div className="container-sm">
             <div className="mb-16">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold">
                 ✦ Shop
@@ -356,52 +455,99 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── Footer ── */}
-        <footer className="border-t border-border bg-bg-deep">
-          <div className="mx-auto max-w-6xl px-6 py-16">
-            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-              <div>
-                <div className="font-display flex items-center gap-2.5 text-2xl font-extrabold tracking-[-0.5px]">
-                  <span className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-gold to-brand-gold-light text-sm text-text-inverse">
-                    ✦
-                  </span>
-                  Kit<span className="text-brand-gold">Fix</span>
-                </div>
-                <p className="mt-4 max-w-xs text-sm leading-relaxed text-text-secondary">
-                  South Africa&apos;s trusted jersey repair and customisation
-                  service. We bring your kit back to life.
-                </p>
-              </div>
-              {Object.entries(footerLinks).map(([heading, links]) => (
-                <div key={heading}>
-                  <h4 className="text-[11px] font-semibold uppercase tracking-[1px] text-text-tertiary">
-                    {heading}
-                  </h4>
-                  <nav
-                    className="mt-5 flex flex-col gap-3"
-                    aria-label={heading}
-                  >
-                    {links.map((item) => (
-                      <Link
-                        key={item}
-                        href="#"
-                        className="text-sm text-text-secondary transition-colors hover:text-text-primary"
-                      >
-                        {item}
-                      </Link>
-                    ))}
-                  </nav>
-                </div>
+        {/* ── Testimonials ── */}
+        <section className="border-t border-border bg-bg section-spacious">
+          <div className="container-sm">
+            <div className="mb-16 text-center">
+              <motion.p
+                className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+              >
+                ✦ Testimonials
+              </motion.p>
+              <AnimatedText
+                text="What Players Say"
+                as="h2"
+                delay={0.1}
+                stagger={0.06}
+                className="mt-3 text-4xl font-extrabold tracking-[-2px] sm:text-5xl"
+              />
+              <motion.p
+                className="mx-auto mt-4 max-w-xl text-lg text-text-secondary"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+              >
+                Trusted by players and clubs across South Africa
+              </motion.p>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-3">
+              {testimonials.map((t, i) => (
+                <ScrollReveal key={t.author} direction="up" delay={0.1 * i}>
+                  <div className="card-base p-8">
+                    <div className="mb-4 flex gap-1">
+                      {Array.from({ length: t.rating }).map((_, idx) => (
+                        <Star
+                          key={idx}
+                          className="size-4 fill-brand-gold text-brand-gold"
+                          aria-hidden="true"
+                        />
+                      ))}
+                    </div>
+                    <blockquote className="text-sm leading-relaxed text-text-primary">
+                      &ldquo;{t.quote}&rdquo;
+                    </blockquote>
+                    <div className="mt-6 border-t border-border pt-4">
+                      <p className="text-sm font-semibold">{t.author}</p>
+                      <p className="text-xs text-text-tertiary">{t.location}</p>
+                    </div>
+                  </div>
+                </ScrollReveal>
               ))}
             </div>
-            <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-sm text-text-tertiary sm:flex-row">
-              <span>
-                &copy; {new Date().getFullYear()} KitFix. All rights reserved.
-              </span>
-              <span>Proudly South African 🇿🇦</span>
+          </div>
+        </section>
+
+        {/* ── CTA Section ── */}
+        <section className="border-t border-border bg-bg-deep section-spacious">
+          <div className="container-sm">
+            <div className="relative overflow-hidden rounded-2xl border border-border p-12 text-center sm:p-16">
+              <div
+                className="pointer-events-none absolute inset-0 -z-10"
+                aria-hidden="true"
+                style={{
+                  background: [
+                    "radial-gradient(ellipse 100% 80% at 50% 20%, rgba(200,169,81,0.12) 0%, transparent 60%)",
+                    "radial-gradient(ellipse 60% 60% at 80% 80%, rgba(0,119,73,0.06) 0%, transparent 50%)",
+                  ].join(", "),
+                }}
+              />
+              <h2 className="font-display text-4xl font-extrabold tracking-[-2px] sm:text-5xl">
+                Ready to fix your kit?
+              </h2>
+              <p className="mx-auto mt-4 max-w-lg text-lg text-text-secondary">
+                Join 500+ South African clubs who trust KitFix for their
+                jersey repairs and customisation.
+              </p>
+              <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+                <Link href="/sign-up" className="btn-primary">
+                  Start Your Repair
+                  <ArrowRight className="size-4" aria-hidden="true" />
+                </Link>
+                <Link href="/shop" className="btn-secondary">
+                  Browse Jerseys
+                </Link>
+              </div>
             </div>
           </div>
-        </footer>
+        </section>
+
+        {/* ── Footer ── */}
+        <Footer />
       </main>
     </div>
   );

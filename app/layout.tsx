@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { DM_Sans, Inter } from "next/font/google";
 import { ServiceWorkerRegistrar } from "@/components/pwa/service-worker-registrar";
 import { NavigationProgress } from "@/components/navigation-progress";
+import { LandingHeader } from "@/components/layout/landing-header";
 import "./globals.css";
 
 const inter = Inter({
@@ -19,9 +20,9 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "KitFix — Jersey Repair Service",
+  title: "KitFix — AI-Powered Jersey Repair Service",
   description:
-    "Submit, track, and manage jersey repairs with KitFix. Professional repair service for all jersey types.",
+    "AI-powered jersey repair and restoration. Describe the damage, get an instant quote, and track your repair. South Africa's trusted jersey fix.",
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
   ),
@@ -67,6 +68,7 @@ export default function RootLayout({
         >
           Skip to content
         </a>
+        <LandingHeader />
         <ServiceWorkerRegistrar />
         <NavigationProgress />
         {children}
