@@ -8,10 +8,10 @@ export default function AuthLayout({
 }) {
   return (
     <div className="flex min-h-screen bg-bg-deep text-text-primary">
-      {/* Left panel – brand showcase (hidden on mobile) */}
+      {/* Left panel - brand showcase (hidden on mobile) */}
       <AuthBrandPanel />
 
-      {/* Right panel – form area */}
+      {/* Right panel - form area */}
       <div className="relative flex w-full flex-col items-center justify-center overflow-hidden bg-bg-deep px-6 py-12 md:w-[55%]">
         {/* Dark base with subtle green radial glow */}
         <div
@@ -37,12 +37,14 @@ export default function AuthLayout({
         {/* Form content */}
         <div className="relative w-full max-w-md">{children}</div>
 
-        {/* Back to home */}
+        {/* Back to home with editorial styling */}
         <Link
           href="/"
-          className="relative mt-10 text-sm text-text-secondary transition-colors hover:text-text-primary"
+          className="relative mt-10 group text-sm text-text-secondary transition-colors hover:text-green-400 inline-flex items-center gap-2"
         >
-          &larr; Back to home
+          <span className="transition-transform duration-300 group-hover:-translate-x-1">&larr;</span>
+          <span>Back to home</span>
+          <span className="absolute -bottom-0.5 left-6 right-0 h-px bg-green-400/40 scale-x-0 transition-transform duration-300 origin-left group-hover:scale-x-100" />
         </Link>
       </div>
     </div>
