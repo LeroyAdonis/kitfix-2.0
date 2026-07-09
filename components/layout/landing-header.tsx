@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
   { label: "Repair", href: "/repairs" },
-  { label: "How It Works", href: "#how-it-works" },
+  { label: "Shop", href: "/shop" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -37,41 +37,34 @@ export function LandingHeader() {
 
   return (
     <motion.header
-      className={cn("sticky top-0 z-50 glass", scrolled && "scrolled")}
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50",
+        scrolled ? "bg-bg-deep/80 backdrop-blur-md" : "mix-blend-difference"
+      )}
       initial={shouldReduceMotion ? undefined : { y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 sm:px-8">
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 text-sm font-semibold tracking-wider uppercase text-text-primary"
+          className="text-xs font-semibold tracking-[0.25em] text-white uppercase"
         >
           KitFix
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden items-center gap-1 md:flex">
-          {NAV_LINKS.map((link, i) => (
-            <div key={link.label} className="flex items-center gap-1">
-              {i > 0 && (
-                <span className="mx-2 text-xs text-text-tertiary">·</span>
-              )}
-              <Link
-                href={link.href}
-                className="px-2 py-1 text-xs font-medium text-text-secondary tracking-wide transition-colors hover:text-text-primary"
-              >
-                {link.label}
-              </Link>
-            </div>
+        <nav className="hidden items-center gap-8 md:flex">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              className="text-xs font-medium tracking-[0.15em] text-white/70 uppercase transition-colors duration-300 hover:text-white"
+            >
+              {link.label}
+            </Link>
           ))}
-          <Link
-            href="/sign-up"
-            className="ml-6 rounded-full border border-border px-4 py-1 text-xs font-medium text-text-secondary transition-colors hover:border-text-primary hover:text-text-primary"
-          >
-            Start a Repair
-          </Link>
         </nav>
 
         {/* Mobile Toggle */}
@@ -81,9 +74,9 @@ export function LandingHeader() {
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
         >
           {mobileOpen ? (
-            <X className="size-6 text-text-primary" />
+            <X className="size-5 text-white" />
           ) : (
-            <Menu className="size-6 text-text-primary" />
+            <Menu className="size-5 text-white" />
           )}
         </button>
       </div>
@@ -96,7 +89,7 @@ export function LandingHeader() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.2 }}
         >
-          <nav className="flex flex-col items-center gap-6 px-6 pt-12">
+          <nav className="flex flex-col items-center gap-8 px-6 pt-16">
             {NAV_LINKS.map((link, i) => (
               <motion.div
                 key={link.label}
@@ -108,29 +101,13 @@ export function LandingHeader() {
               >
                 <Link
                   href={link.href}
-                  className="text-2xl font-semibold text-text-primary transition-colors hover:text-brand-green-bright"
+                  className="text-2xl font-semibold text-white transition-colors hover:text-green-400"
                   onClick={() => setMobileOpen(false)}
                 >
                   {link.label}
                 </Link>
               </motion.div>
             ))}
-            <motion.div
-              className="mt-4"
-              initial={
-                shouldReduceMotion ? undefined : { opacity: 0, y: 16 }
-              }
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.3 }}
-            >
-              <Link
-                href="/sign-up"
-                className="rounded-full border border-border px-5 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:border-text-primary hover:text-text-primary"
-                onClick={() => setMobileOpen(false)}
-              >
-                Start a Repair
-              </Link>
-            </motion.div>
           </nav>
         </motion.div>
       )}

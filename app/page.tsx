@@ -106,26 +106,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-bg-deep text-text-primary overflow-x-hidden">
-      {/* ── Minimal Nav ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 mix-blend-difference">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 sm:px-8">
-          <span className="text-xs font-semibold tracking-[0.25em] text-white uppercase">
-            KitFix
-          </span>
-          <div className="flex gap-8 text-xs font-medium tracking-[0.15em] text-white/70 uppercase">
-            <Link href="#" className="hover:text-white transition-colors duration-300">
-              Repair
-            </Link>
-            <Link href="#shop" className="hover:text-white transition-colors duration-300">
-              Shop
-            </Link>
-            <Link href="#" className="hover:text-white transition-colors duration-300">
-              Contact
-            </Link>
-          </div>
-        </div>
-      </nav>
-
       <main>
         {/* ── HERO — full viewport ── */}
         <section className="relative isolate flex min-h-screen flex-col items-center justify-center overflow-hidden">
