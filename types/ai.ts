@@ -16,3 +16,21 @@ export interface AICostEstimate {
   basedOn: string;
   disclaimer: string;
 }
+
+/** Structured data extracted from natural language repair description */
+export interface SmartRepairExtraction {
+  jerseyDescription: string;
+  jerseyBrand: string | null;
+  jerseySize: string | null;
+  damageType: string;
+  damageDescription: string;
+  urgencyLevel: string;
+  shippingAddress?: {
+    street: string;
+    city: string;
+    province: string;
+    postalCode: string;
+  } | null;
+  confidence: number;
+  missingInfo: string[];
+}
