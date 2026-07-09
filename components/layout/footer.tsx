@@ -7,10 +7,10 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-10 md:grid-cols-4">
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 text-lg font-display font-extrabold tracking-tight">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-gold to-brand-gold-light text-xs text-text-inverse">
-                ✦
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-green to-brand-green-bright text-xs text-text-inverse">
+                🏈
               </span>
-              Kit<span className="text-brand-gold">Fix</span>
+              Kit<span className="text-brand-green-bright">Fix</span>
             </Link>
             <p className="mt-4 max-w-xs text-sm text-text-secondary leading-relaxed">
               South Africa&apos;s trusted jersey repair and customisation service. We bring your kit back to life.

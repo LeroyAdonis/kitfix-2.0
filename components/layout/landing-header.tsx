@@ -48,10 +48,10 @@ export function LandingHeader() {
           href="/"
           className="flex items-center gap-2.5 text-xl font-display font-extrabold tracking-[-0.5px]"
         >
-          <span className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-gold to-brand-gold-light text-xs text-text-inverse">
-            ✦
+          <span className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-green to-brand-green-bright text-xs text-text-inverse">
+            🏈
           </span>
-          Kit<span className="text-brand-gold">Fix</span>
+          Kit<span className="text-brand-green-bright">Fix</span>
         </Link>
 
         {/* Desktop Nav */}
@@ -105,7 +105,7 @@ export function LandingHeader() {
               >
                 <Link
                   href={link.href}
-                  className="text-2xl font-semibold text-text-primary transition-colors hover:text-brand-gold"
+                  className="text-2xl font-semibold text-text-primary transition-colors hover:text-brand-green-bright"
                   onClick={() => setMobileOpen(false)}
                 >
                   {link.label}

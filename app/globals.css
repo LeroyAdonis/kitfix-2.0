@@ -59,6 +59,7 @@
   --color-brand-gold-dark: var(--brand-gold-dark);
   --color-brand-green: var(--brand-green);
   --color-brand-green-bright: var(--brand-green-bright);
+  --color-brand-green-vibrant: var(--brand-green-vibrant);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-tertiary: var(--text-tertiary);
@@ -184,6 +185,15 @@ html {
   --gradient-cta: linear-gradient(90deg, var(--brand-gold), var(--brand-gold-dark));
   --glow-gold: 0 0 40px rgba(200, 169, 81, 0.3);
   --glow-green: 0 0 40px rgba(0, 119, 73, 0.3);
+
+  /* Sport Energy additions */
+  --brand-green-vibrant: #00E859;
+  --brand-green-vibrant-dark: #00C04A;
+  --gradient-sport: linear-gradient(135deg, var(--brand-green-vibrant), var(--brand-gold));
+  --shadow-glow-green-vibrant: 0 0 25px rgba(0, 232, 89, 0.25);
+  --glow-green-vibrant: 0 0 45px rgba(0, 232, 89, 0.35);
+  --shadow-elevated-green: rgba(0, 232, 89, 0.25) 0px 30px 45px -30px, rgba(0,0,0,0.3) 0px 18px 36px -18px;
+  --shadow-card-hover-green: rgba(0, 232, 89, 0.15) 0px 30px 45px -30px, rgba(0,0,0,0.4) 0px 18px 36px -18px, 0 0 30px rgba(0, 232, 89, 0.1);
 }
 
 /* ─── Light Theme ─── */
@@ -212,6 +222,11 @@ html {
   --shadow-xl: 0 16px 48px rgba(0,0,0,0.12);
   --shadow-elevated: rgba(200,169,81,0.1) 0px 30px 45px -30px, rgba(0,0,0,0.06) 0px 18px 36px -18px;
   --shadow-card-hover: rgba(200,169,81,0.08) 0px 30px 45px -30px, rgba(0,0,0,0.1) 0px 18px 36px -18px, 0 0 30px rgba(200,169,81,0.04);
+
+  /* Sport shadows (light) */
+  --shadow-glow-green-vibrant: 0 0 25px rgba(0, 232, 89, 0.15);
+  --shadow-elevated-green: rgba(0, 232, 89, 0.15) 0px 30px 45px -30px, rgba(0,0,0,0.04) 0px 18px 36px -18px;
+  --shadow-card-hover-green: rgba(0, 232, 89, 0.08) 0px 30px 45px -30px, rgba(0,0,0,0.08) 0px 18px 36px -18px, 0 0 30px rgba(0, 232, 89, 0.06);
 
   --background: var(--bg);
   --foreground: var(--text-primary);
@@ -255,6 +270,12 @@ html {
   --accent-light: #A78BFA;
   --accent-dark: #7C3AED;
   --accent-glow: rgba(139, 92, 246, 0.15);
+}
+[data-accent="sport"] {
+  --accent: #00E859;
+  --accent-light: #40FF8A;
+  --accent-dark: #00C04A;
+  --accent-glow: rgba(0, 232, 89, 0.25);
 }
 
 @layer base {
@@ -772,4 +793,325 @@ html {
   outline: none;
   box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--brand-gold);
   border-radius: 8px;
+}
+
+/* ===================================================================
+   SPORT ENERGY DESIGN SYSTEM
+   Additions for the KitFix sport-energy feel.
+   All classes below are additive — they do NOT remove or break
+   any existing classes used by other pages.
+   =================================================================== */
+
+/* ─── Button: Sport Green (solid vibrant green + green glow) ─── */
+
+.btn-sport-green {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 9999px;
+  font-weight: 800;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: none;
+  cursor: pointer;
+  background: var(--brand-green-vibrant);
+  color: #0A0A0B;
+  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+  line-height: 1;
+}
+
+.btn-sport-green:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 35px var(--shadow-glow-green-vibrant), var(--shadow-elevated-green);
+  background: var(--brand-green-vibrant-dark);
+}
+
+.btn-sport-green:active {
+  transform: translateY(0);
+  background: var(--brand-green-vibrant-dark);
+}
+
+.btn-sport-green:focus-visible {
+  outline: 2px solid var(--brand-green-vibrant);
+  outline-offset: 2px;
+}
+
+.btn-sport-green:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ─── Badge: Sport (shield/crest patch-style badge) ─── */
+
+.badge-sport {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px 6px 14px;
+  clip-path: polygon(0% 0%, 100% 0%, 90% 50%, 100% 100%, 0% 100%, 10% 50%);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  white-space: nowrap;
+  background: var(--brand-green-vibrant);
+  color: #0A0A0B;
+}
+
+.badge-sport-gold {
+  background: var(--brand-gold);
+  color: #0A0A0B;
+}
+
+.badge-sport-outline {
+  background: transparent;
+  border: 1.5px solid var(--brand-green-vibrant);
+  color: var(--brand-green-vibrant);
+}
+
+/* ─── Pill: Sport ─── */
+
+.pill-sport {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--brand-green-vibrant);
+  color: #0A0A0B;
+  border: none;
+}
+
+.pill-sport-gold {
+  background: var(--brand-gold);
+  color: #0A0A0B;
+}
+
+.pill-sport-outline {
+  background: transparent;
+  border: 1.5px solid var(--brand-green-vibrant);
+  color: var(--brand-green-vibrant);
+}
+
+/* ─── Typography: Sport Display (bold, condensed, scoreboard feel) ─── */
+
+.text-sport-display {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.text-sport-condensed {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+/* ─── Gradient Text: Sport (green → gold) ─── */
+
+.gradient-text-sport {
+  background: var(--gradient-sport);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ─── Scoreboard-style Stats ─── */
+
+.scoreboard-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 24px;
+  background: var(--surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  min-width: 80px;
+}
+
+.scoreboard-number {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--brand-green-vibrant);
+}
+
+.scoreboard-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+
+.scoreboard-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.scoreboard-divider {
+  width: 2px;
+  height: 32px;
+  background: var(--brand-gold);
+  opacity: 0.5;
+}
+
+/* ─── Stadium Atmosphere Section ─── */
+
+.stadium-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.stadium-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(0, 232, 89, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 100%, rgba(200, 169, 81, 0.06) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.stadium-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Section Divider: Field Marking (soccer pitch line style) ─── */
+
+.section-divider-field {
+  width: 100%;
+  height: 0;
+  border: none;
+  border-top: 3px solid rgba(0, 232, 89, 0.2);
+  position: relative;
+  margin: 0;
+}
+
+.section-divider-field::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: var(--brand-green-vibrant);
+  border-radius: 2px;
+}
+
+.section-divider-field::before {
+  content: '◆';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--brand-gold);
+  font-size: 10px;
+}
+
+/* ─── Field Marking Accent (soccer pitch line style border) ─── */
+
+.field-marking-top {
+  border-top: 2px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+.field-marking-top::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(0, 232, 89, 0.15);
+}
+
+/* Center circle accent */
+.field-marking-center {
+  position: relative;
+}
+
+.field-marking-center::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  border: 2px solid rgba(0, 232, 89, 0.08);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* ─── Sport Card (green-accented card variant) ─── */
+
+.card-sport {
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 232, 89, 0.15);
+  transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 250ms ease, border-color 250ms ease;
+}
+
+.card-sport:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover-green);
+  border-color: var(--brand-green-vibrant);
+}
+
+.card-sport:active {
+  transform: translateY(0);
+}
+
+.card-sport.selected {
+  border-color: var(--brand-green-vibrant);
+  box-shadow: 0 0 25px var(--shadow-glow-green-vibrant);
+}
+
+/* ─── Focus Ring: Green ─── */
+
+.focus-ring-green:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--brand-green-vibrant);
+  border-radius: 8px;
+}
+
+/* ─── Animated Green Glow ─── */
+
+@keyframes glow-pulse-green {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(0, 232, 89, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(0, 232, 89, 0.4);
+  }
+}
+
+.glow-pulse-green {
+  animation: glow-pulse-green 2s ease-in-out infinite;
 }

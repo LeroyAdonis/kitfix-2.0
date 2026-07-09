@@ -12,9 +12,9 @@ import { Footer } from "@/components/layout/footer";
 
 const stats = [
   { value: 2500, suffix: "+", label: "Jerseys Repaired" },
-  { value: 98, suffix: "%", label: "Satisfaction Rate" },
+  { value: 98, suffix: "%", label: "Satisfaction" },
   { value: 4.9, label: "Rating", hasStar: true },
-  { value: 3, suffix: " Days", label: "Turnaround" },
+  { value: 3, suffix: "-Day", label: "Turnaround" },
 ];
 
 const steps = [
@@ -76,19 +76,19 @@ const testimonials = [
     quote: "Saved my vintage Kaizer Chiefs jersey. The repair is flawless — you can't even tell it was torn.",
     author: "Thabo M.",
     rating: 5,
-    location: "Soweto, Gauteng",
+    location: "Soweto",
   },
   {
     quote: "Quick turnaround and professional service. Dropped it off Monday, got it back Wednesday. Will definitely use again.",
     author: "Sarah K.",
     rating: 5,
-    location: "Cape Town, WC",
+    location: "Cape Town",
   },
   {
     quote: "The AI quote was spot-on. Described the damage, got a price instantly, and the repair was exactly what I needed.",
     author: "Dumisani N.",
     rating: 5,
-    location: "Durban, KZN",
+    location: "Durban",
   },
 ];
 
@@ -103,9 +103,9 @@ export default function Home() {
             aria-hidden="true"
             style={{
               background: [
-                "radial-gradient(ellipse 80% 60% at 50% -20%, rgba(0,119,73,0.15) 0%, transparent 60%)",
-                "radial-gradient(ellipse 60% 50% at 80% 80%, rgba(200,169,81,0.08) 0%, transparent 50%)",
-                "radial-gradient(ellipse 70% 50% at 20% 80%, rgba(200,169,81,0.06) 0%, transparent 50%)",
+                "radial-gradient(ellipse 90% 70% at 50% -20%, rgba(0,119,73,0.25) 0%, transparent 60%)",
+                "radial-gradient(ellipse 70% 60% at 80% 80%, rgba(0,168,107,0.12) 0%, transparent 50%)",
+                "radial-gradient(ellipse 70% 60% at 20% 80%, rgba(0,200,100,0.08) 0%, transparent 50%)",
               ].join(", "),
             }}
           />
@@ -125,15 +125,15 @@ export default function Home() {
             <motion.div
               className="mb-8 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-widest"
               style={{
-                borderColor: "rgba(200,169,81,0.25)",
-                background: "rgba(200,169,81,0.08)",
-                color: "var(--brand-gold)",
+                borderColor: "rgba(0,168,107,0.25)",
+                background: "rgba(0,168,107,0.08)",
+                color: "var(--brand-green)",
               }}
               initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              ✦ Trusted by 500+ SA Clubs
+              🏆 Trusted by 500+ SA Clubs
             </motion.div>
 
             <motion.h1
@@ -142,9 +142,9 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              We Fix{" "}
+              Keep Your Kit in{" "}
               <span className="gradient-text">
-                What Matters
+                the Game
               </span>
             </motion.h1>
 
@@ -154,7 +154,7 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
             >
-              AI-powered damage assessment. Expert restoration. Free SA delivery.
+              AI-powered damage assessment. Expert jersey repair. Free SA delivery.
               From match-day tears to vintage heirlooms — we bring your kit back to life.
             </motion.p>
 
@@ -168,7 +168,7 @@ export default function Home() {
                 Start a Repair
                 <ArrowRight className="size-4" aria-hidden="true" />
               </Link>
-              <Link href="/repairs/new" className="btn-ghost-gold">
+              <Link href="/repairs/new" className="btn-secondary">
                 Get AI Quote
               </Link>
             </motion.div>
@@ -194,12 +194,12 @@ export default function Home() {
           <div className="container-sm">
             <div className="mb-16 text-center">
               <motion.p
-                className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold"
+                className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-green"
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
               >
-                ✦ AI Technology
+                ⚡ AI Technology
               </motion.p>
               <AnimatedText
                 text="Smart Repairs, Instant Quotes"
@@ -244,8 +244,8 @@ export default function Home() {
                     <div
                       className="mx-auto mb-5 flex size-14 items-center justify-center rounded-xl"
                       style={{
-                        background: "rgba(200,169,81,0.1)",
-                        color: "var(--brand-gold)",
+                        background: "rgba(0,168,107,0.1)",
+                        color: "var(--brand-green)",
                       }}
                     >
                       <feature.icon className="size-6" aria-hidden="true" />
@@ -274,14 +274,21 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── Stats Bar ── */}
+        {/* ── Stats Bar — Scoreboard Style ── */}
         <section className="border-t border-border bg-bg-deep section-base">
           <div className="container-sm">
             <div className="grid grid-cols-2 gap-y-12 sm:grid-cols-4 sm:gap-8">
               {stats.map((stat) => (
                 <ScrollReveal key={stat.label} direction="up" delay={0.1}>
-                  <div className="text-center">
-                    <p className="font-display flex items-center justify-center gap-1 text-4xl font-extrabold tracking-tight text-brand-gold sm:text-5xl">
+                  <div className="relative text-center">
+                    <div
+                      className="pointer-events-none absolute inset-0 -z-10 scale-150 opacity-20 blur-2xl"
+                      aria-hidden="true"
+                      style={{
+                        background: "radial-gradient(ellipse 50% 50% at 50% 50%, rgba(0,168,107,0.3) 0%, transparent 70%)",
+                      }}
+                    />
+                    <p className="font-display flex items-center justify-center gap-1 text-4xl font-extrabold tracking-tight text-brand-green sm:text-5xl">
                       {stat.hasStar ? (
                         <>
                           <AnimatedCounter
@@ -290,7 +297,7 @@ export default function Home() {
                             className="tabular-nums"
                           />
                           <Star
-                            className="size-6 fill-brand-gold"
+                            className="size-6 fill-brand-green text-brand-green"
                             aria-hidden="true"
                           />
                         </>
@@ -317,11 +324,11 @@ export default function Home() {
         <section id="how-it-works" className="border-t border-border bg-bg section-spacious">
           <div className="container-sm">
             <div className="mb-16">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold">
-                ✦ Process
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-green">
+                🏃 Process
               </p>
               <AnimatedText
-                text="How It Works"
+                text="From Sideline to Spotlight"
                 as="h2"
                 delay={0.1}
                 stagger={0.06}
@@ -339,13 +346,13 @@ export default function Home() {
                     className="card-base relative p-8"
                     style={
                       step.highlighted
-                        ? { borderColor: "rgba(200,169,81,0.35)" }
+                        ? { borderColor: "rgba(0,168,107,0.45)" }
                         : undefined
                     }
                   >
                     {i < steps.length - 1 && (
                       <div
-                        className="pointer-events-none absolute -right-3 top-1/2 hidden -translate-y-1/2 text-xl text-text-tertiary md:block"
+                        className="pointer-events-none absolute -right-3 top-1/2 hidden -translate-y-1/2 text-xl text-brand-green md:block"
                         aria-hidden="true"
                       >
                         →
@@ -355,8 +362,8 @@ export default function Home() {
                       className="font-display text-5xl font-extrabold leading-none"
                       style={{
                         color: step.highlighted
-                          ? "rgba(200,169,81,0.25)"
-                          : "rgba(200,169,81,0.12)",
+                          ? "rgba(0,168,107,0.45)"
+                          : "rgba(0,168,107,0.18)",
                       }}
                     >
                       {step.number}
@@ -365,7 +372,7 @@ export default function Home() {
                       className="mt-4 text-base font-bold"
                       style={
                         step.highlighted
-                          ? { color: "var(--brand-gold)" }
+                          ? { color: "var(--brand-green)" }
                           : undefined
                       }
                     >
@@ -392,11 +399,11 @@ export default function Home() {
         <section id="shop" className="border-t border-border bg-bg-deep section-spacious">
           <div className="container-sm">
             <div className="mb-16">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold">
-                ✦ Shop
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-green">
+                🛍️ Shop
               </p>
               <AnimatedText
-                text="Premium Jerseys"
+                text="Match-Ready Jerseys"
                 as="h2"
                 delay={0.1}
                 stagger={0.06}
@@ -415,7 +422,7 @@ export default function Home() {
                       {product.badge && (
                         <span
                           className={`badge absolute left-3 top-3 ${
-                            product.goldBadge
+                            product.badge === "Best Seller"
                               ? "badge-gold"
                               : "badge-success"
                           }`}
@@ -434,7 +441,7 @@ export default function Home() {
                       <h3 className="font-display mt-2 text-lg font-bold tracking-[-0.3px]">
                         {product.title}
                       </h3>
-                      <p className="mt-2 text-xl font-bold text-brand-gold">
+                      <p className="mt-2 text-xl font-bold text-brand-green">
                         {product.price}
                       </p>
                       <div className="mt-3 flex flex-wrap gap-1.5">
@@ -460,12 +467,12 @@ export default function Home() {
           <div className="container-sm">
             <div className="mb-16 text-center">
               <motion.p
-                className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold"
+                className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-green"
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
               >
-                ✦ Testimonials
+                ⭐ Testimonials
               </motion.p>
               <AnimatedText
                 text="What Players Say"
@@ -521,8 +528,8 @@ export default function Home() {
                 aria-hidden="true"
                 style={{
                   background: [
-                    "radial-gradient(ellipse 100% 80% at 50% 20%, rgba(200,169,81,0.12) 0%, transparent 60%)",
-                    "radial-gradient(ellipse 60% 60% at 80% 80%, rgba(0,119,73,0.06) 0%, transparent 50%)",
+                    "radial-gradient(ellipse 100% 80% at 50% 20%, rgba(0,168,107,0.14) 0%, transparent 60%)",
+                    "radial-gradient(ellipse 60% 60% at 80% 80%, rgba(200,169,81,0.08) 0%, transparent 50%)",
                   ].join(", "),
                 }}
               />
@@ -538,7 +545,7 @@ export default function Home() {
                   Start Your Repair
                   <ArrowRight className="size-4" aria-hidden="true" />
                 </Link>
-                <Link href="/shop" className="btn-secondary">
+                <Link href="/shop" className="btn-ghost">
                   Browse Jerseys
                 </Link>
               </div>
