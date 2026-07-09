@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Shirt } from "lucide-react";
 
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -24,12 +25,13 @@ export function ProductCard({ product }: ProductCardProps) {
     <Card className="group overflow-hidden transition-shadow hover:shadow-md">
       <Link href={`/shop/${product.slug}`}>
         <CardHeader className="p-0">
-          <div className="flex aspect-square items-center justify-center bg-muted">
+          <div className="relative flex aspect-square items-center justify-center bg-muted">
             {product.imageUrl ? (
-              <img
+              <Image
                 src={product.imageUrl}
                 alt={product.name}
-                className="h-full w-full object-cover"
+                fill
+                className="object-cover"
               />
             ) : (
               <Shirt className="h-16 w-16 text-muted-foreground/40" />

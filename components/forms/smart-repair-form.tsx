@@ -29,7 +29,6 @@ import {
   CheckCircle2,
   Edit3,
   Send,
-  ChevronDown,
 } from "lucide-react";
 import type { SmartRepairExtraction } from "@/types/ai";
 
@@ -46,7 +45,6 @@ type FlowStep = "describe" | "analyzing" | "review" | "submitting";
 
 export function SmartRepairForm() {
   const router = useRouter();
-  const router2 = useRouter();
   const [flowStep, setFlowStep] = useState<FlowStep>("describe");
   const [description, setDescription] = useState("");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);

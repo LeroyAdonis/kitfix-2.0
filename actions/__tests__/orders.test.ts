@@ -104,7 +104,7 @@ import { checkStock, decrementStock, getProductById } from "@/lib/db/queries/pro
 // Helpers
 // ---------------------------------------------------------------------------
 
-function mockSession(role: "customer" | "admin" | "technician" = "customer", userId = "user-1") {
+function mockSession(_role: "customer" | "admin" | "technician" = "customer", userId = "user-1") {
   return {
     user: {
       id: userId,
@@ -130,7 +130,7 @@ function mockSession(role: "customer" | "admin" | "technician" = "customer", use
       updatedAt: new Date(),
       impersonatedBy: null,
     },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   } as any;
 }
 

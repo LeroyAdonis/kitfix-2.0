@@ -19,9 +19,6 @@ import {
   products,
   productVariants,
   personalizationOptions,
-  cartItems,
-  orders,
-  orderItems,
 } from "../lib/db/schema";
 
 // ---------------------------------------------------------------------------

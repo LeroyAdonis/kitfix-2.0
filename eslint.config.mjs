@@ -27,6 +27,11 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // CI / skill scripts (CommonJS, not part of the app)
     ".github/**",
+    // Vercel build output (generated, not source)
+    ".vercel/**",
+    // E2E test scripts (CommonJS, not part of the app)
+    "e2e/*.js",
+    "scripts/*.js",
   ]),
 ]);
 

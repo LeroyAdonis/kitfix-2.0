@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -53,7 +54,7 @@ export function LandingHeader() {
           href="/"
           className="flex items-center gap-3"
         >
-          <img src="/logo.svg" alt="KitFix" className="h-5 w-auto" />
+          <Image src="/logo.svg" alt="KitFix" width={20} height={20} className="h-5 w-auto" />
         </Link>
 
         {/* Desktop Nav */}

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
 import { Menu } from "lucide-react";
@@ -15,7 +16,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { AccentPicker } from "@/components/accent-picker";
 import { MobileNav } from "./mobile-nav";
 import { useState } from "react";
 
@@ -46,11 +46,8 @@ export function Header() {
     >
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2 text-lg font-display font-extrabold tracking-tight">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-gold to-brand-gold-light text-xs text-text-inverse">
-              ✦
-            </span>
-            Kit<span className="text-brand-gold">Fix</span>
+          <Link href="/" className="flex items-center gap-3">
+            <Image src="/logo.svg" alt="KitFix" width={20} height={20} className="h-5 w-auto" />
           </Link>
 
           {/* Public nav — always visible */}
@@ -96,7 +93,6 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-1">
-          <AccentPicker />
           <ThemeToggle />
           {isPending ? (
             <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />

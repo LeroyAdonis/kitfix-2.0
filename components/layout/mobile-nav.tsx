@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -19,7 +20,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { AccentPicker } from "@/components/accent-picker";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const publicNavItems = [
@@ -49,10 +49,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
       <SheetContent side="left" className="w-64 bg-bg-deep border-border">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2 font-display font-extrabold tracking-tight">
-            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-brand-gold to-brand-gold-light text-xs text-text-inverse">
-              ✦
-            </span>
-            Kit<span className="text-brand-gold">Fix</span>
+            <Image src="/logo.svg" alt="KitFix" width={16} height={16} className="h-4 w-auto" />
           </SheetTitle>
         </SheetHeader>
 
@@ -72,11 +69,11 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
                   className={cn(
                     "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                     isActive
-                      ? "bg-brand-gold/10 text-brand-gold"
+                      ? "bg-brand-green-bright/10 text-brand-green-bright"
                       : "text-text-secondary hover:bg-surface hover:text-text-primary",
                   )}
                 >
-                  <item.icon className={cn("h-4 w-4", isActive && "text-brand-gold")} />
+                  <item.icon className={cn("h-4 w-4", isActive && "text-brand-green-bright")} />
                   {item.label}
                 </Link>
               );
@@ -102,11 +99,11 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
                   className={cn(
                     "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                     isActive
-                      ? "bg-brand-gold/10 text-brand-gold"
+                      ? "bg-brand-green-bright/10 text-brand-green-bright"
                       : "text-text-secondary hover:bg-surface hover:text-text-primary",
                   )}
                 >
-                  <item.icon className={cn("h-4 w-4", isActive && "text-brand-gold")} />
+                  <item.icon className={cn("h-4 w-4", isActive && "text-brand-green-bright")} />
                   {item.label}
                 </Link>
               );
@@ -120,7 +117,6 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
             <span className="text-xs text-text-tertiary">Theme</span>
             <ThemeToggle />
           </div>
-          <AccentPicker />
         </div>
       </SheetContent>
     </Sheet>

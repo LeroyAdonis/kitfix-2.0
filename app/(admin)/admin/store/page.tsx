@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import { db } from "@/lib/db";
-import { products } from "@/lib/db/schema";
 
 import {
   Table,

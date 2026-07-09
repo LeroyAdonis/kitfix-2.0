@@ -40,7 +40,7 @@ const bcrypt: any = _bcrypt;
 // db is mocked by vi.mock above — cast to any so TypeScript doesn't
 // complain about methods like .limit, .values, .set that don't exist
 // on the real NeonHttpDatabase type.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 import { db as _realDb } from "@/lib/db";
 const db: any = _realDb;
 

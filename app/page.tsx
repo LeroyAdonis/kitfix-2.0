@@ -8,7 +8,7 @@ import { Footer } from "@/components/layout/footer";
 
 /* ── Data ── */
 
-const featuredWork = [
+const _featuredWork = [
   {
     number: "01",
     title: "VINTAGE RESTORATION",

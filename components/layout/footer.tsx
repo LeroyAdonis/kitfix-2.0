@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -7,7 +8,7 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="inline-flex">
-              <img src="/logo.svg" alt="KitFix" className="h-4 w-auto" />
+              <Image src="/logo.svg" alt="KitFix" width={16} height={16} className="h-4 w-auto" />
             </Link>
             <p className="mt-3 max-w-xs text-xs text-text-tertiary leading-relaxed">
               South Africa&apos;s trusted jersey repair and customisation service.

@@ -225,7 +225,7 @@ export const generateReturnLabelAction = authenticatedRoleAction(
         success: true,
         data: { labelUrl: shipment.labelUrl ?? "", tracking: shipment.barcode },
       };
-    } catch (error) {
+    } catch {
       return { success: false, error: "Failed to generate return label" };
     }
   },

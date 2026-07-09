@@ -1,13 +1,7 @@
-import { and, eq, sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 import { db } from "../index";
-import {
-  products,
-  productVariants,
-  personalizationOptions,
-  type NewProductVariant,
-  type NewPersonalizationOption,
-} from "../schema";
+import { products, productVariants } from "../schema";
 
 /** Fetch a single product by ID. Returns null if not found. */
 export async function getProductById(id: string) {

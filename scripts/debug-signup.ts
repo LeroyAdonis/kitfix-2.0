@@ -13,8 +13,8 @@ async function main() {
     const sql = neon(dbUrl);
     const result = await sql`SELECT 1 AS ok`;
     console.log("DB Connection OK:", JSON.stringify(result));
-  } catch (e: any) {
-    console.error("DB Connection FAILED:", e.message);
+  } catch (e: unknown) {
+    console.error("DB Connection FAILED:", e instanceof Error ? e.message : String(e));
     process.exit(1);
   }
 
@@ -23,8 +23,8 @@ async function main() {
     const sql = neon(dbUrl);
     const users = await sql`SELECT COUNT(*) FROM "user"`;
     console.log("User count:", JSON.stringify(users));
-  } catch (e: any) {
-    console.error("User table query FAILED:", e.message);
+  } catch (e: unknown) {
+    console.error("User table query FAILED:", e instanceof Error ? e.message : String(e));
     process.exit(1);
   }
 
@@ -56,8 +56,8 @@ async function main() {
     await sql`DELETE FROM "user" WHERE id = ${userId}`;
     console.log("CLEANUP: OK");
     console.log("ALL DB OPERATIONS PASSED ✅");
-  } catch (e: any) {
-    console.error("INSERT FAILED:", e.message);
+  } catch (e: unknown) {
+    console.error("INSERT FAILED:", e instanceof Error ? e.message : String(e));
     console.error("Full error:", e);
   }
 }

@@ -2,7 +2,6 @@ import { requireRole } from "@/lib/auth-utils";
 import { AdminSidebar } from "@/components/layout/admin-sidebar";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { AccentPicker } from "@/components/accent-picker";
 import { Separator } from "@/components/ui/separator";
 
 /** Admin pages require auth + live DB data — never statically prerender. */
@@ -25,7 +24,6 @@ export default async function AdminLayout({
           {/* Spacer for mobile hamburger */}
           <div className="w-8 md:w-0" />
           <div className="flex items-center gap-3">
-            <AccentPicker />
             <ThemeToggle />
             <span className="text-sm text-text-secondary">
               {session.user.name}

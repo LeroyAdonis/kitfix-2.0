@@ -83,7 +83,7 @@ vi.mock("@/lib/db/queries/products", () => ({
 }));
 
 import { getSession } from "@/lib/auth-utils";
-import { checkStock, getActiveProducts, getProductBySlug, getProductById, getProductVariants } from "@/lib/db/queries/products";
+import { checkStock, getActiveProducts, getProductBySlug, getProductById } from "@/lib/db/queries/products";
 import { addToCart, getCart, removeFromCart, updateCartItem } from "../cart";
 
 function mockSession(userId = "user-1") {
@@ -101,7 +101,7 @@ function mockSession(userId = "user-1") {
       ipAddress: null, userAgent: null,
       createdAt: new Date(), updatedAt: new Date(), impersonatedBy: null,
     },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   } as any;
 }
 

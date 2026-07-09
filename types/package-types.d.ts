@@ -32,7 +32,7 @@ declare module "framer-motion" {
   export type TargetAndTransition = any;
   export type MotionProps = any;
   export type MotionStyle = any;
-  export type MotionValue<T> = any;
+  export type MotionValue<_T> = any;
   export function useMotionValueEvent(value: any, event: string, callback: any): void;
   export default any;
 }

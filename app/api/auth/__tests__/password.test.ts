@@ -8,7 +8,7 @@
  */
 import { describe, it, expect } from "vitest";
 import bcrypt from "bcryptjs";
-import { scryptSync, randomBytes, timingSafeEqual } from "crypto";
+import { scryptSync, randomBytes } from "crypto";
 
 // ---------------------------------------------------------------------------
 // Constants — mirror the FIXED route.ts

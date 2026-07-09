@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { Shirt } from "lucide-react";
 
 import { getProductBySlug } from "@/lib/db/queries/products";
@@ -27,12 +28,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
   return (
     <div className="grid gap-8 md:grid-cols-2">
-      <div className="flex aspect-square items-center justify-center rounded-lg bg-muted">
+      <div className="relative flex aspect-square items-center justify-center rounded-lg bg-muted">
         {product.imageUrl ? (
-          <img
+          <Image
             src={product.imageUrl}
             alt={product.name}
-            className="h-full w-full rounded-lg object-cover"
+            fill
+            className="rounded-lg object-cover"
           />
         ) : (
           <Shirt className="h-24 w-24 text-muted-foreground/40" />
