@@ -1,44 +1,57 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { ArrowRight, ChevronDown, Star, Camera, Brain, Zap } from "lucide-react";
-import {
-  AnimatedText,
-  ScrollReveal,
-  AnimatedCounter,
-} from "@/components/motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+import { ScrollReveal } from "@/components/motion";
 import { Footer } from "@/components/layout/footer";
 
-const stats = [
-  { value: 2500, suffix: "+", label: "Jerseys Repaired" },
-  { value: 98, suffix: "%", label: "Satisfaction" },
-  { value: 4.9, label: "Rating", hasStar: true },
-  { value: 3, suffix: "-Day", label: "Turnaround" },
-];
+/* ── Data ── */
 
-const steps = [
+const featuredWork = [
   {
     number: "01",
-    title: "Describe Damage",
-    description: "Snap photos of the damage and tell us what needs fixing — or let our AI analyse it for you.",
+    title: "VINTAGE RESTORATION",
+    description:
+      "Bringing a 1998 Kaizer Chiefs match-worn jersey back to life. Full re-weave, color match, period-correct patches — every stitch honours the original.",
+    link: "#",
+    accent: "#00E859",
+    media: "👕",
   },
   {
     number: "02",
-    title: "AI Assessment",
-    description: "Our AI engine evaluates the damage and generates a fixed-price quote in seconds.",
-    highlighted: true,
+    title: "MATCH-DAY REPAIR",
+    description:
+      "Same-day turnaround for Orlando Pirates' starting XI. Three torn jerseys inspected, repaired, and returned before kick-off. The benchmark for speed without compromise.",
+    link: "#",
+    accent: "#C8A951",
+    media: "⚡",
   },
   {
     number: "03",
-    title: "Expert Repair",
-    description: "Our technicians restore your jersey with matching materials and pro techniques.",
+    title: "CUSTOM TEAM KIT",
+    description:
+      "Complete redesign of U15 academy kit. Twenty-two jerseys, custom woven badges, individual name sets, and team-colour detailing across every size.",
+    link: "#",
+    accent: "#00A859",
+    media: "🏆",
   },
-  {
-    number: "04",
-    title: "Track & Receive",
-    description: "Real-time tracking from our workshop to your door. Free SA delivery.",
-  },
+];
+
+const stats = [
+  { value: "2500+", label: "Jerseys Restored" },
+  { value: "98%", label: "Satisfaction" },
+  { value: "4.9★", label: "Rating" },
+  { value: "3 Days", label: "Turnaround" },
+];
+
+const clubLogos = [
+  { name: "Kaizer Chiefs", color: "#D4AF37" },
+  { name: "Orlando Pirates", color: "#000000" },
+  { name: "Mamelodi Sundowns", color: "#FFD700" },
+  { name: "Springboks", color: "#006633" },
+  { name: "WP Rugby", color: "#003580" },
+  { name: "Stellenbosch FC", color: "#E31837" },
 ];
 
 const products = [
@@ -46,271 +59,317 @@ const products = [
     category: "Soccer",
     title: "Kaizer Chiefs 2024 Home",
     price: "R899",
-    sizes: ["S", "M", "L", "XL", "2XL"],
-    badge: "New",
   },
   {
     category: "Soccer",
     title: "Orlando Pirates 2024 Away",
     price: "R849",
-    sizes: ["S", "M", "L", "XL", "2XL"],
   },
   {
     category: "Rugby",
     title: "Springbok 2023 RWC",
     price: "R1,299",
-    sizes: ["S", "M", "L", "XL", "2XL"],
     badge: "Best Seller",
-    goldBadge: true,
   },
   {
     category: "Soccer",
     title: "Bafana Bafana 2024 Home",
     price: "R799",
-    sizes: ["S", "M", "L", "XL", "2XL"],
   },
 ];
 
-const testimonials = [
-  {
-    quote: "Saved my vintage Kaizer Chiefs jersey. The repair is flawless — you can't even tell it was torn.",
-    author: "Thabo M.",
-    rating: 5,
-    location: "Soweto",
-  },
-  {
-    quote: "Quick turnaround and professional service. Dropped it off Monday, got it back Wednesday. Will definitely use again.",
-    author: "Sarah K.",
-    rating: 5,
-    location: "Cape Town",
-  },
-  {
-    quote: "The AI quote was spot-on. Described the damage, got a price instantly, and the repair was exactly what I needed.",
-    author: "Dumisani N.",
-    rating: 5,
-    location: "Durban",
-  },
-];
+/* ── Section helper ── */
+
+function FullBleedSection({
+  children,
+  className = "",
+  id,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  id?: string;
+}) {
+  return (
+    <section
+      id={id}
+      className={`min-h-screen flex flex-col justify-center px-6 py-24 ${className}`}
+    >
+      {children}
+    </section>
+  );
+}
+
+/* ── Page ── */
 
 export default function Home() {
+  const prefersReduced = useReducedMotion();
+
   return (
-    <div className="min-h-screen overflow-x-hidden">
-      <main id="main-content">
-        {/* ── Hero ── */}
-        <section className="relative isolate flex min-h-screen flex-col items-center justify-center overflow-hidden bg-bg-deep">
-          <div
-            className="pointer-events-none absolute inset-0 -z-20"
-            aria-hidden="true"
-            style={{
-              background: [
-                "radial-gradient(ellipse 90% 70% at 50% -20%, rgba(0,119,73,0.25) 0%, transparent 60%)",
-                "radial-gradient(ellipse 70% 60% at 80% 80%, rgba(0,168,107,0.12) 0%, transparent 50%)",
-                "radial-gradient(ellipse 70% 60% at 20% 80%, rgba(0,200,100,0.08) 0%, transparent 50%)",
-              ].join(", "),
-            }}
-          />
+    <div className="min-h-screen bg-bg-deep text-text-primary overflow-x-hidden">
+      {/* ── Minimal Nav ── */}
+      <nav className="fixed top-0 left-0 right-0 z-50 mix-blend-difference">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 sm:px-8">
+          <span className="text-xs font-semibold tracking-[0.25em] text-white uppercase">
+            KitFix
+          </span>
+          <div className="flex gap-8 text-xs font-medium tracking-[0.15em] text-white/70 uppercase">
+            <Link href="#" className="hover:text-white transition-colors duration-300">
+              Repair
+            </Link>
+            <Link href="#shop" className="hover:text-white transition-colors duration-300">
+              Shop
+            </Link>
+            <Link href="#" className="hover:text-white transition-colors duration-300">
+              Contact
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      <main>
+        {/* ── HERO — full viewport ── */}
+        <section className="relative isolate flex min-h-screen flex-col items-center justify-center overflow-hidden">
+          {/* Dark base with subtle green radial glow */}
           <div
             className="pointer-events-none absolute inset-0 -z-10"
             aria-hidden="true"
             style={{
-              backgroundImage: [
-                "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px)",
-                "linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
+              background: [
+                "radial-gradient(ellipse 70% 60% at 50% 30%, rgba(0,232,89,0.08) 0%, transparent 70%)",
+                "radial-gradient(ellipse 50% 40% at 80% 80%, rgba(0,168,107,0.05) 0%, transparent 50%)",
               ].join(", "),
-              backgroundSize: "60px 60px",
+            }}
+          />
+          {/* Subtle noise texture */}
+          <div
+            className="pointer-events-none absolute inset-0 -z-20 opacity-[0.03]"
+            aria-hidden="true"
+            style={{
+              backgroundImage:
+                "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
             }}
           />
 
-          <div className="mx-auto max-w-5xl px-6 pt-24 pb-16 text-center">
-            <motion.div
-              className="mb-8 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-widest"
-              style={{
-                borderColor: "rgba(0,168,107,0.25)",
-                background: "rgba(0,168,107,0.08)",
-                color: "var(--brand-green)",
-              }}
-              initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              🏆 Trusted by 500+ SA Clubs
-            </motion.div>
-
-            <motion.h1
-              className="font-display mx-auto max-w-4xl text-5xl font-extrabold leading-[0.95] tracking-[-3px] [text-wrap:balance] sm:text-7xl lg:text-8xl"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              Keep Your Kit in{" "}
-              <span className="gradient-text">
-                the Game
-              </span>
-            </motion.h1>
-
-            <motion.p
-              className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-text-secondary sm:text-xl"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-            >
-              AI-powered damage assessment. Expert jersey repair. Free SA delivery.
-              From match-day tears to vintage heirlooms — we bring your kit back to life.
-            </motion.p>
-
-            <motion.div
-              className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.1 }}
-            >
-              <Link href="/sign-up" className="btn-primary">
-                Start a Repair
-                <ArrowRight className="size-4" aria-hidden="true" />
-              </Link>
-              <Link href="/repairs/new" className="btn-secondary">
-                Get AI Quote
-              </Link>
-            </motion.div>
-          </div>
-
           <motion.div
-            className="absolute bottom-8 left-1/2 -translate-x-1/2"
+            className="text-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.8, duration: 0.6 }}
+            transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            <motion.h1
+              className="font-display text-[clamp(4rem,14vw,10rem)] font-extrabold leading-[0.88] tracking-[-0.04em] text-white"
+              initial={{ opacity: 0, y: 40, filter: "blur(8px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 1, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
-              <ChevronDown className="size-5 text-text-tertiary/50" aria-hidden="true" />
-            </motion.div>
+              KitFix
+            </motion.h1>
+            <motion.p
+              className="mt-4 text-xs font-medium tracking-[0.35em] text-white/50 uppercase sm:text-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+            >
+              South Africa&apos;s Premier Jersey Restoration
+            </motion.p>
+          </motion.div>
+
+          {/* Scroll indicator */}
+          <motion.div
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.6, duration: 0.8 }}
+          >
+            <span className="text-[10px] font-semibold tracking-[0.2em] text-white/30 uppercase">
+              Scroll
+            </span>
+            <motion.div
+              className="h-8 w-px bg-gradient-to-b from-white/20 to-transparent"
+              animate={prefersReduced ? {} : { height: [32, 48, 32] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            />
           </motion.div>
         </section>
 
-        {/* ── AI Smart Repair ── */}
-        <section className="border-t border-border bg-bg section-spacious" id="ai-repair">
-          <div className="container-sm">
-            <div className="mb-16 text-center">
-              <motion.p
-                className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-green"
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-              >
-                ⚡ AI Technology
-              </motion.p>
-              <AnimatedText
-                text="Smart Repairs, Instant Quotes"
-                as="h2"
-                delay={0.1}
-                stagger={0.06}
-                className="mt-3 text-4xl font-extrabold tracking-[-2px] sm:text-5xl"
-              />
-              <motion.p
-                className="mx-auto mt-4 max-w-2xl text-lg text-text-secondary"
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-              >
-                Describe your jersey&apos;s damage in plain English. Our AI analyzes photos
-                and descriptions, identifies the issue, and gives you a fixed-price quote
-                in seconds — no waiting, no guesswork.
-              </motion.p>
+        {/* ── FEATURED WORK — Project 01 ── */}
+        <FullBleedSection id="work-01" className="relative border-t border-white/5">
+          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-16 lg:grid-cols-2 lg:gap-24">
+            <div className="flex flex-col justify-center">
+              <ScrollReveal direction="up" delay={0.1}>
+                <p className="text-[10px] font-semibold tracking-[0.3em] text-green-400 uppercase">
+                  Featured Work
+                </p>
+              </ScrollReveal>
+              <ScrollReveal direction="up" delay={0.2}>
+                <p
+                  className="font-display mt-4 text-[clamp(5rem,12vw,9rem)] font-extrabold leading-[0.85] tracking-[-0.04em]"
+                  style={{ color: "rgba(0,232,89,0.12)" }}
+                >
+                  01
+                </p>
+              </ScrollReveal>
+              <ScrollReveal direction="up" delay={0.3}>
+                <h2 className="font-display mt-2 text-3xl font-bold tracking-[-0.02em] sm:text-4xl lg:text-5xl">
+                  Vintage<br />Restoration
+                </h2>
+              </ScrollReveal>
+              <ScrollReveal direction="up" delay={0.4}>
+                <p className="mt-6 max-w-md text-sm leading-relaxed text-text-secondary sm:text-base">
+                  Bringing a 1998 Kaizer Chiefs match-worn jersey back to life.
+                  Full re-weave, color match, period-correct patches — every
+                  stitch honours the original.
+                </p>
+              </ScrollReveal>
+              <ScrollReveal direction="up" delay={0.5}>
+                <Link
+                  href="#"
+                  className="group mt-8 inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] text-white/70 uppercase hover:text-white transition-all duration-300"
+                >
+                  View Project
+                  <ArrowRight className="size-3 transition-transform duration-300 group-hover:translate-x-1" />
+                </Link>
+              </ScrollReveal>
             </div>
-
-            <div className="grid gap-8 md:grid-cols-3">
-              {[
-                {
-                  icon: Camera,
-                  title: "Snap & Upload",
-                  desc: "Take photos of the damage and describe what needs fixing. Works for any jersey type.",
-                },
-                {
-                  icon: Brain,
-                  title: "AI Analysis",
-                  desc: "Our engine identifies the damage type, assesses severity, and checks material compatibility.",
-                },
-                {
-                  icon: Zap,
-                  title: "Instant Quote",
-                  desc: "Get a fixed-price quote in seconds. No surprises, no hidden fees — pay only if you approve.",
-                },
-              ].map((feature, i) => (
-                <ScrollReveal key={feature.title} direction="up" delay={0.1 * i}>
-                  <div className="card-base p-8 text-center">
-                    <div
-                      className="mx-auto mb-5 flex size-14 items-center justify-center rounded-xl"
-                      style={{
-                        background: "rgba(0,168,107,0.1)",
-                        color: "var(--brand-green)",
-                      }}
-                    >
-                      <feature.icon className="size-6" aria-hidden="true" />
-                    </div>
-                    <h3 className="text-lg font-bold">{feature.title}</h3>
-                    <p className="mt-3 text-sm leading-relaxed text-text-secondary">
-                      {feature.desc}
-                    </p>
-                  </div>
-                </ScrollReveal>
-              ))}
-            </div>
-
-            <motion.div
-              className="mt-12 text-center"
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4 }}
-            >
-              <Link href="/repairs/new" className="btn-primary">
-                Try AI Assessment
-                <ArrowRight className="size-4" aria-hidden="true" />
-              </Link>
-            </motion.div>
+            <ScrollReveal direction="right" delay={0.2} className="flex items-center justify-center">
+              <div className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-sm bg-gradient-to-br from-green-900/20 to-bg-elevated">
+                <div
+                  className="absolute inset-0 opacity-[0.04]"
+                  style={{
+                    backgroundImage:
+                      "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,232,89,0.15) 2px, rgba(0,232,89,0.15) 3px)",
+                  }}
+                />
+                <span className="text-8xl opacity-40 select-none">👕</span>
+              </div>
+            </ScrollReveal>
           </div>
-        </section>
+        </FullBleedSection>
 
-        {/* ── Stats Bar — Scoreboard Style ── */}
-        <section className="border-t border-border bg-bg-deep section-base">
-          <div className="container-sm">
-            <div className="grid grid-cols-2 gap-y-12 sm:grid-cols-4 sm:gap-8">
-              {stats.map((stat) => (
-                <ScrollReveal key={stat.label} direction="up" delay={0.1}>
-                  <div className="relative text-center">
-                    <div
-                      className="pointer-events-none absolute inset-0 -z-10 scale-150 opacity-20 blur-2xl"
-                      aria-hidden="true"
-                      style={{
-                        background: "radial-gradient(ellipse 50% 50% at 50% 50%, rgba(0,168,107,0.3) 0%, transparent 70%)",
-                      }}
-                    />
-                    <p className="font-display flex items-center justify-center gap-1 text-4xl font-extrabold tracking-tight text-brand-green sm:text-5xl">
-                      {stat.hasStar ? (
-                        <>
-                          <AnimatedCounter
-                            value={4.9}
-                            duration={2.5}
-                            className="tabular-nums"
-                          />
-                          <Star
-                            className="size-6 fill-brand-green text-brand-green"
-                            aria-hidden="true"
-                          />
-                        </>
-                      ) : (
-                        <AnimatedCounter
-                          value={stat.value}
-                          suffix={stat.suffix}
-                          duration={2.5}
-                          className="tabular-nums"
-                        />
-                      )}
+        {/* ── FEATURED WORK — Project 02 ── */}
+        <FullBleedSection id="work-02" className="relative border-t border-white/5">
+          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-16 lg:grid-cols-2 lg:gap-24">
+            {/* Media first on mobile, second on desktop for alternating layout */}
+            <ScrollReveal
+              direction="left"
+              delay={0.2}
+              className="order-1 flex items-center justify-center lg:order-1"
+            >
+              <div className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-sm bg-gradient-to-br from-yellow-900/20 to-bg-elevated">
+                <div
+                  className="absolute inset-0 opacity-[0.04]"
+                  style={{
+                    backgroundImage:
+                      "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(200,169,81,0.15) 2px, rgba(200,169,81,0.15) 3px)",
+                  }}
+                />
+                <span className="text-8xl opacity-40 select-none">⚡</span>
+              </div>
+            </ScrollReveal>
+            <div className="order-2 flex flex-col justify-center lg:order-2">
+              <ScrollReveal direction="up" delay={0.1}>
+                <p className="text-[10px] font-semibold tracking-[0.3em] text-yellow-400 uppercase">
+                  Featured Work
+                </p>
+              </ScrollReveal>
+              <ScrollReveal direction="up" delay={0.2}>
+                <p
+                  className="font-display mt-4 text-[clamp(5rem,12vw,9rem)] font-extrabold leading-[0.85] tracking-[-0.04em]"
+                  style={{ color: "rgba(200,169,81,0.12)" }}
+                >
+                  02
+                </p>
+              </ScrollReveal>
+              <ScrollReveal direction="up" delay={0.3}>
+                <h2 className="font-display mt-2 text-3xl font-bold tracking-[-0.02em] sm:text-4xl lg:text-5xl">
+                  Match-Day<br />Repair
+                </h2>
+              </ScrollReveal>
+              <ScrollReveal direction="up" delay={0.4}>
+                <p className="mt-6 max-w-md text-sm leading-relaxed text-text-secondary sm:text-base">
+                  Same-day turnaround for Orlando Pirates&apos; starting XI. Three
+                  torn jerseys inspected, repaired, and returned before
+                  kick-off. The benchmark for speed without compromise.
+                </p>
+              </ScrollReveal>
+              <ScrollReveal direction="up" delay={0.5}>
+                <Link
+                  href="#"
+                  className="group mt-8 inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] text-white/70 uppercase hover:text-white transition-all duration-300"
+                >
+                  View Project
+                  <ArrowRight className="size-3 transition-transform duration-300 group-hover:translate-x-1" />
+                </Link>
+              </ScrollReveal>
+            </div>
+          </div>
+        </FullBleedSection>
+
+        {/* ── FEATURED WORK — Project 03 ── */}
+        <FullBleedSection id="work-03" className="relative border-t border-white/5">
+          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-16 lg:grid-cols-2 lg:gap-24">
+            <div className="flex flex-col justify-center">
+              <ScrollReveal direction="up" delay={0.1}>
+                <p className="text-[10px] font-semibold tracking-[0.3em] text-green-300 uppercase">
+                  Featured Work
+                </p>
+              </ScrollReveal>
+              <ScrollReveal direction="up" delay={0.2}>
+                <p
+                  className="font-display mt-4 text-[clamp(5rem,12vw,9rem)] font-extrabold leading-[0.85] tracking-[-0.04em]"
+                  style={{ color: "rgba(0,168,107,0.12)" }}
+                >
+                  03
+                </p>
+              </ScrollReveal>
+              <ScrollReveal direction="up" delay={0.3}>
+                <h2 className="font-display mt-2 text-3xl font-bold tracking-[-0.02em] sm:text-4xl lg:text-5xl">
+                  Custom<br />Team Kit
+                </h2>
+              </ScrollReveal>
+              <ScrollReveal direction="up" delay={0.4}>
+                <p className="mt-6 max-w-md text-sm leading-relaxed text-text-secondary sm:text-base">
+                  Complete redesign of U15 academy kit. Twenty-two jerseys,
+                  custom woven badges, individual name sets, and team-colour
+                  detailing across every size.
+                </p>
+              </ScrollReveal>
+              <ScrollReveal direction="up" delay={0.5}>
+                <Link
+                  href="#"
+                  className="group mt-8 inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] text-white/70 uppercase hover:text-white transition-all duration-300"
+                >
+                  View Project
+                  <ArrowRight className="size-3 transition-transform duration-300 group-hover:translate-x-1" />
+                </Link>
+              </ScrollReveal>
+            </div>
+            <ScrollReveal direction="right" delay={0.2} className="flex items-center justify-center">
+              <div className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-sm bg-gradient-to-br from-green-600/20 to-bg-elevated">
+                <div
+                  className="absolute inset-0 opacity-[0.04]"
+                  style={{
+                    backgroundImage:
+                      "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,168,107,0.15) 2px, rgba(0,168,107,0.15) 3px)",
+                  }}
+                />
+                <span className="text-8xl opacity-40 select-none">🏆</span>
+              </div>
+            </ScrollReveal>
+          </div>
+        </FullBleedSection>
+
+        {/* ── STATS — clean, minimal ── */}
+        <section className="border-t border-white/5 px-6 py-20">
+          <div className="mx-auto max-w-5xl">
+            <div className="grid grid-cols-2 gap-12 sm:grid-cols-4 sm:gap-8">
+              {stats.map((stat, i) => (
+                <ScrollReveal key={stat.label} direction="up" delay={0.1 * i}>
+                  <div className="text-center">
+                    <p className="font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                      {stat.value}
                     </p>
-                    <p className="mt-2 text-sm font-medium text-text-tertiary">
+                    <p className="mt-2 text-[11px] font-medium tracking-[0.15em] text-text-tertiary uppercase">
                       {stat.label}
                     </p>
                   </div>
@@ -320,74 +379,78 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── How It Works ── */}
-        <section id="how-it-works" className="border-t border-border bg-bg section-spacious">
-          <div className="container-sm">
-            <div className="mb-16">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-green">
-                🏃 Process
-              </p>
-              <AnimatedText
-                text="From Sideline to Spotlight"
-                as="h2"
-                delay={0.1}
-                stagger={0.06}
-                className="mt-3 text-4xl font-extrabold tracking-[-2px] sm:text-5xl"
-              />
-              <p className="mt-4 text-lg text-text-secondary">
-                From sideline to spotlight, in four simple steps
-              </p>
+        {/* ── OUR STORY — Craft & Heritage ── */}
+        <FullBleedSection className="border-t border-white/5">
+          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-16 lg:grid-cols-2 lg:gap-24">
+            <div>
+              <ScrollReveal direction="up" delay={0.1}>
+                <p className="text-[10px] font-semibold tracking-[0.3em] text-green-400 uppercase">
+                  Our Story
+                </p>
+              </ScrollReveal>
+              <ScrollReveal direction="up" delay={0.2}>
+                <h2 className="font-display mt-4 text-4xl font-bold tracking-[-0.03em] sm:text-5xl lg:text-6xl">
+                  Craft &amp;<br />
+                  <span className="text-green-400">Heritage</span>
+                </h2>
+              </ScrollReveal>
+              <ScrollReveal direction="up" delay={0.3}>
+                <p className="mt-8 max-w-lg text-sm leading-relaxed text-text-secondary sm:text-base">
+                  Born on the pitches of South Africa. Every jersey has a story
+                  — match-winning goals, cup final tears, Friday night lights.
+                  We don&apos;t just repair kits; we preserve memories.
+                </p>
+              </ScrollReveal>
+              <ScrollReveal direction="up" delay={0.4}>
+                <p className="mt-4 max-w-lg text-sm leading-relaxed text-text-secondary sm:text-base">
+                  From Soweto to Cape Town, from amateur clubhouses to the
+                  Springbok change room — our craft is rooted in the belief that
+                  the best jersey is the one with history written into every
+                  fibre.
+                </p>
+              </ScrollReveal>
             </div>
+            <ScrollReveal direction="right" delay={0.2} className="flex items-center justify-center">
+              <div className="relative flex aspect-square w-full max-w-md items-center justify-center overflow-hidden rounded-sm bg-gradient-to-br from-green-900/20 via-bg-elevated to-bg">
+                <div
+                  className="absolute inset-0 opacity-[0.03]"
+                  style={{
+                    backgroundImage:
+                      "repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(0,232,89,0.15) 4px, rgba(0,232,89,0.15) 5px)",
+                  }}
+                />
+                <div className="text-center">
+                  <span className="block text-6xl opacity-30 select-none">🇿🇦</span>
+                  <p className="mt-4 text-[10px] font-semibold tracking-[0.2em] text-white/20 uppercase">
+                    Since 2024
+                  </p>
+                </div>
+              </div>
+            </ScrollReveal>
+          </div>
+        </FullBleedSection>
 
-            <div className="relative grid gap-6 md:grid-cols-4 md:gap-4">
-              {steps.map((step, i) => (
-                <ScrollReveal key={step.title} direction="up" delay={0.1 * i}>
-                  <div
-                    className="card-base relative p-8"
-                    style={
-                      step.highlighted
-                        ? { borderColor: "rgba(0,168,107,0.45)" }
-                        : undefined
-                    }
-                  >
-                    {i < steps.length - 1 && (
+        {/* ── CLIENTS — Trusted By ── */}
+        <section className="border-t border-white/5 px-6 py-24">
+          <div className="mx-auto max-w-6xl">
+            <ScrollReveal direction="up" delay={0.1}>
+              <p className="mb-16 text-center text-[10px] font-semibold tracking-[0.3em] text-white/40 uppercase">
+                Trusted By
+              </p>
+            </ScrollReveal>
+            <div className="grid grid-cols-3 gap-8 sm:grid-cols-6 sm:gap-12">
+              {clubLogos.map((club, i) => (
+                <ScrollReveal key={club.name} direction="up" delay={0.05 * i}>
+                  <div className="flex aspect-square items-center justify-center rounded-sm border border-white/5 bg-white/[0.02] p-4 transition-colors duration-300 hover:border-white/10">
+                    <div className="text-center">
                       <div
-                        className="pointer-events-none absolute -right-3 top-1/2 hidden -translate-y-1/2 text-xl text-brand-green md:block"
-                        aria-hidden="true"
-                      >
-                        →
-                      </div>
-                    )}
-                    <p
-                      className="font-display text-5xl font-extrabold leading-none"
-                      style={{
-                        color: step.highlighted
-                          ? "rgba(0,168,107,0.45)"
-                          : "rgba(0,168,107,0.18)",
-                      }}
-                    >
-                      {step.number}
-                    </p>
-                    <h3
-                      className="mt-4 text-base font-bold"
-                      style={
-                        step.highlighted
-                          ? { color: "var(--brand-green)" }
-                          : undefined
-                      }
-                    >
-                      {step.title}
-                    </h3>
-                    <p
-                      className="mt-2 text-sm leading-relaxed"
-                      style={
-                        step.highlighted
-                          ? { color: "var(--text-primary)" }
-                          : { color: "var(--text-secondary)" }
-                      }
-                    >
-                      {step.description}
-                    </p>
+                        className="mx-auto h-8 w-8 rounded-full"
+                        style={{ backgroundColor: club.color }}
+                      />
+                      <p className="mt-3 text-[10px] font-semibold tracking-[0.05em] text-text-tertiary leading-tight">
+                        {club.name}
+                      </p>
+                    </div>
                   </div>
                 </ScrollReveal>
               ))}
@@ -395,122 +458,55 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── Product Showcase ── */}
-        <section id="shop" className="border-t border-border bg-bg-deep section-spacious">
-          <div className="container-sm">
-            <div className="mb-16">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-green">
-                🛍️ Shop
+        {/* ── SHOP — Match-Ready Kits ── */}
+        <section
+          id="shop"
+          className="border-t border-white/5 px-6 py-24"
+        >
+          <div className="mx-auto max-w-6xl">
+            <ScrollReveal direction="up" delay={0.1}>
+              <p className="mb-2 text-[10px] font-semibold tracking-[0.3em] text-green-400 uppercase">
+                Shop
               </p>
-              <AnimatedText
-                text="Match-Ready Jerseys"
-                as="h2"
-                delay={0.1}
-                stagger={0.06}
-                className="mt-3 text-4xl font-extrabold tracking-[-2px] sm:text-5xl"
-              />
-              <p className="mt-4 text-lg text-text-secondary">
-                Built for SA Teams
-              </p>
-            </div>
-
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            </ScrollReveal>
+            <ScrollReveal direction="up" delay={0.15}>
+              <h2 className="font-display text-3xl font-bold tracking-[-0.02em] sm:text-4xl">
+                Match-Ready Kits
+              </h2>
+            </ScrollReveal>
+            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {products.map((product, i) => (
                 <ScrollReveal key={product.title} direction="up" delay={0.08 * i}>
-                  <div className="card-base overflow-hidden">
-                    <div className="relative flex aspect-[3/4] items-center justify-center bg-gradient-to-br from-bg-elevated to-surface">
+                  <div className="group cursor-pointer">
+                    <div className="relative flex aspect-[3/4] items-center justify-center overflow-hidden bg-gradient-to-br from-bg-elevated to-surface">
                       {product.badge && (
-                        <span
-                          className={`badge absolute left-3 top-3 ${
-                            product.badge === "Best Seller"
-                              ? "badge-gold"
-                              : "badge-success"
-                          }`}
-                        >
+                        <span className="absolute left-3 top-3 rounded-sm bg-green-500/20 px-2 py-1 text-[9px] font-semibold tracking-[0.1em] text-green-400 uppercase">
                           {product.badge}
                         </span>
                       )}
-                      <span className="text-5xl opacity-50" aria-hidden="true">
+                      <span
+                        className="text-6xl transition-transform duration-500 group-hover:scale-110 select-none"
+                        aria-hidden="true"
+                      >
                         👕
                       </span>
-                    </div>
-                    <div className="p-5">
-                      <p className="text-[11px] font-semibold uppercase tracking-[1px] text-text-tertiary">
-                        {product.category}
-                      </p>
-                      <h3 className="font-display mt-2 text-lg font-bold tracking-[-0.3px]">
-                        {product.title}
-                      </h3>
-                      <p className="mt-2 text-xl font-bold text-brand-green">
-                        {product.price}
-                      </p>
-                      <div className="mt-3 flex flex-wrap gap-1.5">
-                        {product.sizes.map((size) => (
-                          <span
-                            key={size}
-                            className="rounded-md bg-bg-elevated px-2.5 py-1 text-[11px] font-semibold text-text-secondary"
-                          >
-                            {size}
-                          </span>
-                        ))}
+                      {/* Hover overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-all duration-500 group-hover:bg-black/40">
+                        <span className="translate-y-4 text-[10px] font-semibold tracking-[0.2em] text-white uppercase opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+                          Quick View
+                        </span>
                       </div>
                     </div>
-                  </div>
-                </ScrollReveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── Testimonials ── */}
-        <section className="border-t border-border bg-bg section-spacious">
-          <div className="container-sm">
-            <div className="mb-16 text-center">
-              <motion.p
-                className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-green"
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-              >
-                ⭐ Testimonials
-              </motion.p>
-              <AnimatedText
-                text="What Players Say"
-                as="h2"
-                delay={0.1}
-                stagger={0.06}
-                className="mt-3 text-4xl font-extrabold tracking-[-2px] sm:text-5xl"
-              />
-              <motion.p
-                className="mx-auto mt-4 max-w-xl text-lg text-text-secondary"
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-              >
-                Trusted by players and clubs across South Africa
-              </motion.p>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-3">
-              {testimonials.map((t, i) => (
-                <ScrollReveal key={t.author} direction="up" delay={0.1 * i}>
-                  <div className="card-base p-8">
-                    <div className="mb-4 flex gap-1">
-                      {Array.from({ length: t.rating }).map((_, idx) => (
-                        <Star
-                          key={idx}
-                          className="size-4 fill-brand-gold text-brand-gold"
-                          aria-hidden="true"
-                        />
-                      ))}
-                    </div>
-                    <blockquote className="text-sm leading-relaxed text-text-primary">
-                      &ldquo;{t.quote}&rdquo;
-                    </blockquote>
-                    <div className="mt-6 border-t border-border pt-4">
-                      <p className="text-sm font-semibold">{t.author}</p>
-                      <p className="text-xs text-text-tertiary">{t.location}</p>
+                    <div className="mt-4">
+                      <p className="text-[10px] font-semibold tracking-[0.15em] text-text-tertiary uppercase">
+                        {product.category}
+                      </p>
+                      <h3 className="mt-1 text-sm font-bold tracking-[-0.01em]">
+                        {product.title}
+                      </h3>
+                      <p className="mt-1 text-base font-bold text-green-400">
+                        {product.price}
+                      </p>
                     </div>
                   </div>
                 </ScrollReveal>
@@ -519,37 +515,37 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── CTA Section ── */}
-        <section className="border-t border-border bg-bg-deep section-spacious">
-          <div className="container-sm">
-            <div className="relative overflow-hidden rounded-2xl border border-border p-12 text-center sm:p-16">
-              <div
-                className="pointer-events-none absolute inset-0 -z-10"
-                aria-hidden="true"
-                style={{
-                  background: [
-                    "radial-gradient(ellipse 100% 80% at 50% 20%, rgba(0,168,107,0.14) 0%, transparent 60%)",
-                    "radial-gradient(ellipse 60% 60% at 80% 80%, rgba(200,169,81,0.08) 0%, transparent 50%)",
-                  ].join(", "),
-                }}
-              />
-              <h2 className="font-display text-4xl font-extrabold tracking-[-2px] sm:text-5xl">
-                Ready to fix your kit?
+        {/* ── CTA — Restore Your Kit ── */}
+        <section className="border-t border-white/5 px-6 py-32">
+          <div className="mx-auto max-w-3xl text-center">
+            <ScrollReveal direction="up" delay={0.1}>
+              <h2 className="font-display text-4xl font-bold tracking-[-0.03em] sm:text-5xl lg:text-6xl">
+                Restore Your Kit
               </h2>
-              <p className="mx-auto mt-4 max-w-lg text-lg text-text-secondary">
-                Join 500+ South African clubs who trust KitFix for their
-                jersey repairs and customisation.
+            </ScrollReveal>
+            <ScrollReveal direction="up" delay={0.2}>
+              <p className="mx-auto mt-6 max-w-md text-sm leading-relaxed text-text-secondary sm:text-base">
+                Every jersey deserves a second half. Send us your kit and we&apos;ll
+                bring it back to match-day condition.
               </p>
-              <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-                <Link href="/sign-up" className="btn-primary">
-                  Start Your Repair
-                  <ArrowRight className="size-4" aria-hidden="true" />
+            </ScrollReveal>
+            <ScrollReveal direction="up" delay={0.3}>
+              <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+                <Link
+                  href="/sign-up"
+                  className="inline-flex items-center gap-2 rounded-none border border-green-400 bg-green-400 px-8 py-3 text-xs font-semibold tracking-[0.2em] text-bg-deep uppercase transition-all duration-300 hover:bg-green-300"
+                >
+                  Get a Quote
+                  <ArrowRight className="size-3" />
                 </Link>
-                <Link href="/shop" className="btn-ghost">
-                  Browse Jerseys
+                <Link
+                  href="#work-01"
+                  className="inline-flex items-center gap-2 rounded-none border border-white/20 px-8 py-3 text-xs font-semibold tracking-[0.2em] text-white/80 uppercase transition-all duration-300 hover:border-white/50 hover:text-white"
+                >
+                  Our Work
                 </Link>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </section>
 

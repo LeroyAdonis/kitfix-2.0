@@ -224,6 +224,7 @@ html {
   --shadow-card-hover: rgba(200,169,81,0.08) 0px 30px 45px -30px, rgba(0,0,0,0.1) 0px 18px 36px -18px, 0 0 30px rgba(200,169,81,0.04);
 
   /* Sport shadows (light) */
+  --brand-green-vibrant: #00C853;
   --shadow-glow-green-vibrant: 0 0 25px rgba(0, 232, 89, 0.15);
   --shadow-elevated-green: rgba(0, 232, 89, 0.15) 0px 30px 45px -30px, rgba(0,0,0,0.04) 0px 18px 36px -18px;
   --shadow-card-hover-green: rgba(0, 232, 89, 0.08) 0px 30px 45px -30px, rgba(0,0,0,0.08) 0px 18px 36px -18px, 0 0 30px rgba(0, 232, 89, 0.06);
@@ -1115,3 +1116,204 @@ html {
 .glow-pulse-green {
   animation: glow-pulse-green 2s ease-in-out infinite;
 }
+
+/* ===================================================================
+   PREMIUM BRAND PORTFOLIO
+   Full-bleed editorial sections, project cards, scroll-triggered
+   reveals, and minimal premium brand styling (janissne.com inspired).
+   All classes below are additive — they do NOT remove or break
+   any existing classes used by other pages.
+   =================================================================== */
+
+/* ─── Full-viewport Section ─── */
+
+.section-viewport {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+/* ─── Editorial Hero Typography ─── */
+
+.text-hero {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(3rem, 8vw, 8rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+/* ─── Project Card (Portfolio-style, minimal) ─── */
+
+.project-card {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  cursor: pointer;
+}
+
+.project-card .overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 2rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project-card:hover .overlay {
+  opacity: 1;
+}
+
+/* ─── Project Number (big faded number) ─── */
+
+.project-number {
+  font-weight: 900;
+  font-size: clamp(4rem, 10vw, 8rem);
+  line-height: 1;
+  opacity: 0.1;
+}
+
+/* ─── Full-bleed Image/Video Container ─── */
+
+.media-full {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ─── Section Label (small uppercase accent label) ─── */
+
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--brand-green-vibrant);
+  margin-bottom: 1rem;
+}
+
+/* ─── Scroll Indicator ─── */
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ─── Client Logo Grid ─── */
+
+.client-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 2rem;
+  align-items: center;
+  justify-items: center;
+}
+
+/* ─── Premium Divider (subtle gradient) ─── */
+
+.divider-premium {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  margin: 0;
+  border: none;
+}
+
+/* ─── Media Placeholder ─── */
+
+.media-placeholder {
+  background: var(--surface);
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Premium Card (borderless, no background, minimal) ─── */
+
+.card-premium {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+/* ─── Premium Stat (clean, minimal stat display) ─── */
+
+.stat-premium {
+  text-align: center;
+}
+
+.stat-premium .number {
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--brand-green-vibrant);
+}
+
+.stat-premium .label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-tertiary);
+  margin-top: 0.5rem;
+}
+
+/* ─── Full-bleed Section with Overlay ─── */
+
+.section-fullbleed {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.section-fullbleed .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1;
+}
+
+.section-fullbleed > .content {
+  position: relative;
+  z-index: 2;
+}
+
+/* ─── Scroll-triggered Reveal (animation + utility) ─── */
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 100ms; }
+.reveal-delay-2 { transition-delay: 200ms; }
+.reveal-delay-3 { transition-delay: 300ms; }
+.reveal-delay-4 { transition-delay: 400ms; }

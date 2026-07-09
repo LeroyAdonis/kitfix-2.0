@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
   { label: "Repair", href: "/repairs" },
-  { label: "Shop", href: "/shop" },
   { label: "How It Works", href: "#how-it-works" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export function LandingHeader() {
@@ -46,28 +46,31 @@ export function LandingHeader() {
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2.5 text-xl font-display font-extrabold tracking-[-0.5px]"
+          className="flex items-center gap-2 text-sm font-semibold tracking-wider uppercase text-text-primary"
         >
-          <span className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-green to-brand-green-bright text-xs text-text-inverse">
-            🏈
-          </span>
-          Kit<span className="text-brand-green-bright">Fix</span>
+          KitFix
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden items-center gap-8 md:flex">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.label}
-              href={link.href}
-              className="text-sm font-medium text-text-secondary transition-colors hover:text-text-primary"
-            >
-              {link.label}
-            </Link>
+        <nav className="hidden items-center gap-1 md:flex">
+          {NAV_LINKS.map((link, i) => (
+            <div key={link.label} className="flex items-center gap-1">
+              {i > 0 && (
+                <span className="mx-2 text-xs text-text-tertiary">·</span>
+              )}
+              <Link
+                href={link.href}
+                className="px-2 py-1 text-xs font-medium text-text-secondary tracking-wide transition-colors hover:text-text-primary"
+              >
+                {link.label}
+              </Link>
+            </div>
           ))}
-          <Link href="/sign-up" className="btn-primary">
+          <Link
+            href="/sign-up"
+            className="ml-6 rounded-full border border-border px-4 py-1 text-xs font-medium text-text-secondary transition-colors hover:border-text-primary hover:text-text-primary"
+          >
             Start a Repair
-            <ArrowRight className="size-4" aria-hidden="true" />
           </Link>
         </nav>
 
@@ -122,11 +125,10 @@ export function LandingHeader() {
             >
               <Link
                 href="/sign-up"
-                className="btn-primary"
+                className="rounded-full border border-border px-5 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:border-text-primary hover:text-text-primary"
                 onClick={() => setMobileOpen(false)}
               >
                 Start a Repair
-                <ArrowRight className="size-4" aria-hidden="true" />
               </Link>
             </motion.div>
           </nav>
