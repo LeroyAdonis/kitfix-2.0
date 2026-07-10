@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { Montserrat } from "next/font/google";
 import { FloatingShapes } from "@/components/motion";
 import { ShieldCheck } from "lucide-react";
 
