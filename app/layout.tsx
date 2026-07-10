@@ -20,9 +20,9 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "KitFix — AI-Powered Jersey Repair Service",
+  title: "KitFix — South Africa's #1 Jersey Repair & Customisation Service",
   description:
-    "AI-powered jersey repair and restoration. Describe the damage, get an instant quote, and track your repair. South Africa's trusted jersey fix.",
+    "Premium jersey repair, custom kits & vintage restoration. From Kaizer Chiefs to your club team — South Africa's trusted jersey specialists.",
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
   ),
