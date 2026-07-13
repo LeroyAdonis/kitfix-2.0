@@ -118,15 +118,18 @@ export function VoiceUpdateButton({
         audioRef.current?.pause();
 
         const audio = new Audio(note.audioUrl);
+        audio.preload = "auto";
         audio.onended = () => setPlayingId(null);
         audio.onerror = () => {
           setPlayingId(null);
           setError("Failed to play audio");
         };
-        audio.play().catch(() => {
-          setError("Failed to play audio — user interaction may be required");
-          setPlayingId(null);
-        });
+        audio.oncanplaythrough = () => {
+          audio.play().catch(() => {
+            setPlayingId(null);
+            setError("Failed to play audio");
+          });
+        };
 
         audioRef.current = audio;
         setPlayingId(note.id);
