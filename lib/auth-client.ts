@@ -113,8 +113,16 @@ export async function signUp(input: { email: string; password: string; name: str
 }
 
 export async function signOut(_options?: { fetchOptions?: { onSuccess?: () => void } }): Promise<void> {
-  // Clear the cookie client-side
-  document.cookie = "better-auth.session_token=; path=/; max-age=0;";
-  _options?.fetchOptions?.onSuccess?.();
+  // Clear via server endpoint for reliable httpOnly cookie removal
+  try {
+    await fetch(`${BASE_URL}/api/auth/sign-out`, {
+      method: "GET",
+      credentials: "include",
+    });
+  } catch {
+    // Fallback: clear cookie client-side
+    document.cookie = "better-auth.session_token=; path=/; max-age=0;";
+    document.cookie = "better-auth.session_token=; path=/; domain=.kitfix-2-0.vercel.app; max-age=0;";
+  }
   window.location.href = "/sign-in";
 }

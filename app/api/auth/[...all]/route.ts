@@ -155,6 +155,7 @@ async function handleSignIn(request: NextRequest): Promise<NextResponse> {
       // Try legacy Better Auth scrypt format
       const legacy = await verifyLegacyPassword(accounts[0].password, password);
       if (!legacy.valid) {
+        console.warn("[auth] Legacy password verify failed:", legacy.debug);
         return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
       }
       // Migrate to bcrypt
