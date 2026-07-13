@@ -299,6 +299,13 @@ describe("POST /api/voice/generate", () => {
       "https://blob.vercel.com/voice-note-123.wav",
     );
     expect(json.data.id).toBe("voice-1");
+
+    // Verify put() was called with access: "private" (matching the private Vercel Blob store)
+    expect(vi.mocked(put)).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(Blob),
+      expect.objectContaining({ access: "private" }),
+    );
   });
 });
 

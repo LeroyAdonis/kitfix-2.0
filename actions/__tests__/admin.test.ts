@@ -53,10 +53,19 @@ vi.mock("@/lib/db", () => ({
 
 vi.mock("@/lib/db/queries/repairs", () => ({
   updateRepairStatus: vi.fn(),
+  getRepairById: vi.fn(),
 }));
 
 vi.mock("@/lib/db/queries/notifications", () => ({
   createNotification: vi.fn(),
+}));
+
+vi.mock("@/lib/db/queries/voice-notes", () => ({
+  createVoiceNote: vi.fn(),
+}));
+
+vi.mock("@vercel/blob", () => ({
+  put: vi.fn(),
 }));
 
 // ---------------------------------------------------------------------------
@@ -64,8 +73,10 @@ vi.mock("@/lib/db/queries/notifications", () => ({
 // ---------------------------------------------------------------------------
 
 import { getSession } from "@/lib/auth-utils";
-import { updateRepairStatus } from "@/lib/db/queries/repairs";
+import { updateRepairStatus, getRepairById } from "@/lib/db/queries/repairs";
 import { createNotification } from "@/lib/db/queries/notifications";
+import { createVoiceNote } from "@/lib/db/queries/voice-notes";
+import { put } from "@vercel/blob";
 import {
   assignTechnicianAction,
   updateRepairStatusAction,
@@ -343,6 +354,90 @@ describe("updateRepairStatusAction", () => {
       success: false,
       error: "Failed to update repair status",
     });
+  });
+
+  it("triggers voice note with private blob access on quality_check status", async () => {
+    vi.mocked(getSession).mockResolvedValueOnce(mockSession("admin", "admin-1"));
+    vi.mocked(updateRepairStatus).mockResolvedValueOnce({
+      id: "repair-1",
+      customerId: "cust-1",
+      technicianId: null,
+      jerseyDescription: "Test",
+      jerseyBrand: null,
+      jerseySize: "M",
+      damageType: "tear",
+      damageDescription: "Torn sleeve",
+      urgencyLevel: "standard",
+      currentStatus: "quality_check",
+      estimatedCost: null,
+      finalCost: null,
+      aiDamageAssessment: null,
+      adminNotes: null,
+      quoteDeclineReason: null,
+      trackingNumber: null,
+      shippingAddress: null,
+      pickupRequired: false,
+      pickupFee: 0,
+      deliveryFee: 0,
+      shippingMode: null,
+      outboundLockerId: null,
+      returnLockerId: null,
+      outboundTracking: null,
+      returnTracking: null,
+      outboundLabelUrl: null,
+      returnLabelUrl: null,
+      shippingRateCents: null,
+      shippingSurchargeCents: null,
+      deletedAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    vi.mocked(getRepairById).mockResolvedValueOnce({
+      id: "repair-1",
+      customerId: "cust-1",
+      customer: { id: "cust-1", name: "Thabo", email: "thabo@example.com", role: "customer" },
+      jerseyDescription: "Test",
+      currentStatus: "quality_check",
+    } as NonNullable<Awaited<ReturnType<typeof getRepairById>>>);
+    vi.mocked(createNotification).mockResolvedValueOnce({
+      id: "notif-1",
+      userId: "cust-1",
+      type: "status_update",
+      title: "Repair Status Updated",
+      message: "Status updated",
+      repairRequestId: "repair-1",
+      isRead: false,
+      createdAt: new Date(),
+    } as Awaited<ReturnType<typeof createNotification>>);
+
+    const fakeWav = new Blob(["fake-wav"], { type: "audio/wav" });
+    const origFetch = globalThis.fetch;
+    globalThis.fetch = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      blob: () => Promise.resolve(fakeWav),
+    } as Response);
+
+    vi.mocked(put).mockResolvedValueOnce({
+      url: "https://blob.vercel.com/voice-note-123.wav",
+    } as Awaited<ReturnType<typeof put>>);
+
+    vi.mocked(createVoiceNote).mockResolvedValueOnce({
+      id: "voice-1",
+      repairRequestId: "repair-1",
+      audioUrl: "https://blob.vercel.com/voice-note-123.wav",
+    } as Awaited<ReturnType<typeof createVoiceNote>>);
+
+    const result = await updateRepairStatusAction("repair-1", "quality_check");
+
+    expect(result).toEqual({ success: true, data: { repairRequestId: "repair-1" } });
+
+    expect(vi.mocked(put)).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(Blob),
+      expect.objectContaining({ access: "private" }),
+    );
+
+    globalThis.fetch = origFetch;
   });
 });
 

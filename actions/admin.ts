@@ -64,7 +64,7 @@ async function triggerVoiceNoteIfNeeded(
     const audioBlob = await response.blob();
     const filename = `voice-notes/${repairId}/${Date.now()}.wav`;
     const blobResult = await put(filename, audioBlob, {
-      access: "public",
+      access: "private",
       contentType: "audio/wav",
       addRandomSuffix: true,
     });

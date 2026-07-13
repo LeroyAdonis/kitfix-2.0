@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
   let blobResult: { url: string };
   try {
     blobResult = await put(filename, audioBlob, {
-      access: "public",
+      access: "private",
       contentType: "audio/wav",
       addRandomSuffix: true,
     });
