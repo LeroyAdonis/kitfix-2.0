@@ -117,7 +117,7 @@ export function VoiceUpdateButton({
         // Stop any current playback
         audioRef.current?.pause();
 
-        const audio = new Audio(note.audioUrl);
+        const audio = new Audio(`/api/voice/stream/${note.id}`);
         audio.preload = "auto";
         audio.onended = () => setPlayingId(null);
         audio.onerror = () => {

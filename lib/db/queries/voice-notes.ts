@@ -4,6 +4,18 @@ import { db } from "../index";
 import { voiceNotes, type NewVoiceNote } from "../schema";
 
 /**
+ * Fetch a single voice note by ID.
+ */
+export async function getVoiceNoteById(id: string) {
+  const [note] = await db
+    .select()
+    .from(voiceNotes)
+    .where(eq(voiceNotes.id, id))
+    .limit(1);
+  return note ?? null;
+}
+
+/**
  * Fetch all voice notes for a given repair request, newest first.
  */
 export async function getVoiceNotesByRepair(repairRequestId: string) {
