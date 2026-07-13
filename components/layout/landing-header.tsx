@@ -6,6 +6,8 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSession, signOut } from "@/lib/auth-client";
+import { Button } from "@/components/ui/button";
 
 const NAV_LINKS = [
   { label: "Repair", href: "/repairs" },
@@ -17,6 +19,7 @@ export function LandingHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const shouldReduceMotion = useReducedMotion();
+  const { data: session } = useSession();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -71,6 +74,35 @@ export function LandingHeader() {
               <span className="absolute -bottom-1 left-0 right-0 h-px bg-green-400/60 scale-x-0 transition-transform duration-300 origin-left group-hover:scale-x-100" />
             </Link>
           ))}
+          {/* Auth buttons */}
+          {session ? (
+            <div className="flex items-center gap-3">
+              <Link
+                href="/dashboard"
+                className="text-xs font-medium tracking-[0.15em] text-green-400/80 uppercase transition-colors hover:text-green-400"
+              >
+                Dashboard
+              </Link>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => signOut()}
+                className="text-xs font-medium tracking-[0.15em] text-white/50 uppercase hover:text-white"
+              >
+                Sign Out
+              </Button>
+            </div>
+          ) : (
+            <Link href="/sign-in">
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs font-medium tracking-[0.15em] uppercase border-white/10 text-white/80 hover:text-white hover:border-white/30"
+              >
+                Sign In
+              </Button>
+            </Link>
+          )}
         </nav>
 
         {/* Mobile Toggle */}
@@ -114,6 +146,37 @@ export function LandingHeader() {
                 </Link>
               </motion.div>
             ))}
+            {/* Mobile auth buttons */}
+            {session ? (
+              <div className="flex flex-col items-center gap-4 pt-4">
+                <Link
+                  href="/dashboard"
+                  className="text-lg font-semibold text-green-400 transition-colors hover:text-green-300 font-display"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={() => { signOut(); setMobileOpen(false); }}
+                  className="text-base text-white/50 transition-colors hover:text-white"
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/sign-in"
+                className="pt-4"
+                onClick={() => setMobileOpen(false)}
+              >
+                <Button
+                  variant="outline"
+                  className="text-base font-medium tracking-[0.15em] uppercase border-white/20 text-white/80 hover:text-white hover:border-white/40"
+                >
+                  Sign In
+                </Button>
+              </Link>
+            )}
             {/* Mobile brand accent */}
             <motion.div
               className="mt-6 h-px w-20 bg-gradient-to-r from-transparent via-green-400/40 to-transparent"
