@@ -3,6 +3,8 @@
 import { authenticatedAction } from "@/lib/auth-utils";
 import type { AIDamageAssessment } from "@/types/ai";
 
+export const maxDuration = 30;
+
 interface NVidiaVisionResponse {
   choices: {
     message: {
@@ -52,6 +54,7 @@ export const analyzeDamageAction = authenticatedAction(async (
         temperature: 0.1,
         max_tokens: 300,
       }),
+      signal: AbortSignal.timeout(25_000), // 25s before Vercel's 30s maxDuration
     });
 
     if (!response.ok) {
