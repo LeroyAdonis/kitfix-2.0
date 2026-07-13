@@ -11,12 +11,12 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, AlertTriangle, Cpu } from "lucide-react";
+import { Loader2, AlertTriangle, Cpu, Upload } from "lucide-react";
 import { analyzeDamageAction } from "@/actions/ai-damage";
 import type { AIDamageAssessment } from "@/types/ai";
 import { useRouter } from "next/navigation";
 
-type AnalysisState = "idle" | "loading" | "success" | "error";
+type AnalysisState = "idle" | "loading" | "uploading" | "success" | "error";
 
 const SEVERITY_VARIANT: Record<string, "default" | "secondary" | "destructive"> = {
   minor: "secondary",
@@ -25,18 +25,27 @@ const SEVERITY_VARIANT: Record<string, "default" | "secondary" | "destructive"> 
 };
 
 interface DamageAnalyzerProps {
+  /** Data URLs for displaying preview thumbnails */
   photoUrls: string[];
+  /** Original File objects for client-side upload to temp storage */
+  files: File[];
   existingAssessment?: AIDamageAssessment | null;
-  onAnalysisComplete?: (result: AIDamageAssessment) => void;
+  onAnalysisComplete?: (result: AIDamageAssessment, blobUrl?: string) => void;
 }
 
-export function DamageAnalyzer({ photoUrls, existingAssessment, onAnalysisComplete }: DamageAnalyzerProps) {
+export function DamageAnalyzer({
+  photoUrls,
+  files,
+  existingAssessment,
+  onAnalysisComplete,
+}: DamageAnalyzerProps) {
   const [state, setState] = useState<AnalysisState>(existingAssessment ? "success" : "idle");
   const [result, setResult] = useState<AIDamageAssessment | null>(existingAssessment ?? null);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [uploadProgress, setUploadProgress] = useState(0);
   const router = useRouter();
 
-  if (photoUrls.length === 0) {
+  if (photoUrls.length === 0 || files.length === 0) {
     return (
       <Card className="border-dashed">
         <CardContent className="pt-6">
@@ -51,22 +60,84 @@ export function DamageAnalyzer({ photoUrls, existingAssessment, onAnalysisComple
     );
   }
 
+  /**
+   * Upload a file to the temp upload endpoint using XMLHttpRequest
+   * for progress tracking, then return the public URL.
+   */
+  function uploadFile(file: File): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+
+      xhr.upload.addEventListener("progress", (e) => {
+        if (e.lengthComputable) {
+          const pct = Math.round((e.loaded / e.total) * 100);
+          setUploadProgress(pct);
+        }
+      });
+
+      xhr.addEventListener("load", () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const json = JSON.parse(xhr.responseText);
+            if (json.success && json.url) {
+              resolve(json.url);
+            } else {
+              reject(new Error(json.error ?? "Upload failed"));
+            }
+          } catch {
+            reject(new Error("Invalid server response"));
+          }
+        } else {
+          let msg = `Upload failed (${xhr.status})`;
+          try {
+            const json = JSON.parse(xhr.responseText);
+            if (json.error) msg = json.error;
+          } catch {
+            // keep generic
+          }
+          reject(new Error(msg));
+        }
+      });
+
+      xhr.addEventListener("error", () => {
+        reject(new Error("Network error — check your connection"));
+      });
+
+      xhr.addEventListener("abort", () => {
+        reject(new Error("Upload was cancelled"));
+      });
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      xhr.open("POST", "/api/upload/temp");
+      xhr.send(formData);
+    });
+  }
+
   async function handleAnalyze() {
-    setState("loading");
+    setState("uploading");
+    setUploadProgress(0);
     setErrorMessage("");
 
     try {
-      const result = await analyzeDamageAction(photoUrls[0]);
+      // Step 1: Upload the first file to temp storage
+      const blobUrl = await uploadFile(files[0]);
 
-      if (!result.success) {
-        setErrorMessage(result.error);
+      // Step 2: Call the AI server action with the public URL
+      setState("loading");
+
+      const assessment = await analyzeDamageAction(blobUrl);
+
+      if (!assessment.success) {
+        setErrorMessage(assessment.error);
         setState("error");
         return;
       }
 
-      setResult(result.data);
+      setResult(assessment.data);
       setState("success");
-      onAnalysisComplete?.(result.data);
+      onAnalysisComplete?.(assessment.data, blobUrl);
       router.refresh();
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : "Analysis failed unexpectedly.");
@@ -99,6 +170,24 @@ export function DamageAnalyzer({ photoUrls, existingAssessment, onAnalysisComple
             <Cpu className="mr-2 h-4 w-4" />
             Analyze with NVIDIA Vision
           </Button>
+        )}
+
+        {state === "uploading" && (
+          <div className="space-y-2 py-4">
+            <div className="flex items-center justify-center gap-2 text-muted-foreground">
+              <Upload className="h-5 w-5 animate-pulse" />
+              <span className="text-sm">Uploading photo…</span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full rounded-full bg-primary transition-all duration-300"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
+            <p className="text-center text-xs text-muted-foreground">
+              {uploadProgress}%
+            </p>
+          </div>
         )}
 
         {state === "loading" && (

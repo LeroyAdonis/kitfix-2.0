@@ -103,6 +103,7 @@ export function RepairRequestForm() {
   const [formData, setFormData] = useState<RepairFormData>(initialFormData);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [aiAssessment, setAiAssessment] = useState<AIDamageAssessment | null>(null);
+  const [uploadedBlobUrl, setUploadedBlobUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [isPending, startTransition] = useTransition();
@@ -250,12 +251,43 @@ export function RepairRequestForm() {
         fd.set("aiDamageAssessment", JSON.stringify(aiAssessment));
       }
 
+      // Pass the pre-uploaded blob URL so the backend can link it to the repair
+      if (uploadedBlobUrl) {
+        fd.set("aiPhotoUrl", uploadedBlobUrl);
+      }
+
       const result = await createRepairAction(fd);
 
       if (result.success) {
-        // Upload selected photos in the background — don't block on failures
         const repairId = result.data.id;
-        for (const file of selectedFiles) {
+
+        // If the AI analysis pre-uploaded a photo, link it to the repair
+        if (uploadedBlobUrl && selectedFiles[0]) {
+          try {
+            const linkBody: Record<string, unknown> = {
+              url: uploadedBlobUrl,
+              repairRequestId: repairId,
+              photoType: "before",
+              originalFilename: selectedFiles[0].name,
+              mimeType: selectedFiles[0].type,
+              sizeBytes: selectedFiles[0].size,
+            };
+            await fetch("/api/upload/link", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(linkBody),
+            });
+          } catch (linkErr) {
+            logger.warn("Failed to link AI-uploaded photo", {
+              repairId,
+              error: linkErr instanceof Error ? linkErr.message : String(linkErr),
+            });
+          }
+        }
+
+        // Upload remaining selected photos (skip the AI-uploaded one)
+        const remainingFiles = uploadedBlobUrl ? selectedFiles.slice(1) : selectedFiles;
+        for (const file of remainingFiles) {
           try {
             const uploadFd = new globalThis.FormData();
             uploadFd.set("file", file);
@@ -545,7 +577,11 @@ export function RepairRequestForm() {
 
           <DamageAnalyzer
             photoUrls={formData.photoUrls}
-            onAnalysisComplete={setAiAssessment}
+            files={selectedFiles}
+            onAnalysisComplete={(assessment, blobUrl) => {
+              setAiAssessment(assessment);
+              if (blobUrl) setUploadedBlobUrl(blobUrl);
+            }}
           />
 
           <CostEstimator

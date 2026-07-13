@@ -54,7 +54,7 @@ export const analyzeDamageAction = authenticatedAction(async (
         temperature: 0.1,
         max_tokens: 300,
       }),
-      signal: AbortSignal.timeout(25_000), // 25s before Vercel's 30s maxDuration
+      signal: AbortSignal.timeout(9_000), // 9s to fail cleanly before Vercel's 10s Hobby cap
     });
 
     if (!response.ok) {
