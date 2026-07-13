@@ -5,6 +5,7 @@ import { getSession } from "@/lib/auth-utils";
 import { getRepairById } from "@/lib/db/queries/repairs";
 import { getPaymentsByRepair } from "@/lib/db/queries/payments";
 import { StatusTracker } from "@/components/repair/status-tracker";
+import { VoiceUpdateButton } from "@/components/voice/voice-update-button";
 import { DamageTypeBadge } from "@/components/repair/damage-type-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -60,6 +61,12 @@ export default async function RepairDetailPage(props: {
           statusHistory={repair.statusHistory}
         />
       </div>
+
+      {/* Voice Updates */}
+      <VoiceUpdateButton
+        repairId={repair.id}
+        currentStatus={repair.currentStatus}
+      />
 
       {/* Jersey & Damage Info */}
       <div className="grid gap-6 md:grid-cols-2">

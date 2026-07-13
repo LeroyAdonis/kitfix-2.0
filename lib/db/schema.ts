@@ -341,6 +341,46 @@ export const notifications = pgTable(
 );
 
 // ---------------------------------------------------------------------------
+// Voice Notes (pocket-tts generated audio updates)
+// ---------------------------------------------------------------------------
+
+export const voiceNotes = pgTable(
+  "voice_notes",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    repairRequestId: text("repair_request_id")
+      .notNull()
+      .references(() => repairRequests.id, { onDelete: "cascade" }),
+    customerId: text("customer_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    statusAtGeneration: repairStatusEnum("status_at_generation").notNull(),
+    audioUrl: text("audio_url").notNull(),
+    script: text("script").notNull(),
+    durationMs: integer("duration_ms"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("idx_voice_notes_repair_request_id").on(table.repairRequestId),
+    index("idx_voice_notes_customer_id").on(table.customerId),
+    index("idx_voice_notes_created_at").on(table.createdAt),
+  ],
+);
+
+export const voiceNoteRelations = relations(voiceNotes, ({ one }) => ({
+  repairRequest: one(repairRequests, {
+    fields: [voiceNotes.repairRequestId],
+    references: [repairRequests.id],
+  }),
+  customer: one(user, {
+    fields: [voiceNotes.customerId],
+    references: [user.id],
+  }),
+}));
+
+// ---------------------------------------------------------------------------
 // E-commerce tables
 // ---------------------------------------------------------------------------
 
@@ -517,6 +557,7 @@ export const userRelations = relations(user, ({ many }) => ({
   statusChanges: many(statusHistory),
   cartItems: many(cartItems),
   orders: many(orders),
+  voiceNotes: many(voiceNotes),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -554,6 +595,7 @@ export const repairRequestRelations = relations(
       references: [reviews.repairRequestId],
     }),
     notifications: many(notifications),
+    voiceNotes: many(voiceNotes),
   }),
 );
 
@@ -731,3 +773,6 @@ export type NewOrder = typeof orders.$inferInsert;
 
 export type OrderItem = typeof orderItems.$inferSelect;
 export type NewOrderItem = typeof orderItems.$inferInsert;
+
+export type VoiceNote = typeof voiceNotes.$inferSelect;
+export type NewVoiceNote = typeof voiceNotes.$inferInsert;

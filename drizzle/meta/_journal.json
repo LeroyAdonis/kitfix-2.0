@@ -50,6 +50,13 @@
       "when": 1782493480878,
       "tag": "0006_abnormal_forge",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1783921134514,
+      "tag": "0007_mighty_blizzard",
+      "breakpoints": true
     }
   ]
 }
