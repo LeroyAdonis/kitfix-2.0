@@ -53,9 +53,6 @@ export async function extractRepairAction(
       description.trim(),
     ).replace("{{HAS_PHOTOS}}", photoCount > 0 ? `Yes (${photoCount} photo(s))` : "No");
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000); // 8s before Vercel's 10s limit
-
     const response = await fetch(NVIDIA_ENDPOINT, {
       method: "POST",
       headers: {
@@ -71,10 +68,8 @@ export async function extractRepairAction(
         temperature: 0.1,
         max_tokens: 500,
       }),
-      signal: controller.signal,
+      signal: AbortSignal.timeout(9_500), // 9.5s to stay under Vercel's 10s Hobby cap
     });
-
-    clearTimeout(timeout);
 
     if (!response.ok) {
       const errText = await response.text().catch(() => "Unknown error");
