@@ -13,6 +13,12 @@ const nextConfig: NextConfig = {
   // Next.js 16 / Turbopack. The ServiceWorkerRegistrar client component
   // handles registration in production.
 
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "10mb",
+    },
+  },
+
   images: {
     remotePatterns: [
       {
