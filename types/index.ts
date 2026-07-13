@@ -14,6 +14,7 @@ import type {
   cartItems,
   orders,
   orderItems,
+  voiceNotes,
 } from "@/lib/db/schema";
 
 // ---------------------------------------------------------------------------
@@ -64,6 +65,9 @@ export type NewOrder = typeof orders.$inferInsert;
 
 export type OrderItem = typeof orderItems.$inferSelect;
 export type NewOrderItem = typeof orderItems.$inferInsert;
+
+export type VoiceNote = typeof voiceNotes.$inferSelect;
+export type NewVoiceNote = typeof voiceNotes.$inferInsert;
 
 // ---------------------------------------------------------------------------
 // Server action result type

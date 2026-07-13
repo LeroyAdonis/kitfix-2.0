@@ -13,6 +13,88 @@ import type { ActionResult } from "@/types";
 import type { RepairStatus } from "@/types";
 
 // ---------------------------------------------------------------------------
+// TTS Server URL
+// ---------------------------------------------------------------------------
+
+const TTS_SERVER_URL =
+  process.env.TTS_SERVER_URL ?? "http://178.238.227.235:8765";
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Trigger voice note generation for a repair when the status changes to a
+ * "voice-note-worthy" status like quality_check or shipped.
+ */
+async function triggerVoiceNoteIfNeeded(
+  repairId: string,
+  newStatus: RepairStatus,
+): Promise<void> {
+  const AUTO_VOICE_STATUSES: RepairStatus[] = ["quality_check", "shipped"];
+  if (!AUTO_VOICE_STATUSES.includes(newStatus)) return;
+
+  try {
+    const repair = await getRepairById(repairId);
+    if (!repair) return;
+
+    const customerName = repair.customer?.name ?? "there";
+    const friendlyStatus = newStatus.replace(/_/g, " ");
+    const script = `Hi ${customerName}, great news! Your ${repair.jerseyDescription} repair is ${friendlyStatus}. Thanks for trusting KitFix — South Africa's jersey specialists.`;
+
+    const response = await fetch(
+      `${TTS_SERVER_URL}/generate`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: script }),
+        signal: AbortSignal.timeout(30_000),
+      },
+    );
+
+    if (!response.ok) {
+      console.warn(
+        `[voice] TTS server returned ${response.status} for repair ${repairId}`,
+      );
+      return;
+    }
+
+    // Upload to Vercel Blob
+    const { put } = await import("@vercel/blob");
+    const audioBlob = await response.blob();
+    const filename = `voice-notes/${repairId}/${Date.now()}.wav`;
+    const blobResult = await put(filename, audioBlob, {
+      access: "public",
+      contentType: "audio/wav",
+      addRandomSuffix: true,
+    });
+
+    // Save to DB
+    const { createVoiceNote } = await import(
+      "@/lib/db/queries/voice-notes"
+    );
+    await createVoiceNote({
+      repairRequestId: repairId,
+      customerId: repair.customerId,
+      statusAtGeneration: newStatus,
+      audioUrl: blobResult.url,
+      script,
+      durationMs: null,
+    });
+
+    console.log(
+      `[voice] Auto-generated voice note for repair ${repairId} (status: ${newStatus})`,
+    );
+  } catch (err) {
+    // Voice note generation is best-effort — never block the status update
+    console.warn(
+      `[voice] Failed to auto-generate voice note for repair ${repairId}:`,
+      err instanceof Error ? err.message : err,
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Actions
 // ---------------------------------------------------------------------------
 
@@ -68,6 +150,9 @@ export const updateRepairStatusAction = authenticatedRoleAction(
         message: `Your repair status has been updated to: ${newStatus.replace(/_/g, " ")}`,
         repairRequestId,
       });
+
+      // Auto-generate voice note for key status changes (best-effort)
+      await triggerVoiceNoteIfNeeded(repairRequestId, newStatus);
 
       revalidatePath("/admin/requests");
       revalidatePath(`/admin/requests/${repairRequestId}`);
