@@ -28,7 +28,25 @@
         }
     </script>
     <style>
-        /* ===== FADE-IN ON SCROLL ===== */
+        /* ===== SMOOTH SCROLL ===== */
+        html {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        body {
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            touch-action: manipulation;
+        }
+        
+        /* ===== FIXED NAV ===== */
+        #navbar {
+            will-change: transform;
+        }
+        /* Prevent content hiding under fixed nav */
+        section:first-of-type {
+            scroll-margin-top: 80px;
+        }
         .fade-in {
             opacity: 0;
             transform: translateY(30px);
@@ -203,11 +221,23 @@
 
         /* ===== MOBILE MENU ===== */
         .mobile-menu {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 40;
+            overflow-y: auto;
             transform: translateY(-100%);
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
         }
         .mobile-menu.open {
             transform: translateY(0);
+            pointer-events: auto;
+        }
+        body.menu-open {
+            overflow: hidden;
         }
 
         /* ===== BUTTON STYLES ===== */
@@ -290,6 +320,15 @@
             .hero-title {
                 font-size: 2.25rem !important;
             }
+            .mobile-menu {
+                top: 64px;
+            }
+            nav #navbar, nav .h-20 {
+                height: 64px !important;
+            }
+            section:first-of-type {
+                scroll-margin-top: 64px;
+            }
         }
     </style>
 </head>
@@ -312,7 +351,7 @@
                     <a href="#process" class="text-sm font-semibold text-white/80 hover:text-gold transition-colors duration-300">How It Works</a>
                     <a href="#testimonials" class="text-sm font-semibold text-white/80 hover:text-gold transition-colors duration-300">Reviews</a>
                     <a href="#contact" class="text-sm font-semibold text-white/80 hover:text-gold transition-colors duration-300">Contact</a>
-                    <a href="#cta" class="btn-primary text-sm py-2.5 px-5">Get a Quote</a>
+                    <a href="#cta" class="btn-primary text-sm py-2.5 px-5 nav-cta">Get a Quote</a>
                 </div>
 
                 <!-- Mobile Hamburger -->
@@ -338,7 +377,7 @@
     </nav>
 
     <!-- ===== 2. HERO ===== -->
-    <section id="hero" class="hero-gradient min-h-screen flex items-center relative overflow-hidden">
+    <section id="hero" class="hero-gradient min-h-[100dvh] flex items-center relative overflow-hidden pt-16 sm:pt-20">
         <div class="hero-overlay absolute inset-0"></div>
         <div class="accent-glow absolute top-1/4 right-1/4 w-96 h-96"></div>
         <div class="accent-glow absolute bottom-1/4 left-1/4 w-64 h-64"></div>
@@ -915,15 +954,13 @@
     <script>
         // === Fade-in on scroll (Intersection Observer) ===
         const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, i) => {
+            entries.forEach((entry) => {
                 if (entry.isIntersecting) {
-                    setTimeout(() => {
-                        entry.target.classList.add('visible');
-                    }, i * 100);
+                    entry.target.classList.add('visible');
                     observer.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.1 });
+        }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
 
         document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right').forEach((el) => {
             observer.observe(el);
@@ -949,12 +986,15 @@
 
         menuBtn.addEventListener('click', () => {
             mobileMenu.classList.toggle('open');
+            document.body.classList.toggle('menu-open');
         });
 
         // Close menu on link click
+        // Close menu on link click and smooth scroll to sections
         mobileMenu.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
+            link.addEventListener('click', (e) => {
                 mobileMenu.classList.remove('open');
+                document.body.classList.remove('menu-open');
             });
         });
 

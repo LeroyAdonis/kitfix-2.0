@@ -19,6 +19,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@neondatabase/serverless": "^1.0.2",
     "@next/swc-wasm-nodejs": "^16.2.9",
     "@polar-sh/nextjs": "^0.9.3",
@@ -30,6 +31,7 @@
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.1",
     "framer-motion": "^12.34.4",
+    "gsap": "^3.15.0",
     "jose": "^6.2.3",
     "lightningcss-wasm": "^1.31.1",
     "lucide-react": "^0.575.0",
