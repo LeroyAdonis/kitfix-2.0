@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" fill="#0A0A0B"/>
+  <g id="void-circle">
+    <!-- Outer ring -->
+    <circle cx="50" cy="50" r="38" fill="none" stroke="#00E859" stroke-width="6"/>
+    <!-- Negative space cut: a stylized jersey stitch mark -->
+    <path d="M 35 35 L 45 35" stroke="#0A0A0B" stroke-width="4" stroke-linecap="round"/>
+    <path d="M 55 35 L 65 35" stroke="#0A0A0B" stroke-width="4" stroke-linecap="round"/>
+    <path d="M 40 50 L 60 50" stroke="#0A0A0B" stroke-width="3" stroke-linecap="round"/>
+    <!-- Gold accent dot -->
+    <circle cx="50" cy="35" r="2" fill="#C8A951"/>
+  </g>
+</svg>
