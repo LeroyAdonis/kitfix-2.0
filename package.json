@@ -4,12 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "CSS_TRANSFORMER_WASM=true next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
     "convex": "^1.22.0",
+    "lightningcss-wasm": "^1.33.0",
     "lucide-react": "^0.575.0",
     "next": "^16.2.9",
     "react": "19.2.3",
