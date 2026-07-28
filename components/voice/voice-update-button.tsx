@@ -189,12 +189,12 @@ export function VoiceUpdateButton({
       {/* Voice notes list */}
       {loading && notes.length === 0 && (
         <div className="flex items-center justify-center py-6">
-          <Loader2 className="h-5 w-5 animate-spin text-text-tertiary" />
+          <Loader2 className="h-5 w-5 animate-spin text-content-tertiary" />
         </div>
       )}
 
       {!loading && notes.length === 0 && !error && (
-        <p className="text-xs text-text-tertiary">
+        <p className="text-xs text-content-tertiary">
           No voice updates yet. Click the button above to generate one.
         </p>
       )}
@@ -222,10 +222,10 @@ export function VoiceUpdateButton({
               </button>
 
               <div className="min-w-0 flex-1">
-                <p className="truncate text-xs text-text-primary">
+                <p className="truncate text-xs text-content">
                   {note.script}
                 </p>
-                <p className="mt-0.5 text-[10px] text-text-tertiary">
+                <p className="mt-0.5 text-[10px] text-content-tertiary">
                   {formatTimestamp(note.createdAt)} &middot; Status:{" "}
                   {note.statusAtGeneration.replace(/_/g, " ")}
                 </p>

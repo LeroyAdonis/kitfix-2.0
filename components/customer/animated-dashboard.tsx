@@ -80,7 +80,7 @@ export function AnimatedDashboard({
           className="font-display text-3xl font-bold tracking-[-0.02em] sm:text-4xl"
         />
         <motion.p
-          className="mt-1 text-sm text-text-secondary"
+          className="mt-1 text-sm text-content-secondary"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.4 }}
@@ -101,12 +101,12 @@ export function AnimatedDashboard({
           >
             <div className="group rounded-xl border border-white/[0.04] bg-surface p-5 transition-all duration-300 hover:-translate-y-1 hover:border-green-400/20 hover:shadow-[0_0_30px_rgba(0,232,89,0.04)]">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-text-secondary">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-content-secondary">
                   {stat.label}
                 </p>
-                <stat.icon className="h-4 w-4 text-text-tertiary transition-colors duration-300 group-hover:text-green-400" aria-hidden="true" />
+                <stat.icon className="h-4 w-4 text-content-tertiary transition-colors duration-300 group-hover:text-green-400" aria-hidden="true" />
               </div>
-              <div className="font-display text-3xl font-bold text-text-primary">
+              <div className="font-display text-3xl font-bold text-content">
                 <AnimatedCounter value={statsValues[stat.key]} />
               </div>
             </div>
@@ -118,7 +118,7 @@ export function AnimatedDashboard({
       <div>
         <ScrollReveal>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display text-lg font-bold text-text-primary">Recent Repairs</h2>
+            <h2 className="font-display text-lg font-bold text-content">Recent Repairs</h2>
             <Link
               href="/repairs"
               className="text-xs font-semibold tracking-[0.15em] text-green-400 uppercase transition-colors hover:text-green-400/80"

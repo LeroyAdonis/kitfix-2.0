@@ -22,14 +22,14 @@ export default async function RepairsPage(props: {
         <div>
           <div className="flex items-center gap-3 mb-2">
             <div className="h-px w-8 bg-green-400/40" />
-            <p className="text-[10px] font-semibold tracking-[0.3em] text-green-400 uppercase">Requests</p>
+            <p className="text-xs font-semibold tracking-widest text-green-400 uppercase">Requests</p>
           </div>
-          <h1 className="font-display text-3xl font-bold tracking-[-0.02em] text-text-primary">My Repairs</h1>
-          <p className="mt-1 text-sm text-text-secondary">Track all your jersey repair requests.</p>
+          <h1 className="font-display text-3xl font-bold tracking-[-0.02em] text-content">My Repairs</h1>
+          <p className="mt-1 text-sm text-content-secondary">Track all your jersey repair requests.</p>
         </div>
         <Link
           href="/repairs/new"
-          className="inline-flex items-center gap-2 rounded-lg border border-green-400/20 bg-green-400/10 px-4 py-2.5 text-xs font-semibold text-green-400 tracking-[0.1em] uppercase transition-all duration-300 hover:bg-green-400/20"
+                className="inline-flex items-center gap-2 rounded-lg border border-green-400/20 bg-green-400/10 px-4 py-2.5 text-xs font-semibold text-green-400 tracking-wider uppercase transition-all duration-300 hover:bg-green-400/20"
         >
           <PlusCircle className="h-3.5 w-3.5" aria-hidden="true" />
           New Request
@@ -55,7 +55,7 @@ export default async function RepairsPage(props: {
             page <= 1 ? (
               <Link
                 href="/repairs/new"
-                className="inline-flex items-center gap-2 rounded-lg border border-green-400/20 bg-green-400/10 px-4 py-2.5 text-xs font-semibold text-green-400 tracking-[0.1em] uppercase transition-all duration-300 hover:bg-green-400/20"
+          className="inline-flex items-center gap-2 rounded-lg border border-green-400/20 bg-green-400/10 px-4 py-2.5 text-xs font-semibold text-green-400 tracking-wider uppercase transition-all duration-300 hover:bg-green-400/20"
               >
                 <PlusCircle className="h-3.5 w-3.5" aria-hidden="true" />
                 Submit Your First Request
@@ -70,7 +70,7 @@ export default async function RepairsPage(props: {
           {page > 1 && (
             <Link
               href={`/repairs?page=${page - 1}`}
-              className="inline-flex items-center gap-2 rounded-lg border border-white/[0.06] bg-surface px-4 py-2 text-xs font-semibold text-text-secondary tracking-[0.1em] uppercase transition-all duration-300 hover:border-green-400/20 hover:text-green-400"
+              className="inline-flex items-center gap-2 rounded-lg border border-white/[0.06] bg-surface px-4 py-2 text-xs font-semibold text-content-secondary tracking-wider uppercase transition-all duration-300 hover:border-green-400/20 hover:text-green-400"
             >
               Previous
             </Link>
@@ -78,7 +78,7 @@ export default async function RepairsPage(props: {
           {hasMore && (
             <Link
               href={`/repairs?page=${page + 1}`}
-              className="inline-flex items-center gap-2 rounded-lg border border-green-400/20 bg-green-400/10 px-4 py-2 text-xs font-semibold text-green-400 tracking-[0.1em] uppercase transition-all duration-300 hover:bg-green-400/20"
+              className="inline-flex items-center gap-2 rounded-lg border border-green-400/20 bg-green-400/10 px-4 py-2 text-xs font-semibold text-green-400 tracking-wider uppercase transition-all duration-300 hover:bg-green-400/20"
             >
               Next
             </Link>

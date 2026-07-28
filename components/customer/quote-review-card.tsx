@@ -199,12 +199,12 @@ export function QuoteReviewCard({
                 <span>{formatCurrency(deliveryFee)}</span>
               </div>
             )}
-            <hr className="border-border" />
+            <hr className="border-border-default" />
             <div className="flex justify-between font-bold">
               <span>Total</span>
               <span>{formatCurrency(totalCost)}</span>
             </div>
-            <hr className="border-border" />
+            <hr className="border-border-default" />
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">
                 Due Now (50% Deposit)

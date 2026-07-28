@@ -174,7 +174,7 @@ export function SendQuoteForm({
               <span>Delivery</span>
               <span>{formatCurrency(feePreview.delivery)}</span>
             </div>
-            <hr className="my-1 border-border" />
+            <hr className="my-1 border-border-default" />
             <div className="flex justify-between font-semibold">
               <span>Total</span>
               <span>{formatCurrency(feePreview.total)}</span>

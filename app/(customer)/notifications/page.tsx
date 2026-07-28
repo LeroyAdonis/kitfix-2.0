@@ -4,7 +4,7 @@ import {
   getUnreadNotifications,
 } from "@/lib/db/queries/notifications";
 import { EmptyState } from "@/components/shared/empty-state";
-import { formatDateSAST } from "@/lib/utils";
+import { cn, formatDateSAST } from "@/lib/utils";
 import { Bell } from "lucide-react";
 import { NotificationActions } from "./notification-actions";
 
@@ -19,8 +19,8 @@ export default async function NotificationsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-text-primary">Notifications</h1>
-          <p className="text-text-secondary">
+          <h1 className="font-display text-2xl font-bold text-content">Notifications</h1>
+          <p className="text-content-secondary">
             {unreadNotifs.length > 0
               ? `You have ${unreadNotifs.length} unread notification${unreadNotifs.length === 1 ? "" : "s"}.`
               : "You're all caught up!"}
@@ -34,21 +34,21 @@ export default async function NotificationsPage() {
           {allNotifs.items.map((notif) => (
             <div
               key={notif.id}
-              className={`card-base flex items-start justify-between gap-4 p-4 ${notif.isRead ? "opacity-60" : ""}`}
+              className={cn("card-base flex items-start justify-between gap-4 p-4", notif.isRead && "opacity-60")}
             >
               <div className="min-w-0 flex-1 space-y-1">
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-text-primary">{notif.title}</p>
+                  <p className="text-sm font-medium text-content">{notif.title}</p>
                   {!notif.isRead && (
-                    <span className="badge badge-gold text-[10px]">
+                    <span className="badge badge-gold text-xs">
                       New
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-text-secondary">
+                <p className="text-sm text-content-secondary">
                   {notif.message}
                 </p>
-                <p className="text-xs text-text-tertiary">
+                <p className="text-xs text-content-tertiary">
                   {formatDateSAST(notif.createdAt)}
                 </p>
               </div>

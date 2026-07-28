@@ -75,14 +75,14 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight text-text-primary">Dashboard</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-content">Dashboard</h1>
 
       <StatsCards stats={stats} />
 
       {/* Recent requests */}
       <div className="card-base overflow-hidden">
-        <div className="flex flex-row items-center justify-between border-b border-border px-6 py-4">
-          <h2 className="text-lg font-semibold text-text-primary">Recent Requests</h2>
+        <div className="flex flex-row items-center justify-between border-b border-border-default px-6 py-4">
+          <h2 className="text-lg font-semibold text-content">Recent Requests</h2>
           <Link href="/admin/requests" className="btn-ghost text-sm">
             View all <ArrowRight className="ml-1 h-4 w-4" aria-hidden="true" />
           </Link>

@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, CheckCircle2, XCircle, Mail } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { PageTransition } from "@/components/motion";
 
 type VerificationStatus = "loading" | "success" | "error" | "missing-token";
@@ -122,17 +123,17 @@ export default function VerifyEmailPage() {
                         damping: 15,
                         delay: status === "loading" ? 0 : 0.1,
                       }}
-                      className={`mx-auto mb-6 flex size-14 items-center justify-center rounded-full ${config.bgClass}`}
+                      className={cn("mx-auto mb-6 flex size-14 items-center justify-center rounded-full", config.bgClass)}
                     >
                       <Icon
-                        className={`size-7 ${config.color} ${config.iconClass}`}
+                        className={cn("size-7", config.color, config.iconClass)}
                       />
                     </motion.div>
 
-                    <h1 className="text-2xl font-bold tracking-tight text-text-primary">
+                    <h1 className="text-2xl font-bold tracking-tight text-content">
                       {config.title}
                     </h1>
-                    <p className="mt-3 text-sm text-text-secondary">
+                    <p className="mt-3 text-sm text-content-secondary">
                       {config.description}
                     </p>
 

@@ -4,7 +4,7 @@ import { Footer } from "@/components/layout/footer";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#080808] text-white overflow-x-hidden">
+    <div className="min-h-screen bg-surface-deep text-white overflow-x-hidden">
       <main>
         {/* Desktop: pinned scroll animation (lg+) */}
         <div className="hidden lg:block">

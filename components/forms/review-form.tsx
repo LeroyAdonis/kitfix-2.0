@@ -13,6 +13,8 @@ interface ReviewFormProps {
   repairRequestId: string;
 }
 
+import { cn } from "@/lib/utils";
+
 export function ReviewForm({ repairRequestId }: ReviewFormProps) {
   const router = useRouter();
   const [rating, setRating] = useState(0);
@@ -80,11 +82,12 @@ export function ReviewForm({ repairRequestId }: ReviewFormProps) {
               aria-label={`Rate ${star} out of 5 stars`}
             >
               <Star
-                className={`h-8 w-8 ${
+                className={cn(
+                  "h-8 w-8",
                   star <= (hoveredRating || rating)
                     ? "fill-yellow-400 text-yellow-400"
                     : "text-muted-foreground/30"
-                }`}
+                )}
               />
             </button>
           ))}

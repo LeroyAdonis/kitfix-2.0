@@ -33,7 +33,7 @@ export function StoreNav() {
                 "relative px-3 py-2 text-[10px] font-medium tracking-[0.2em] uppercase transition-colors duration-300 group",
                 pathname === link.href
                   ? "text-green-400"
-                  : "text-text-secondary hover:text-green-400",
+                  : "text-content-secondary hover:text-green-400",
               )}
             >
               {link.label}

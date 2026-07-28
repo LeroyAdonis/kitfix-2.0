@@ -195,7 +195,7 @@ export default function LabHero() {
       {/* ═══ PINNED HERO SECTION ═══ */}
       <div
         ref={pinRef}
-        className="relative h-screen w-full overflow-hidden bg-[#080808]"
+        className="relative h-screen w-full overflow-hidden bg-surface-deep"
       >
         {/* ── Jersey image + SVG overlay ── */}
         <div
@@ -237,7 +237,7 @@ export default function LabHero() {
                 ref={tearPrimaryRef}
                 d="M 680 180 L 720 175 L 718 210 L 695 215 Z"
                 fill="none"
-                stroke="#ff4444"
+                stroke="var(--color-danger)"
                 strokeWidth="2"
                 opacity="0.85"
                 filter="url(#lab-glow)"
@@ -247,7 +247,7 @@ export default function LabHero() {
               <path
                 d="M 680 180 L 685 188 M 685 188 L 690 183"
                 fill="none"
-                stroke="#ff6666"
+                stroke="var(--color-danger-light)"
                 strokeWidth="1"
                 opacity="0.6"
               />
@@ -257,7 +257,7 @@ export default function LabHero() {
                 ref={tearSecondaryRef}
                 d="M 280 780 L 285 775 L 305 778 L 300 785 Z"
                 fill="none"
-                stroke="#ff4444"
+                stroke="var(--color-danger)"
                 strokeWidth="1.8"
                 opacity="0.75"
                 filter="url(#lab-glow)"
@@ -273,7 +273,7 @@ export default function LabHero() {
                 cy="195"
                 r="28"
                 fill="none"
-                stroke="#00E859"
+                stroke="var(--brand-green-vibrant)"
                 strokeWidth="1.5"
                 strokeDasharray="4 3"
                 opacity="0"
@@ -286,7 +286,7 @@ export default function LabHero() {
                 cy="780"
                 r="16"
                 fill="none"
-                stroke="#00E859"
+                stroke="var(--brand-green-vibrant)"
                 strokeWidth="1.5"
                 strokeDasharray="4 3"
                 opacity="0"
@@ -300,7 +300,7 @@ export default function LabHero() {
                 y1="160"
                 x2="700"
                 y2="230"
-                stroke="#00E859"
+                stroke="var(--brand-green-vibrant)"
                 strokeWidth="0.8"
                 opacity="0"
               />
@@ -310,7 +310,7 @@ export default function LabHero() {
                 y1="195"
                 x2="735"
                 y2="195"
-                stroke="#00E859"
+                stroke="var(--brand-green-vibrant)"
                 strokeWidth="0.8"
                 opacity="0"
               />
@@ -320,7 +320,7 @@ export default function LabHero() {
                 y1="780"
                 x2="325"
                 y2="780"
-                stroke="#00E859"
+                stroke="var(--brand-green-vibrant)"
                 strokeWidth="0.8"
                 opacity="0"
               />
@@ -332,7 +332,7 @@ export default function LabHero() {
                 ref={stitchPrimaryRef}
                 d="M 678 182 L 688 176 L 692 184 L 700 177 L 704 186 L 712 180 L 716 190 L 720 183 L 718 198 L 710 203 L 704 210 L 695 213 L 688 208 L 682 200 L 678 192 Z"
                 fill="none"
-                stroke="#00E859"
+                stroke="var(--brand-green-vibrant)"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -346,7 +346,7 @@ export default function LabHero() {
                 ref={stitchSecondaryRef}
                 d="M 278 776 L 283 774 L 288 777 L 293 774 L 298 777 L 303 775"
                 fill="none"
-                stroke="#00E859"
+                stroke="var(--brand-green-vibrant)"
                 strokeWidth="1.8"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -364,7 +364,7 @@ export default function LabHero() {
                   cy="350"
                   r="45"
                   fill="rgba(0,232,89,0.08)"
-                  stroke="#00E859"
+                  stroke="var(--brand-green-vibrant)"
                   strokeWidth="1.5"
                 />
                 {/* Handle */}
@@ -373,20 +373,20 @@ export default function LabHero() {
                   y1="385"
                   x2="420"
                   y2="420"
-                  stroke="#00E859"
+                  stroke="var(--brand-green-vibrant)"
                   strokeWidth="3"
                   strokeLinecap="round"
                 />
                 {/* Crosshair */}
                 <line
                   x1="350" y1="330" x2="350" y2="370"
-                  stroke="#00E859"
+                  stroke="var(--brand-green-vibrant)"
                   strokeWidth="0.5"
                   opacity="0.5"
                 />
                 <line
                   x1="330" y1="350" x2="370" y2="350"
-                  stroke="#00E859"
+                  stroke="var(--brand-green-vibrant)"
                   strokeWidth="0.5"
                   opacity="0.5"
                 />
@@ -401,7 +401,7 @@ export default function LabHero() {
                   height="45"
                   rx="3"
                   fill="rgba(0,232,89,0.12)"
-                  stroke="#00E859"
+                  stroke="var(--brand-green-vibrant)"
                   strokeWidth="2"
                   transform="rotate(-12, 445, 262)"
                 />
@@ -413,7 +413,7 @@ export default function LabHero() {
                   fontFamily="monospace"
                   fontSize="22"
                   fontWeight="bold"
-                  fill="#00E859"
+                  fill="var(--brand-green-vibrant)"
                   transform="rotate(-12, 445, 262)"
                   style={{ letterSpacing: "0.15em" }}
                 >
@@ -429,10 +429,10 @@ export default function LabHero() {
               style={{ left: "18%", top: "25%", willChange: "transform, opacity" }}
             >
               <div className="flex flex-col items-center gap-1">
-                <div className="w-8 h-10 rounded-sm bg-[#1a3a1a] border border-[#00E859]/30 flex items-center justify-center">
-                  <div className="w-1 h-1 rounded-full bg-[#00E859]" />
+                <div className="w-8 h-10 rounded-sm bg-brand-green/20 border border-brand-green-vibrant/30 flex items-center justify-center">
+                  <div className="w-1 h-1 rounded-full bg-brand-green-vibrant" />
                 </div>
-                <span className="text-[9px] font-mono text-[#00E859]/60 tracking-wider">
+                <span className="text-[9px] font-mono text-brand-green-vibrant/60 tracking-wider">
                   #00E859
                 </span>
               </div>
@@ -443,10 +443,10 @@ export default function LabHero() {
               style={{ right: "18%", top: "30%", willChange: "transform, opacity" }}
             >
               <div className="flex flex-col items-center gap-1">
-                <div className="w-8 h-10 rounded-sm bg-[#1a2a1a] border border-[#00E859]/30 flex items-center justify-center">
-                  <div className="w-1 h-1 rounded-full bg-[#00E859]" />
+                <div className="w-8 h-10 rounded-sm bg-brand-green-dark/20 border border-brand-green-vibrant/30 flex items-center justify-center">
+                  <div className="w-1 h-1 rounded-full bg-brand-green-vibrant" />
                 </div>
-                <span className="text-[9px] font-mono text-[#00E859]/60 tracking-wider">
+                <span className="text-[9px] font-mono text-brand-green-vibrant/60 tracking-wider">
                   DARK MATCH
                 </span>
               </div>
@@ -455,7 +455,7 @@ export default function LabHero() {
         </div>
 
         {/* ── Bottom vignette ── */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#080808] via-transparent to-transparent opacity-40" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface-deep via-transparent to-transparent opacity-40" />
       </div>
 
       {/* ═══ STAGE INDICATOR (fixed position overlay) ═══ */}
@@ -478,7 +478,7 @@ export default function LabHero() {
       </div>
 
       {/* ═══ POST-SCROLL SECTION: CTA + Pricing ═══ */}
-      <section className="relative bg-[#080808] border-t border-white/5 px-6 py-32">
+      <section className="relative bg-surface-deep border-t border-white/5 px-6 py-32">
         {/* Ambient glow */}
         <div
           className="pointer-events-none absolute inset-0"
@@ -491,7 +491,7 @@ export default function LabHero() {
         <div className="mx-auto max-w-4xl text-center">
           <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-[-0.03em] text-white leading-[1.05]">
             Your Jersey,<br />
-            <span className="text-[#00E859]">Lab-Restored</span>
+            <span className="text-brand-green-vibrant">Lab-Restored</span>
           </h2>
           <p className="mt-6 max-w-xl mx-auto text-sm text-white/40 leading-relaxed">
             Every jersey that enters the KitFix Lab is documented, analyzed,
@@ -502,7 +502,7 @@ export default function LabHero() {
           {/* Pricing cards */}
           <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
             {/* Basic */}
-            <div className="group relative p-8 bg-white/[0.03] border border-white/10 rounded-sm text-left transition-all duration-300 hover:border-[#00E859]/30 hover:bg-white/[0.05]">
+            <div className="group relative p-8 bg-white/[0.03] border border-white/10 rounded-sm text-left transition-all duration-300 hover:border-brand-green-vibrant/30 hover:bg-white/[0.05]">
               <p className="text-[10px] font-semibold tracking-[0.3em] text-white/30 uppercase">
                 Basic
               </p>
@@ -518,7 +518,7 @@ export default function LabHero() {
               </ul>
               <a
                 href="/repairs/new"
-                className="mt-8 inline-flex items-center gap-2 px-6 py-3 bg-[#00E859]/10 border border-[#00E859]/20 text-[#00E859] text-xs font-semibold tracking-[0.15em] uppercase transition-all duration-300 hover:bg-[#00E859]/20 hover:border-[#00E859]/40"
+                className="mt-8 inline-flex items-center gap-2 px-6 py-3 bg-brand-green-vibrant/10 border border-brand-green-vibrant/20 text-brand-green-vibrant text-xs font-semibold tracking-[0.15em] uppercase transition-all duration-300 hover:bg-brand-green-vibrant/20 hover:border-brand-green-vibrant/40"
               >
                 Start Basic Repair
                 <span className="text-base">→</span>
@@ -526,16 +526,16 @@ export default function LabHero() {
             </div>
 
             {/* Pro */}
-            <div className="group relative p-8 bg-[#00E859]/[0.04] border border-[#00E859]/20 rounded-sm text-left transition-all duration-300 hover:border-[#00E859]/40 hover:bg-[#00E859]/[0.07]">
+            <div className="group relative p-8 bg-brand-green-vibrant/[0.04] border border-brand-green-vibrant/20 rounded-sm text-left transition-all duration-300 hover:border-brand-green-vibrant/40 hover:bg-brand-green-vibrant/[0.07]">
               <div className="absolute -top-3 left-6">
-                <span className="px-3 py-1 bg-[#00E859] text-black text-[9px] font-bold tracking-[0.2em] uppercase rounded-sm">
+                <span className="px-3 py-1 bg-brand-green-vibrant text-black text-[9px] font-bold tracking-[0.2em] uppercase rounded-sm">
                   Recommended
                 </span>
               </div>
-              <p className="text-[10px] font-semibold tracking-[0.3em] text-[#00E859]/60 uppercase mt-2">
+              <p className="text-[10px] font-semibold tracking-[0.3em] text-brand-green-vibrant/60 uppercase mt-2">
                 Pro
               </p>
-              <p className="mt-3 font-display text-4xl font-bold text-[#00E859]">
+              <p className="mt-3 font-display text-4xl font-bold text-brand-green-vibrant">
                 R650
               </p>
               <ul className="mt-6 space-y-2 text-xs text-white/50">
@@ -547,7 +547,7 @@ export default function LabHero() {
               </ul>
               <a
                 href="/repairs/new?tier=pro"
-                className="mt-8 inline-flex items-center gap-2 px-6 py-3 bg-[#00E859] text-black text-xs font-bold tracking-[0.15em] uppercase transition-all duration-300 hover:bg-[#00E859]/90"
+                className="mt-8 inline-flex items-center gap-2 px-6 py-3 bg-brand-green-vibrant text-black text-xs font-bold tracking-[0.15em] uppercase transition-all duration-300 hover:bg-brand-green-vibrant/90"
               >
                 Start Pro Repair
                 <span className="text-base">→</span>

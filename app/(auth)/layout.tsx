@@ -7,12 +7,12 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-bg-deep text-text-primary">
+    <div className="flex min-h-screen bg-surface-deep text-content">
       {/* Left panel - brand showcase (hidden on mobile) */}
       <AuthBrandPanel />
 
       {/* Right panel - form area */}
-      <div className="relative flex w-full flex-col items-center justify-center overflow-hidden bg-bg-deep px-6 py-12 md:w-[55%]">
+      <div className="relative flex w-full flex-col items-center justify-center overflow-hidden bg-surface-deep px-6 py-12 md:w-[55%]">
         {/* Dark base with subtle green radial glow */}
         <div
           className="pointer-events-none absolute inset-0 -z-10"
@@ -40,7 +40,7 @@ export default function AuthLayout({
         {/* Back to home with editorial styling */}
         <Link
           href="/"
-          className="relative mt-10 group text-sm text-text-secondary transition-colors hover:text-green-400 inline-flex items-center gap-2"
+          className="relative mt-10 group text-sm text-content-secondary transition-colors hover:text-green-400 inline-flex items-center gap-2"
         >
           <span className="transition-transform duration-300 group-hover:-translate-x-1">&larr;</span>
           <span>Back to home</span>

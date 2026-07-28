@@ -72,7 +72,7 @@ export function CustomerNav() {
                 "relative flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-[color,background-color,transform] duration-200",
                 isActive
                   ? "text-brand-gold"
-                  : "text-text-secondary hover:translate-x-1 hover:bg-surface hover:text-text-primary",
+                  : "text-content-secondary hover:translate-x-1 hover:bg-surface hover:text-content",
               )}
             >
               <item.icon className={cn("h-4 w-4", isActive && "text-brand-gold")} />

@@ -10,7 +10,7 @@ import { DamageTypeBadge } from "@/components/repair/damage-type-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatCurrency, formatDateSAST } from "@/lib/utils";
+import { cn, formatCurrency, formatDateSAST } from "@/lib/utils";
 import { QuoteReviewCard } from "@/components/customer/quote-review-card";
 import { Star, Package, MessageSquare } from "lucide-react";
 
@@ -41,10 +41,10 @@ export default async function RepairDetailPage(props: {
       <div className="relative">
         <div className="flex items-center gap-3 mb-2">
           <div className="h-px w-8 bg-green-400/40" />
-          <p className="text-[10px] font-semibold tracking-[0.3em] text-green-400 uppercase">Repair</p>
+          <p className="text-xs font-semibold tracking-widest text-green-400 uppercase">Repair</p>
         </div>
-        <h1 className="font-display text-2xl font-bold tracking-[-0.02em] text-text-primary">Repair Details</h1>
-        <p className="mt-1 text-xs text-text-secondary">
+        <h1 className="font-display text-2xl font-bold tracking-[-0.02em] text-content">Repair Details</h1>
+        <p className="mt-1 text-xs text-content-secondary">
           Request ID: {repair.id.slice(0, 8)}&hellip; &middot; Submitted{" "}
           {formatDateSAST(repair.createdAt)}
         </p>
@@ -54,7 +54,7 @@ export default async function RepairDetailPage(props: {
       <div className="rounded-xl border border-white/[0.04] bg-surface p-6">
         <div className="flex items-center gap-3 mb-5">
           <div className="h-px w-6 bg-green-400/40" />
-          <h2 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-green-400/80">Status</h2>
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-green-400/80">Status</h2>
         </div>
         <StatusTracker
           currentStatus={repair.currentStatus}
@@ -73,32 +73,32 @@ export default async function RepairDetailPage(props: {
         <div className="rounded-xl border border-white/[0.04] bg-surface p-6">
           <div className="flex items-center gap-3 mb-5">
             <div className="h-px w-6 bg-green-400/40" />
-            <h2 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-green-400/80">Jersey Information</h2>
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-green-400/80">Jersey Information</h2>
           </div>
           <div className="space-y-2 text-sm">
-            <p className="text-text-primary">{repair.jerseyDescription}</p>
+            <p className="text-content">{repair.jerseyDescription}</p>
             {repair.jerseyBrand && (
-              <p className="text-text-secondary">
+              <p className="text-content-secondary">
                 Brand: {repair.jerseyBrand}
               </p>
             )}
-            <p className="text-text-secondary">Size: {repair.jerseySize}</p>
+            <p className="text-content-secondary">Size: {repair.jerseySize}</p>
           </div>
         </div>
 
         <div className="rounded-xl border border-white/[0.04] bg-surface p-6">
           <div className="flex items-center gap-3 mb-5">
             <div className="h-px w-6 bg-green-400/40" />
-            <h2 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-green-400/80">Damage Details</h2>
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-green-400/80">Damage Details</h2>
           </div>
           <div className="space-y-3 text-sm">
             <div className="flex items-center gap-2">
               <DamageTypeBadge type={repair.damageType} />
-              <span className="inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.03] px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-text-tertiary">
+              <span className="inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.03] px-2.5 py-0.5 text-xs font-medium uppercase tracking-wider text-content-tertiary">
                 {repair.urgencyLevel}
               </span>
             </div>
-            <p className="text-text-primary">{repair.damageDescription}</p>
+            <p className="text-content">{repair.damageDescription}</p>
           </div>
         </div>
       </div>
@@ -197,7 +197,7 @@ export default async function RepairDetailPage(props: {
                   />
                   <Badge
                     variant="secondary"
-                    className="absolute bottom-1 left-1 text-[10px] capitalize"
+                    className="absolute bottom-1 left-1 text-xs capitalize"
                   >
                     {photo.photoType}
                   </Badge>
@@ -304,11 +304,12 @@ export default async function RepairDetailPage(props: {
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                   key={star}
-                  className={`h-5 w-5 ${
+                  className={cn(
+                    "h-5 w-5",
                     star <= repair.review!.rating
                       ? "fill-yellow-400 text-yellow-400"
                       : "text-muted-foreground/30"
-                  }`}
+                  )}
                 />
               ))}
             </div>

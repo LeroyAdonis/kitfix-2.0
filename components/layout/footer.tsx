@@ -57,7 +57,7 @@ const itemVariants = {
 function FooterLink({ label, href }: { label: string; href: string }) {
   return (
     <motion.li className="group" whileHover={{ y: -2 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
-      <Link href={href} className="relative inline-block text-xs text-text-tertiary transition-colors duration-300 hover:text-green-400">
+      <Link href={href} className="relative inline-block text-xs text-content-tertiary transition-colors duration-300 hover:text-green-400">
         {label}
         <span className="absolute -bottom-0.5 left-0 right-0 h-px bg-green-400/60 scale-x-0 transition-transform duration-300 origin-left group-hover:scale-x-100" />
       </Link>
@@ -89,7 +89,7 @@ export function Footer() {
             <Link href="/" className="inline-flex">
               <Image src="/logo.svg" alt="KitFix" width={120} height={40} className="h-7 w-auto" />
             </Link>
-            <p className="mt-3 max-w-xs text-xs text-text-tertiary leading-relaxed">
+            <p className="mt-3 max-w-xs text-xs text-content-tertiary leading-relaxed">
               South Africa&apos;s trusted jersey repair and customisation service.
             </p>
           </motion.div>
@@ -120,12 +120,12 @@ export function Footer() {
           viewport={{ once: true }}
           transition={{ delay: 0.4, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
-          <span className="text-[10px] text-text-tertiary tracking-wider">
+          <span className="text-[10px] text-content-tertiary tracking-wider">
             &copy; 2026 KitFix
           </span>
           <div className="flex items-center gap-3">
             <div className="h-px w-6 bg-green-400/30" />
-            <span className="text-[10px] text-text-tertiary tracking-wider">
+            <span className="text-[10px] text-content-tertiary tracking-wider">
               Proudly South African
             </span>
             <div className="h-px w-6 bg-green-400/30" />

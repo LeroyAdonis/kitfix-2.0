@@ -46,7 +46,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="left" className="w-64 bg-bg-deep border-border">
+      <SheetContent side="left" className="w-64 bg-surface-deep border-border-default">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2 font-display font-extrabold tracking-tight">
             <Image src="/logo.svg" alt="KitFix" width={16} height={16} className="h-4 w-auto" />
@@ -55,7 +55,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
 
         {/* Public nav */}
         <div className="mt-6">
-          <p className="px-3 text-xs font-semibold uppercase tracking-wider text-text-tertiary mb-2">
+          <p className="px-3 text-xs font-semibold uppercase tracking-wider text-content-tertiary mb-2">
             Browse
           </p>
           <nav className="flex flex-col gap-1">
@@ -70,7 +70,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
                     "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                     isActive
                       ? "bg-brand-green-bright/10 text-brand-green-bright"
-                      : "text-text-secondary hover:bg-surface hover:text-text-primary",
+                      : "text-content-secondary hover:bg-surface hover:text-content",
                   )}
                 >
                   <item.icon className={cn("h-4 w-4", isActive && "text-brand-green-bright")} />
@@ -83,7 +83,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
 
         {/* Auth nav */}
         <div className="mt-6">
-          <p className="px-3 text-xs font-semibold uppercase tracking-wider text-text-tertiary mb-2">
+          <p className="px-3 text-xs font-semibold uppercase tracking-wider text-content-tertiary mb-2">
             Your Account
           </p>
           <nav className="flex flex-col gap-1">
@@ -100,7 +100,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
                     "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                     isActive
                       ? "bg-brand-green-bright/10 text-brand-green-bright"
-                      : "text-text-secondary hover:bg-surface hover:text-text-primary",
+                      : "text-content-secondary hover:bg-surface hover:text-content",
                   )}
                 >
                   <item.icon className={cn("h-4 w-4", isActive && "text-brand-green-bright")} />
@@ -112,9 +112,9 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
         </div>
 
         {/* Theme + Accent */}
-        <div className="mt-8 flex items-center gap-4 border-t border-border pt-6 px-3">
+        <div className="mt-8 flex items-center gap-4 border-t border-border-default pt-6 px-3">
           <div className="flex items-center gap-3">
-            <span className="text-xs text-text-tertiary">Theme</span>
+            <span className="text-xs text-content-tertiary">Theme</span>
             <ThemeToggle />
           </div>
         </div>

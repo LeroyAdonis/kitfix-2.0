@@ -38,7 +38,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             className="rounded-xl object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <Shirt className="h-24 w-24 text-text-tertiary/40" />
+          <Shirt className="h-24 w-24 text-content-tertiary/40" />
         )}
         {/* Editorial corner markers */}
         <div className="absolute top-0 left-0 h-10 w-10 border-t border-l border-transparent group-hover:border-green-400/30 transition-colors duration-500" />
@@ -52,15 +52,15 @@ export default async function ProductDetailPage({ params }: PageProps) {
         <div>
           <div className="flex items-center gap-3 mb-2">
             <div className="h-px w-8 bg-green-400/40" />
-            <p className="text-[10px] font-semibold tracking-[0.3em] text-green-400 uppercase">{product.category}</p>
+            <p className="text-xs font-semibold tracking-widest text-green-400 uppercase">{product.category}</p>
           </div>
-          <h1 className="font-display text-3xl font-bold tracking-[-0.02em] text-text-primary sm:text-4xl">{product.name}</h1>
+          <h1 className="font-display text-3xl font-bold tracking-[-0.02em] text-content sm:text-4xl">{product.name}</h1>
           <p className="mt-3 text-2xl font-semibold text-green-400">{formatCurrency(product.basePrice)}</p>
         </div>
 
         <div className="h-px w-full bg-gradient-to-r from-green-400/20 via-green-400/10 to-transparent" />
 
-        <p className="text-sm leading-relaxed text-text-secondary">{product.description}</p>
+        <p className="text-sm leading-relaxed text-content-secondary">{product.description}</p>
 
         <ProductDetailClient
           productId={product.id}

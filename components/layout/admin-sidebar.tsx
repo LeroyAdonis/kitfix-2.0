@@ -85,7 +85,7 @@ export function AdminSidebar() {
                 "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 isActive(href)
                   ? "bg-brand-gold/10 text-brand-gold font-semibold"
-                  : "text-text-secondary hover:bg-surface hover:text-text-primary",
+                  : "text-content-secondary hover:bg-surface hover:text-content",
               )}
             >
               <Icon className={cn("h-4 w-4", isActive(href) && "text-brand-gold")} />
@@ -94,7 +94,7 @@ export function AdminSidebar() {
           ))}
         </nav>
 
-        <div className="p-4 text-xs text-text-tertiary">
+        <div className="p-4 text-xs text-content-tertiary">
           KitFix 2.0 · Admin Panel
         </div>
       </aside>

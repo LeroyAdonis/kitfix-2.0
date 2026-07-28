@@ -29,7 +29,7 @@ export function ProductCard({ product }: ProductCardProps) {
     >
       <Link href={`/shop/${product.slug}`} className="block">
         {/* Image area */}
-        <div className="relative flex aspect-square items-center justify-center bg-bg-elevated overflow-hidden">
+        <div className="relative flex aspect-square items-center justify-center bg-surface-elevated overflow-hidden">
           {product.imageUrl ? (
             <Image
               src={product.imageUrl}
@@ -38,7 +38,7 @@ export function ProductCard({ product }: ProductCardProps) {
               className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
-            <Shirt className="h-16 w-16 text-text-tertiary/40" />
+            <Shirt className="h-16 w-16 text-content-tertiary/40" />
           )}
 
           {/* Green border reveal on hover */}
@@ -55,10 +55,10 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="p-4">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <h3 className="truncate font-display text-sm font-semibold text-text-primary group-hover:text-green-400 transition-colors duration-300">
+              <h3 className="truncate font-display text-sm font-semibold text-content group-hover:text-green-400 transition-colors duration-300">
                 {product.name}
               </h3>
-              <p className="mt-1 text-[10px] font-medium tracking-[0.15em] uppercase text-text-tertiary">
+              <p className="mt-1 text-[10px] font-medium tracking-[0.15em] uppercase text-content-tertiary">
                 {product.category}
               </p>
             </div>
@@ -67,7 +67,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
         {/* Footer area */}
         <div className="flex items-center justify-between border-t border-white/[0.04] px-4 py-3">
-          <span className="font-display text-sm font-bold text-text-primary">
+          <span className="font-display text-sm font-bold text-content">
             {formatCurrency(product.basePrice)}
           </span>
           {totalStock === 0 ? (

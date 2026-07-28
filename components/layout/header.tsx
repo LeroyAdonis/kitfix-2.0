@@ -39,7 +39,7 @@ export function Header() {
 
   return (
     <motion.header
-      className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60"
+      className="sticky top-0 z-50 border-b border-border-default/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60"
       initial={shouldReduceMotion ? false : { y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
@@ -54,19 +54,19 @@ export function Header() {
           <nav className="hidden items-center gap-4 md:flex">
             <Link
               href="/shop"
-              className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+              className="text-sm text-content-secondary transition-colors hover:text-content"
             >
               Shop
             </Link>
             <Link
               href="/repairs/new"
-              className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+              className="text-sm text-content-secondary transition-colors hover:text-content"
             >
               Repairs
             </Link>
             <Link
               href="/"
-              className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+              className="text-sm text-content-secondary transition-colors hover:text-content"
             >
               How It Works
             </Link>
@@ -75,14 +75,14 @@ export function Header() {
                 <span className="h-4 w-px bg-border" />
                 <Link
                   href="/dashboard"
-                  className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+                  className="text-sm text-content-secondary transition-colors hover:text-content"
                 >
                   Dashboard
                 </Link>
                 {isAdmin && (
                   <Link
                     href="/admin"
-                    className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+                    className="text-sm text-content-secondary transition-colors hover:text-content"
                   >
                     Admin
                   </Link>
@@ -130,7 +130,7 @@ export function Header() {
               </DropdownMenu>
             </>
           ) : (
-            <Button asChild variant="default" size="sm" className="rounded-full">
+            <Button asChild variant="default" size="sm" className="rounded-lg">
               <Link href="/sign-in">Get Started</Link>
             </Button>
           )}

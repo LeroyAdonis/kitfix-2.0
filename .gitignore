@@ -45,3 +45,5 @@ gcm-diagnose.log
 
 # IDE
 .idea/
+# Added by code-review-graph
+.code-review-graph/

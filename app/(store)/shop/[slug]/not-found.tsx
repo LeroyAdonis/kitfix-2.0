@@ -10,7 +10,7 @@ export default function ProductNotFound() {
       </p>
       <Link
         href="/shop"
-        className="mt-6 inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+        className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Shop

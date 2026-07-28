@@ -15,17 +15,17 @@ export default async function AdminLayout({
   const session = await requireRole(["admin"]);
 
   return (
-    <div className="flex min-h-screen bg-bg-deep">
+    <div className="flex min-h-screen bg-surface-deep">
       <AdminSidebar />
 
       <div className="flex flex-1 flex-col">
         {/* Top bar */}
-        <header className="flex h-14 items-center justify-between border-b border-border bg-bg px-4 md:px-6">
+        <header className="flex h-14 items-center justify-between border-b border-border-default bg-surface-base px-4 md:px-6">
           {/* Spacer for mobile hamburger */}
           <div className="w-8 md:w-0" />
           <div className="flex items-center gap-3">
             <ThemeToggle />
-            <span className="text-sm text-text-secondary">
+            <span className="text-sm text-content-secondary">
               {session.user.name}
             </span>
             <NotificationBell />
@@ -33,7 +33,7 @@ export default async function AdminLayout({
         </header>
         <Separator />
 
-        <main id="main-content" className="flex-1 overflow-y-auto bg-bg-deep p-4 md:p-6">{children}</main>
+        <main id="main-content" className="flex-1 overflow-y-auto bg-surface-deep p-4 md:p-6">{children}</main>
       </div>
     </div>
   );

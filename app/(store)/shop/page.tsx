@@ -18,8 +18,8 @@ export default async function ShopPage() {
         <div className="flex size-16 items-center justify-center rounded-full bg-green-400/10 mb-6">
           <Shirt className="h-8 w-8 text-green-400/60" />
         </div>
-        <h2 className="font-display text-2xl font-bold text-text-primary">No products yet</h2>
-        <p className="mt-2 max-w-sm text-sm text-text-secondary">Our jersey collection is coming soon. Check back later!</p>
+        <h2 className="font-display text-2xl font-bold text-content">No products yet</h2>
+        <p className="mt-2 max-w-sm text-sm text-content-secondary">Our jersey collection is coming soon. Check back later!</p>
         <Link href="/" className="mt-8 inline-flex rounded-lg border border-green-400/20 bg-green-400/10 px-4 py-2.5 text-sm font-semibold text-green-400 transition-all duration-300 hover:bg-green-400/20">
           Back to Home
         </Link>
@@ -33,12 +33,12 @@ export default async function ShopPage() {
       <div className="relative">
         <div className="flex items-center gap-3 mb-2">
           <div className="h-px w-8 bg-green-400/40" />
-          <p className="text-[10px] font-semibold tracking-[0.3em] text-green-400 uppercase">Collection</p>
+          <p className="text-xs font-semibold tracking-widest text-green-400 uppercase">Collection</p>
         </div>
-        <h1 className="font-display text-4xl font-bold tracking-[-0.03em] text-text-primary sm:text-5xl">
+        <h1 className="font-display text-4xl font-bold tracking-[-0.03em] text-content sm:text-5xl">
           Shop
         </h1>
-        <p className="mt-2 text-sm text-text-secondary">
+        <p className="mt-2 text-sm text-content-secondary">
           Browse our collection of {products.length} jersey{products.length !== 1 ? "s" : ""}
         </p>
       </div>

@@ -12,6 +12,8 @@ const accents = [
   { value: "purple", label: "Purple", class: "bg-[#8B5CF6]" },
 ] as const;
 
+import { cn } from "@/lib/utils";
+
 export function AccentPicker() {
   const [mounted, setMounted] = useState(false);
   const [accent, setAccent] = useState("gold");
@@ -35,15 +37,17 @@ export function AccentPicker() {
 
   return (
     <div className="flex items-center gap-2">
-      <Palette className="h-4 w-4 text-text-tertiary" />
+      <Palette className="h-4 w-4 text-content-tertiary" />
       <div className="flex gap-1.5">
         {accents.map((a) => (
           <button
             key={a.value}
             onClick={() => select(a.value)}
-            className={`h-5 w-5 rounded-full transition-transform ${a.class} ${
+            className={cn(
+              "h-5 w-5 rounded-full transition-transform",
+              a.class,
               accent === a.value ? "scale-125 ring-2 ring-text-primary ring-offset-1 ring-offset-bg" : "opacity-60 hover:opacity-100"
-            }`}
+            )}
             aria-label={`Set accent to ${a.label}`}
           />
         ))}

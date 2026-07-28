@@ -325,11 +325,12 @@ export function RepairRequestForm() {
             <div className="flex flex-col items-center">
               <div
                 aria-current={index === step ? "step" : undefined}
-                className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium ${
+                className={cn(
+                  "flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium",
                   index <= step
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground"
-                }`}
+                )}
               >
                 {index + 1}
               </div>
@@ -337,9 +338,10 @@ export function RepairRequestForm() {
             </div>
             {index < STEPS.length - 1 && (
               <div
-                className={`mx-2 h-0.5 flex-1 ${
+                className={cn(
+                  "mx-2 h-0.5 flex-1",
                   index < step ? "bg-primary" : "bg-muted"
-                }`}
+                )}
               />
             )}
           </div>
@@ -472,11 +474,12 @@ export function RepairRequestForm() {
                   key={level.value}
                   type="button"
                   onClick={() => updateField("urgencyLevel", level.value)}
-                  className={`rounded-lg border p-3 text-left transition-colors ${
+                  className={cn(
+                    "rounded-lg border p-3 text-left transition-colors",
                     formData.urgencyLevel === level.value
                       ? "border-primary bg-primary/5"
                       : "border-muted hover:border-foreground/20"
-                  }`}
+                  )}
                 >
                   <p className="text-sm font-medium">{level.label}</p>
                   <p className="text-xs text-muted-foreground">

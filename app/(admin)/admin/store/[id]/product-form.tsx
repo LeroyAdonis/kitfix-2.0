@@ -395,7 +395,7 @@ export function ProductForm({ product }: ProductFormProps) {
                           type="checkbox"
                           checked={f.isRequired}
                           onChange={(e) => updatePersonalizationField(i, "isRequired", e.target.checked)}
-                          className="h-4 w-4 rounded border-gray-300"
+                          className="h-4 w-4 rounded border-border-default"
                         />
                         Required
                       </label>

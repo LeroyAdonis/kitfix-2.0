@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { formatCurrency, formatDateSAST } from "@/lib/utils";
+import { cn, formatCurrency, formatDateSAST } from "@/lib/utils";
 
 const STATUSES = ["pending", "paid", "shipped", "delivered", "cancelled"] as const;
 
@@ -54,17 +54,18 @@ export default async function AdminOrdersPage({
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight text-text-primary">Orders</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-content">Orders</h1>
 
       {/* Status filter tabs */}
       <div className="flex flex-wrap gap-2">
         <Link
           href="/admin/orders"
-          className={`inline-flex items-center rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+          className={cn(
+            "inline-flex items-center rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
             !isValidStatus
               ? "bg-primary text-primary-foreground"
-              : "bg-surface text-text-secondary hover:bg-surface-hover"
-          }`}
+              : "bg-surface text-content-secondary hover:bg-surface-hover"
+          )}
         >
           All
         </Link>
@@ -72,21 +73,22 @@ export default async function AdminOrdersPage({
           <Link
             key={s}
             href={`/admin/orders?status=${s}`}
-            className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium capitalize transition-colors",
               statusFilter === s
                 ? "bg-primary text-primary-foreground"
-                : "bg-surface text-text-secondary hover:bg-surface-hover"
-            }`}
+                : "bg-surface text-content-secondary hover:bg-surface-hover"
+            )}
           >
             {s}
-            <span className="ml-1 text-[10px] text-text-tertiary">
+            <span className="ml-1 text-xs text-content-tertiary">
               {BADGE_CLASS[s] === "badge-outline" ? "○" : "●"}
             </span>
           </Link>
         ))}
       </div>
 
-      <div className="rounded-md border border-border">
+      <div className="rounded-md border border-border-default">
         <Table>
           <TableHeader>
             <TableRow>
@@ -107,7 +109,7 @@ export default async function AdminOrdersPage({
                 <TableCell className="font-medium">{o.customerName}</TableCell>
                 <TableCell>{formatCurrency(o.grandTotalCents)}</TableCell>
                 <TableCell>
-                  <span className={`badge ${BADGE_CLASS[o.status] ?? "badge-outline"}`}>
+                  <span className={cn("badge", BADGE_CLASS[o.status] ?? "badge-outline")}>
                     {o.status}
                   </span>
                 </TableCell>
@@ -117,7 +119,7 @@ export default async function AdminOrdersPage({
                 <TableCell>
                   <Link
                     href={`/admin/orders/${o.id}`}
-                    className="text-sm font-medium text-text-link hover:underline"
+                    className="text-sm font-medium text-content-link hover:underline"
                   >
                     View
                   </Link>

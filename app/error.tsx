@@ -44,7 +44,7 @@ export default function Error({
               : "An unexpected error occurred. Please try again."}
           </p>
           {error.digest && (
-            <p className="mt-2 font-mono text-[11px] text-muted-foreground/50">
+            <p className="mt-2 font-mono text-xs text-muted-foreground/50">
               Ref: {error.digest}
             </p>
           )}
@@ -53,14 +53,14 @@ export default function Error({
         <div className="mt-8 flex flex-col items-center gap-2.5 sm:flex-row sm:justify-center">
           <button
             onClick={reset}
-            className="inline-flex h-10 w-full items-center justify-center rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 sm:w-auto"
+            className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 sm:w-auto"
             aria-label="Retry loading this page"
           >
             Try Again
           </button>
           <Link
             href="/"
-            className="inline-flex h-10 w-full items-center justify-center rounded-lg border bg-background px-5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground sm:w-auto"
+            className="inline-flex h-11 w-full items-center justify-center rounded-lg border bg-background px-5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground sm:w-auto"
           >
             Go Home
           </Link>

@@ -58,11 +58,11 @@ export default function ForgotPasswordPage() {
               <Mail className="size-7 text-green-400" />
             </motion.div>
 
-            <h1 className="text-2xl font-bold tracking-tight text-text-primary">
+            <h1 className="text-2xl font-bold tracking-tight text-content">
               Check your email
             </h1>
-            <p className="mt-3 text-sm text-text-secondary">
-              If an account exists for <strong className="text-text-primary">{email}</strong>,
+            <p className="mt-3 text-sm text-content-secondary">
+              If an account exists for <strong className="text-content">{email}</strong>,
               we&apos;ve sent a password reset link.
             </p>
 
@@ -101,10 +101,10 @@ export default function ForgotPasswordPage() {
               </div>
               <div className="h-px w-12 bg-gradient-to-l from-transparent via-green-400/40 to-transparent" />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-text-primary">
+            <h1 className="text-2xl font-bold tracking-tight text-content">
               Forgot your password?
             </h1>
-            <p className="mt-1 text-sm text-text-secondary">
+            <p className="mt-1 text-sm text-content-secondary">
               Enter your email and we&apos;ll send a reset link
             </p>
           </div>
@@ -122,7 +122,7 @@ export default function ForgotPasswordPage() {
             )}
 
             <div className="space-y-2">
-              <label htmlFor="email" className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
+              <label htmlFor="email" className="text-xs font-semibold uppercase tracking-widest text-content-secondary">
                 Email
               </label>
               <input
@@ -133,7 +133,7 @@ export default function ForgotPasswordPage() {
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-white/[0.06] bg-bg-elevated/60 px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary/50 transition-all duration-200 focus:border-green-400/40 focus:outline-none focus:ring-1 focus:ring-green-400/20"
+                className="w-full rounded-lg border border-white/[0.06] bg-surface-elevated/60 px-4 py-2.5 text-sm text-content placeholder:text-content-tertiary/50 transition-all duration-200 focus:border-green-400/40 focus:outline-none focus:ring-1 focus:ring-green-400/20"
               />
             </div>
 
@@ -153,7 +153,7 @@ export default function ForgotPasswordPage() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-text-secondary">
+          <p className="mt-6 text-center text-sm text-content-secondary">
             Remember your password?{" "}
             <Link
               href="/sign-in"

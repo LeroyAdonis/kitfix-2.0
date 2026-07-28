@@ -26,6 +26,8 @@ const SHIPPING_MODES: { mode: ShippingMode; label: string; desc: string }[] = [
   { mode: "D2D", label: "Door to Door", desc: "We collect & deliver to your door" },
 ];
 
+import { cn } from "@/lib/utils";
+
 export function ShippingSelector({ onSelect, direction, defaultMode = "L2L" }: ShippingSelectorProps) {
   const [mode, setMode] = useState<ShippingMode>(defaultMode);
   const [lockers, setLockers] = useState<Locker[]>([]);
@@ -68,7 +70,7 @@ export function ShippingSelector({ onSelect, direction, defaultMode = "L2L" }: S
 
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-semibold uppercase tracking-wider text-text-tertiary">
+      <h3 className="text-sm font-semibold uppercase tracking-wider text-content-tertiary">
         {direction === "outbound" ? "Ship to Us" : "Return Delivery"}
       </h3>
 
@@ -78,15 +80,16 @@ export function ShippingSelector({ onSelect, direction, defaultMode = "L2L" }: S
           <button
             key={s.mode}
             onClick={() => setMode(s.mode)}
-            className={`flex items-center justify-between rounded-lg border p-3 text-left text-sm transition-colors ${
+            className={cn(
+              "flex items-center justify-between rounded-lg border p-3 text-left text-sm transition-colors",
               mode === s.mode
-                ? "border-brand-gold bg-brand-gold/5 text-text-primary"
-                : "border-border bg-surface text-text-secondary hover:border-border-hover"
-            }`}
+                ? "border-brand-gold bg-brand-gold/5 text-content"
+                : "border-border-default bg-surface text-content-secondary hover:border-border-default"
+            )}
           >
             <div>
               <span className="font-medium">{s.label}</span>
-              <p className="text-xs text-text-tertiary">{s.desc}</p>
+              <p className="text-xs text-content-tertiary">{s.desc}</p>
             </div>
             {mode === s.mode && <span className="text-brand-gold text-lg">✓</span>}
           </button>
@@ -96,13 +99,13 @@ export function ShippingSelector({ onSelect, direction, defaultMode = "L2L" }: S
       {/* Locker selector */}
       {needsLocker && (
         <div>
-          <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-text-tertiary">
+          <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-content-tertiary">
             Choose a Locker
           </label>
           <select
             value={selectedLocker}
             onChange={(e) => setSelectedLocker(e.target.value)}
-            className="w-full rounded-lg border border-border bg-surface p-2.5 text-sm text-text-primary focus:border-brand-gold focus:ring-1 focus:ring-brand-gold"
+            className="w-full rounded-lg border border-border-default bg-surface p-2.5 text-sm text-content focus:border-brand-gold focus:ring-1 focus:ring-brand-gold"
           >
             <option value="">Select a locker location</option>
             {lockers.map((l) => (
@@ -118,7 +121,7 @@ export function ShippingSelector({ onSelect, direction, defaultMode = "L2L" }: S
       {needsAddress && (
         <div className="space-y-3">
           <div>
-            <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-text-tertiary">
+            <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-content-tertiary">
               Street Address
             </label>
             <input
@@ -126,12 +129,12 @@ export function ShippingSelector({ onSelect, direction, defaultMode = "L2L" }: S
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="123 Main Street"
-              className="w-full rounded-lg border border-border bg-surface p-2.5 text-sm text-text-primary placeholder:text-text-tertiary focus:border-brand-gold focus:ring-1 focus:ring-brand-gold"
+              className="w-full rounded-lg border border-border-default bg-surface p-2.5 text-sm text-content placeholder:text-content-tertiary focus:border-brand-gold focus:ring-1 focus:ring-brand-gold"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-text-tertiary">
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-content-tertiary">
                 City
               </label>
               <input
@@ -139,11 +142,11 @@ export function ShippingSelector({ onSelect, direction, defaultMode = "L2L" }: S
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 placeholder="Cape Town"
-                className="w-full rounded-lg border border-border bg-surface p-2.5 text-sm text-text-primary placeholder:text-text-tertiary focus:border-brand-gold focus:ring-1 focus:ring-brand-gold"
+                className="w-full rounded-lg border border-border-default bg-surface p-2.5 text-sm text-content placeholder:text-content-tertiary focus:border-brand-gold focus:ring-1 focus:ring-brand-gold"
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-text-tertiary">
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-content-tertiary">
                 Postal Code
               </label>
               <input
@@ -151,7 +154,7 @@ export function ShippingSelector({ onSelect, direction, defaultMode = "L2L" }: S
                 value={postalCode}
                 onChange={(e) => setPostalCode(e.target.value)}
                 placeholder="8001"
-                className="w-full rounded-lg border border-border bg-surface p-2.5 text-sm text-text-primary placeholder:text-text-tertiary focus:border-brand-gold focus:ring-1 focus:ring-brand-gold"
+                className="w-full rounded-lg border border-border-default bg-surface p-2.5 text-sm text-content placeholder:text-content-tertiary focus:border-brand-gold focus:ring-1 focus:ring-brand-gold"
               />
             </div>
           </div>
@@ -159,13 +162,13 @@ export function ShippingSelector({ onSelect, direction, defaultMode = "L2L" }: S
       )}
 
       {/* Cost */}
-      {loading && <p className="text-sm text-text-tertiary">Calculating shipping...</p>}
+      {loading && <p className="text-sm text-content-tertiary">Calculating shipping...</p>}
       {error && <p className="text-sm text-status-error">{error}</p>}
       {cost && !loading && (
         <div className="rounded-lg bg-surface p-3">
           <div className="flex justify-between text-sm">
-            <span className="text-text-secondary">Shipping</span>
-            <span className="font-medium text-text-primary">{formatShippingCost(cost.totalCents)}</span>
+            <span className="text-content-secondary">Shipping</span>
+            <span className="font-medium text-content">{formatShippingCost(cost.totalCents)}</span>
           </div>
         </div>
       )}
@@ -174,7 +177,7 @@ export function ShippingSelector({ onSelect, direction, defaultMode = "L2L" }: S
       <button
         onClick={handleConfirm}
         disabled={!cost || loading || (needsLocker && !selectedLocker) || (needsAddress && (!address || !postalCode))}
-        className="w-full rounded-full bg-brand-gold py-2.5 text-sm font-bold text-text-inverse transition-all hover:bg-brand-gold-dark disabled:opacity-40"
+        className="w-full rounded-lg bg-brand-gold py-2.5 text-sm font-bold text-text-inverse transition-all hover:bg-brand-gold-dark disabled:opacity-40"
       >
         Confirm Shipping
       </button>

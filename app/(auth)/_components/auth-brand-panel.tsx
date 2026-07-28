@@ -69,7 +69,7 @@ export function AuthBrandPanel() {
         {/* Editorial divider */}
         <div className="flex items-center justify-center gap-4">
           <div className="h-px w-12 bg-gradient-to-l from-green-400/40 to-transparent" />
-          <p className="text-[10px] font-medium tracking-[0.3em] text-green-400/60 uppercase">
+          <p className="text-xs font-medium tracking-widest text-green-400/60 uppercase">
             Premium Service
           </p>
           <div className="h-px w-12 bg-gradient-to-r from-green-400/40 to-transparent" />

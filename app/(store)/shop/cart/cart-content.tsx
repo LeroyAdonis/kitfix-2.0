@@ -34,10 +34,10 @@ export function CartContent({ items, itemTotal }: CartContentProps) {
       <div className="relative">
         <div className="flex items-center gap-3 mb-2">
           <div className="h-px w-8 bg-green-400/40" />
-          <p className="text-[10px] font-semibold tracking-[0.3em] text-green-400 uppercase">Cart</p>
+          <p className="text-xs font-semibold tracking-widest text-green-400 uppercase">Cart</p>
         </div>
-        <h1 className="font-display text-3xl font-bold tracking-[-0.02em] text-text-primary sm:text-4xl">Shopping Cart</h1>
-        <p className="mt-1 text-sm text-text-secondary">
+        <h1 className="font-display text-3xl font-bold tracking-[-0.02em] text-content sm:text-4xl">Shopping Cart</h1>
+        <p className="mt-1 text-sm text-content-secondary">
           {items.length} item{items.length !== 1 ? "s" : ""}
         </p>
       </div>
@@ -54,8 +54,8 @@ export function CartContent({ items, itemTotal }: CartContentProps) {
 
       <div className="flex items-center justify-between border-t border-white/[0.04] pt-6">
         <div>
-          <p className="font-display text-lg font-bold text-text-primary">Total: {formatCurrency(itemTotal)}</p>
-          <p className="text-xs text-text-tertiary mt-1">Shipping calculated at checkout</p>
+          <p className="font-display text-lg font-bold text-content">Total: {formatCurrency(itemTotal)}</p>
+          <p className="text-xs text-content-tertiary mt-1">Shipping calculated at checkout</p>
         </div>
         <a
           href="/checkout"

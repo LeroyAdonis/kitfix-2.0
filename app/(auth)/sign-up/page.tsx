@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { signUp } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
 import { AnimatedText, PageTransition } from "@/components/motion";
 
 export default function SignUpPage() {
@@ -98,9 +99,9 @@ export default function SignUpPage() {
             <AnimatedText
               text="Create an account"
               as="h1"
-              className="justify-center text-3xl font-bold tracking-tight text-text-primary"
+              className="justify-center text-3xl font-bold tracking-tight text-content"
             />
-            <p className="mt-2 text-sm text-text-secondary">
+            <p className="mt-2 text-sm text-content-secondary">
               Get started with KitFix jersey repairs
             </p>
           </div>
@@ -119,7 +120,7 @@ export default function SignUpPage() {
             )}
 
             <div className="space-y-2">
-              <label htmlFor="name" className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
+              <label htmlFor="name" className="text-xs font-semibold uppercase tracking-widest text-content-secondary">
                 Full name
               </label>
               <input
@@ -131,7 +132,10 @@ export default function SignUpPage() {
                 placeholder="John Doe"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className={`w-full rounded-lg border border-white/[0.06] bg-bg-elevated/60 px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary/50 transition-all duration-200 focus:border-green-400/40 focus:outline-none focus:ring-1 focus:ring-green-400/20 ${fieldErrors.name ? "border-destructive/50" : ""}`}
+                className={cn(
+                  "w-full rounded-lg border border-white/[0.06] bg-surface-elevated/60 px-4 py-2.5 text-sm text-content placeholder:text-content-tertiary/50 transition-all duration-200 focus:border-green-400/40 focus:outline-none focus:ring-1 focus:ring-green-400/20",
+                  fieldErrors.name && "border-destructive/50"
+                )}
               />
               {fieldErrors.name && (
                 <motion.p
@@ -145,7 +149,7 @@ export default function SignUpPage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="email" className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
+              <label htmlFor="email" className="text-xs font-semibold uppercase tracking-widest text-content-secondary">
                 Email
               </label>
               <input
@@ -158,7 +162,10 @@ export default function SignUpPage() {
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`w-full rounded-lg border border-white/[0.06] bg-bg-elevated/60 px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary/50 transition-all duration-200 focus:border-green-400/40 focus:outline-none focus:ring-1 focus:ring-green-400/20 ${fieldErrors.email ? "border-destructive/50" : ""}`}
+                className={cn(
+                  "w-full rounded-lg border border-white/[0.06] bg-surface-elevated/60 px-4 py-2.5 text-sm text-content placeholder:text-content-tertiary/50 transition-all duration-200 focus:border-green-400/40 focus:outline-none focus:ring-1 focus:ring-green-400/20",
+                  fieldErrors.email && "border-destructive/50"
+                )}
               />
               {fieldErrors.email && (
                 <motion.p
@@ -172,7 +179,7 @@ export default function SignUpPage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="password" className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
+              <label htmlFor="password" className="text-xs font-semibold uppercase tracking-widest text-content-secondary">
                 Password
               </label>
               <input
@@ -184,7 +191,10 @@ export default function SignUpPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={`w-full rounded-lg border border-white/[0.06] bg-bg-elevated/60 px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary/50 transition-all duration-200 focus:border-green-400/40 focus:outline-none focus:ring-1 focus:ring-green-400/20 ${fieldErrors.password ? "border-destructive/50" : ""}`}
+                className={cn(
+                  "w-full rounded-lg border border-white/[0.06] bg-surface-elevated/60 px-4 py-2.5 text-sm text-content placeholder:text-content-tertiary/50 transition-all duration-200 focus:border-green-400/40 focus:outline-none focus:ring-1 focus:ring-green-400/20",
+                  fieldErrors.password && "border-destructive/50"
+                )}
               />
               {fieldErrors.password && (
                 <motion.p
@@ -198,7 +208,7 @@ export default function SignUpPage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
+              <label htmlFor="confirmPassword" className="text-xs font-semibold uppercase tracking-widest text-content-secondary">
                 Confirm password
               </label>
               <input
@@ -210,7 +220,10 @@ export default function SignUpPage() {
                 placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className={`w-full rounded-lg border border-white/[0.06] bg-bg-elevated/60 px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary/50 transition-all duration-200 focus:border-green-400/40 focus:outline-none focus:ring-1 focus:ring-green-400/20 ${fieldErrors.confirmPassword ? "border-destructive/50" : ""}`}
+                className={cn(
+                  "w-full rounded-lg border border-white/[0.06] bg-surface-elevated/60 px-4 py-2.5 text-sm text-content placeholder:text-content-tertiary/50 transition-all duration-200 focus:border-green-400/40 focus:outline-none focus:ring-1 focus:ring-green-400/20",
+                  fieldErrors.confirmPassword && "border-destructive/50"
+                )}
               />
               {fieldErrors.confirmPassword && (
                 <motion.p
@@ -239,7 +252,7 @@ export default function SignUpPage() {
             </button>
           </form>
 
-          <p className="mt-8 text-center text-sm text-text-secondary">
+          <p className="mt-8 text-center text-sm text-content-secondary">
             Already have an account?{" "}
             <Link
               href="/sign-in"

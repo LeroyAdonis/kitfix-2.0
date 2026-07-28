@@ -45,10 +45,10 @@ export default async function OrdersPage() {
       <div className="relative">
         <div className="flex items-center gap-3 mb-2">
           <div className="h-px w-8 bg-green-400/40" />
-          <p className="text-[10px] font-semibold tracking-[0.3em] text-green-400 uppercase">Orders</p>
+          <p className="text-xs font-semibold tracking-widest text-green-400 uppercase">Orders</p>
         </div>
-        <h1 className="font-display text-3xl font-bold tracking-[-0.02em] text-text-primary sm:text-4xl">My Orders</h1>
-        <p className="mt-1 text-sm text-text-secondary">
+        <h1 className="font-display text-3xl font-bold tracking-[-0.02em] text-content sm:text-4xl">My Orders</h1>
+        <p className="mt-1 text-sm text-content-secondary">
           {orders.length} order{orders.length !== 1 ? "s" : ""}
         </p>
       </div>
@@ -62,10 +62,10 @@ export default async function OrdersPage() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-text-primary group-hover:text-green-400 transition-colors duration-300">
+                <p className="text-sm font-medium text-content group-hover:text-green-400 transition-colors duration-300">
                   Order #{order.id.slice(0, 8)}
                 </p>
-                <p className="mt-0.5 text-xs text-text-secondary">
+                <p className="mt-0.5 text-xs text-content-secondary">
                   {formatDateSAST(new Date(order.createdAt))}
                 </p>
               </div>
@@ -73,20 +73,20 @@ export default async function OrdersPage() {
                 <span
                   className={
                     order.status === "paid"
-                      ? "inline-flex items-center rounded-full border border-green-400/30 bg-green-400/10 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-green-400"
-                      : order.status === "shipped"
-                        ? "inline-flex items-center rounded-full border border-green-400/30 bg-green-400/10 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-green-400"
-                        : "inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.03] px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-text-tertiary"
+                       ? "inline-flex items-center rounded-full border border-green-400/30 bg-green-400/10 px-2.5 py-0.5 text-xs font-medium uppercase tracking-wider text-green-400"
+                       : order.status === "shipped"
+                         ? "inline-flex items-center rounded-full border border-green-400/30 bg-green-400/10 px-2.5 py-0.5 text-xs font-medium uppercase tracking-wider text-green-400"
+                         : "inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.03] px-2.5 py-0.5 text-xs font-medium uppercase tracking-wider text-content-tertiary"
                   }
                 >
                   {order.status === "paid" ? "Paid" : order.status}
                 </span>
-                <span className="text-sm font-semibold text-text-primary">
+                <span className="text-sm font-semibold text-content">
                   {formatCurrency(order.grandTotalCents)}
                 </span>
               </div>
             </div>
-            <p className="mt-2 text-xs text-text-secondary">
+            <p className="mt-2 text-xs text-content-secondary">
               {order.items.length} item{order.items.length !== 1 ? "s" : ""}
               {order.items.length > 0 && (
                 <> &mdash; {order.items.map((i) => i.productName || "Product").join(", ")}</>

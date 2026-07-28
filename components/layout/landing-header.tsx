@@ -44,7 +44,7 @@ export function LandingHeader() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out-expo",
         scrolled || mobileOpen
-          ? "bg-bg-deep/85 backdrop-blur-xl border-b border-white/[0.03]"
+          ? "bg-surface-deep/85 backdrop-blur-xl border-b border-white/[0.03]"
           : "mix-blend-difference"
       )}
       initial={shouldReduceMotion ? undefined : { y: -20, opacity: 0 }}
@@ -122,7 +122,7 @@ export function LandingHeader() {
       {/* Mobile Menu Overlay */}
       {mobileOpen && (
         <motion.div
-          className="fixed inset-0 top-16 z-40 bg-bg-deep/98 backdrop-blur-xl md:hidden"
+          className="fixed inset-0 top-16 z-40 bg-surface-deep/98 backdrop-blur-xl md:hidden"
           initial={shouldReduceMotion ? undefined : { opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.25 }}

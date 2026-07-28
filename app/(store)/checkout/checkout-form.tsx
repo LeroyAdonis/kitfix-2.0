@@ -77,10 +77,10 @@ export function CheckoutForm({ items, itemTotal }: CheckoutFormProps) {
       <div className="relative">
         <div className="flex items-center gap-3 mb-2">
           <div className="h-px w-8 bg-green-400/40" />
-          <p className="text-[10px] font-semibold tracking-[0.3em] text-green-400 uppercase">Payment</p>
+          <p className="text-xs font-semibold tracking-widest text-green-400 uppercase">Payment</p>
         </div>
-        <h1 className="font-display text-3xl font-bold tracking-[-0.02em] text-text-primary sm:text-4xl">Checkout</h1>
-        <p className="mt-1 text-sm text-text-secondary">
+        <h1 className="font-display text-3xl font-bold tracking-[-0.02em] text-content sm:text-4xl">Checkout</h1>
+        <p className="mt-1 text-sm text-content-secondary">
           Review your order and complete payment
         </p>
       </div>
@@ -180,27 +180,27 @@ export function CheckoutForm({ items, itemTotal }: CheckoutFormProps) {
               {items.map((item) => (
                 <div key={item.id} className="flex justify-between text-sm">
                   <div className="flex-1">
-                    <p className="font-medium text-text-primary">{item.productName}</p>
-                    <p className="text-text-tertiary text-xs">
+                    <p className="font-medium text-content">{item.productName}</p>
+                    <p className="text-content-tertiary text-xs">
                       Size {item.variantSize} &times; {item.quantity}
                     </p>
                   </div>
-                  <p className="font-medium text-text-primary">
+                  <p className="font-medium text-content">
                     {formatCurrency(item.unitPrice * item.quantity)}
                   </p>
                 </div>
               ))}
               <Separator className="bg-white/[0.04]" />
               <div className="flex justify-between text-sm">
-                <span className="text-text-secondary">Subtotal</span>
-                <span className="text-text-primary">{formatCurrency(itemTotal)}</span>
+                <span className="text-content-secondary">Subtotal</span>
+                <span className="text-content">{formatCurrency(itemTotal)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-text-secondary">Shipping ({shippingMode})</span>
-                <span className="text-text-primary">{shippingCost > 0 ? formatCurrency(shippingCost) : "Free"}</span>
+                <span className="text-content-secondary">Shipping ({shippingMode})</span>
+                <span className="text-content">{shippingCost > 0 ? formatCurrency(shippingCost) : "Free"}</span>
               </div>
               <Separator className="bg-white/[0.04]" />
-              <div className="flex justify-between font-semibold text-text-primary">
+              <div className="flex justify-between font-semibold text-content">
                 <span>Total</span>
                 <span>{formatCurrency(itemTotal + shippingCost)}</span>
               </div>

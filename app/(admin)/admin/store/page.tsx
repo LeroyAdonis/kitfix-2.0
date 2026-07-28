@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { formatCurrency, formatDateSAST } from "@/lib/utils";
+import { cn, formatCurrency, formatDateSAST } from "@/lib/utils";
 import { ProductActions } from "./product-actions";
 
 export default async function AdminProductsPage() {
@@ -23,14 +23,14 @@ export default async function AdminProductsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-text-primary">All Products</h2>
+        <h2 className="text-xl font-semibold text-content">All Products</h2>
         <Link href="/admin/store/new" className="btn-primary">
           <Plus className="h-4 w-4" />
           Add Product
         </Link>
       </div>
 
-      <div className="rounded-md border border-border">
+      <div className="rounded-md border border-border-default">
         <Table>
           <TableHeader>
             <TableRow>
@@ -50,12 +50,12 @@ export default async function AdminProductsPage() {
                   <TableCell className="font-medium">{p.name}</TableCell>
                   <TableCell>{formatCurrency(p.basePrice)}</TableCell>
                   <TableCell>
-                    <span className={`badge ${totalStock > 0 ? "badge-outline" : "badge-error"}`}>
+                    <span className={cn("badge", totalStock > 0 ? "badge-outline" : "badge-error")}>
                       {totalStock}
                     </span>
                   </TableCell>
                   <TableCell>
-                    <span className={`badge ${p.isActive ? "badge-gold" : "badge-outline"}`}>
+                    <span className={cn("badge", p.isActive ? "badge-gold" : "badge-outline")}>
                       {p.isActive ? "Active" : "Inactive"}
                     </span>
                   </TableCell>

@@ -28,6 +28,8 @@ const MODE_OPTIONS: { value: ShippingMode; label: string; description: string }[
   { value: "D2D", label: "Door to Door", description: "Delivered to your door" },
 ];
 
+import { cn } from "@/lib/utils";
+
 export function ShippingStep({
   shippingMode,
   onModeChange,
@@ -83,18 +85,20 @@ export function ShippingStep({
             key={opt.value}
             type="button"
             onClick={() => handleModeChange(opt.value)}
-            className={`flex items-start gap-3 rounded-md border p-3 text-left transition-colors ${
+            className={cn(
+              "flex items-start gap-3 rounded-md border p-3 text-left transition-colors",
               shippingMode === opt.value
                 ? "border-primary bg-primary/5"
                 : "hover:bg-muted/50"
-            }`}
+            )}
           >
             <div
-              className={`mt-0.5 h-4 w-4 shrink-0 rounded-full border-2 ${
+              className={cn(
+                "mt-0.5 h-4 w-4 shrink-0 rounded-full border-2",
                 shippingMode === opt.value
                   ? "border-primary bg-primary"
                   : "border-muted-foreground"
-              }`}
+              )}
             />
             <div className="flex-1">
               <span className="font-medium">{opt.label}</span>

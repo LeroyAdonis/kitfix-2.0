@@ -37,13 +37,13 @@ export default async function OrderDetailPage({ params }: Props) {
       <div className="flex items-center gap-4">
         <Link
           href="/orders"
-          className="flex size-8 items-center justify-center rounded-full border border-white/[0.06] text-text-secondary transition-colors hover:text-green-400 hover:border-green-400/30"
+          className="flex size-8 items-center justify-center rounded-full border border-white/[0.06] text-content-secondary transition-colors hover:text-green-400 hover:border-green-400/30"
         >
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <div>
-          <h1 className="font-display text-3xl font-bold tracking-[-0.02em] text-text-primary">Order Details</h1>
-          <p className="mt-1 text-sm text-text-secondary">
+          <h1 className="font-display text-3xl font-bold tracking-[-0.02em] text-content">Order Details</h1>
+          <p className="mt-1 text-sm text-content-secondary">
             #{order.id.slice(0, 8)}
           </p>
         </div>
@@ -63,12 +63,12 @@ export default async function OrderDetailPage({ params }: Props) {
                 {order.items.map((item) => (
                   <div key={item.id} className="flex justify-between py-3 text-sm">
                     <div>
-                      <p className="font-medium text-text-primary">{item.productName || "Product"}</p>
-                      <p className="text-text-tertiary text-xs">
+                      <p className="font-medium text-content">{item.productName || "Product"}</p>
+                      <p className="text-content-tertiary text-xs">
                         Size {item.variantSize} &times; {item.quantity}
                       </p>
                     </div>
-                    <p className="font-medium text-text-primary">
+                    <p className="font-medium text-content">
                       {formatCurrency(item.unitPriceCents * item.quantity)}
                     </p>
                   </div>
@@ -85,7 +85,7 @@ export default async function OrderDetailPage({ params }: Props) {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-text-secondary">Status</span>
+                <span className="text-content-secondary">Status</span>
                 <span className="inline-flex items-center gap-1 rounded-full border border-green-400/30 bg-green-400/10 px-2.5 py-0.5 text-xs font-medium text-green-400">
                   {isPaid ? (
                     <>
@@ -100,15 +100,15 @@ export default async function OrderDetailPage({ params }: Props) {
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-text-secondary">Subtotal</span>
-                <span className="text-text-primary">{formatCurrency(order.totalCents)}</span>
+                <span className="text-content-secondary">Subtotal</span>
+                <span className="text-content">{formatCurrency(order.totalCents)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-text-secondary">Shipping</span>
-                <span className="text-text-primary">{formatCurrency(order.shippingCents)}</span>
+                <span className="text-content-secondary">Shipping</span>
+                <span className="text-content">{formatCurrency(order.shippingCents)}</span>
               </div>
               <div className="h-px bg-white/[0.04]" />
-              <div className="flex justify-between font-semibold text-text-primary">
+              <div className="flex justify-between font-semibold text-content">
                 <span>Total</span>
                 <span>{formatCurrency(order.grandTotalCents)}</span>
               </div>

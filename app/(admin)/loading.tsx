@@ -16,7 +16,7 @@ export default function AdminLoading() {
 
       {/* Recent requests table skeleton */}
       <div className="card-base">
-        <div className="border-b border-border p-4">
+        <div className="border-b border-border-default p-4">
           <div className="h-5 w-40 skeleton" />
         </div>
         <div className="p-4 space-y-1">

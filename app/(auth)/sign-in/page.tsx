@@ -66,9 +66,9 @@ export default function SignInPage() {
             <AnimatedText
               text="Welcome back"
               as="h1"
-              className="justify-center text-3xl font-bold tracking-tight text-text-primary"
+              className="justify-center text-3xl font-bold tracking-tight text-content"
             />
-            <p className="mt-2 text-sm text-text-secondary">
+            <p className="mt-2 text-sm text-content-secondary">
               Sign in to your KitFix account
             </p>
           </div>
@@ -87,7 +87,7 @@ export default function SignInPage() {
             )}
 
             <div className="space-y-2">
-              <label htmlFor="email" className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
+              <label htmlFor="email" className="text-xs font-semibold uppercase tracking-widest text-content-secondary">
                 Email
               </label>
               <input
@@ -100,18 +100,18 @@ export default function SignInPage() {
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-white/[0.06] bg-bg-elevated/60 px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary/50 transition-all duration-200 focus:border-green-400/40 focus:outline-none focus:ring-1 focus:ring-green-400/20"
+                className="w-full rounded-lg border border-white/[0.06] bg-surface-elevated/60 px-4 py-2.5 text-sm text-content placeholder:text-content-tertiary/50 transition-all duration-200 focus:border-green-400/40 focus:outline-none focus:ring-1 focus:ring-green-400/20"
               />
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="text-xs font-semibold uppercase tracking-widest text-text-secondary">
+                <label htmlFor="password" className="text-xs font-semibold uppercase tracking-widest text-content-secondary">
                   Password
                 </label>
                 <Link
                   href="/forgot-password"
-                  className="text-xs font-medium text-text-tertiary transition-colors hover:text-green-400"
+                  className="text-xs font-medium text-content-tertiary transition-colors hover:text-green-400"
                 >
                   Forgot?
                 </Link>
@@ -125,7 +125,7 @@ export default function SignInPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-lg border border-white/[0.06] bg-bg-elevated/60 px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary/50 transition-all duration-200 focus:border-green-400/40 focus:outline-none focus:ring-1 focus:ring-green-400/20"
+                className="w-full rounded-lg border border-white/[0.06] bg-surface-elevated/60 px-4 py-2.5 text-sm text-content placeholder:text-content-tertiary/50 transition-all duration-200 focus:border-green-400/40 focus:outline-none focus:ring-1 focus:ring-green-400/20"
               />
             </div>
 
@@ -146,7 +146,7 @@ export default function SignInPage() {
           </form>
 
           <div className="mt-8 space-y-3 text-center text-sm">
-            <p className="text-text-secondary">
+            <p className="text-content-secondary">
               Don&apos;t have an account?{" "}
               <Link
                 href="/sign-up"

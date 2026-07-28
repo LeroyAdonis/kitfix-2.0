@@ -101,11 +101,11 @@ export default async function PaymentPage({ params }: PaymentPageProps) {
   if (!repair.estimatedCost || repair.estimatedCost <= 0) {
     return (
       <div className="mx-auto max-w-lg px-4 py-12">
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center">
-          <h1 className="mb-2 text-xl font-semibold text-gray-800">
+        <div className="rounded-lg border border-border-default bg-surface p-8 text-center">
+          <h1 className="mb-2 text-xl font-semibold text-content">
             Awaiting Estimate
           </h1>
-          <p className="text-gray-600">
+          <p className="text-content-secondary">
             The admin is still preparing your cost estimate. You&apos;ll be notified
             when it&apos;s ready.
           </p>
@@ -116,42 +116,42 @@ export default async function PaymentPage({ params }: PaymentPageProps) {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-12">
-      <h1 className="mb-6 text-2xl font-bold text-gray-900">
+      <h1 className="mb-6 text-2xl font-bold text-content">
         Complete Payment
       </h1>
 
       {/* Repair summary */}
-      <div className="mb-6 rounded-lg border border-gray-200 bg-white p-6">
-        <h2 className="mb-4 text-lg font-semibold text-gray-800">
+      <div className="mb-6 rounded-lg border border-border-default bg-surface p-6">
+        <h2 className="mb-4 text-lg font-semibold text-content">
           Repair Summary
         </h2>
 
         <dl className="space-y-3 text-sm">
           <div className="flex justify-between">
-            <dt className="text-gray-500">Jersey</dt>
-            <dd className="font-medium text-gray-900">
+            <dt className="text-content-tertiary">Jersey</dt>
+            <dd className="font-medium text-content">
               {repair.jerseyDescription}
             </dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-gray-500">Damage Type</dt>
-            <dd className="font-medium capitalize text-gray-900">
+            <dt className="text-content-tertiary">Damage Type</dt>
+            <dd className="font-medium capitalize text-content">
               {repair.damageType.replace("_", " ")}
             </dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-gray-500">Urgency</dt>
-            <dd className="font-medium capitalize text-gray-900">
+            <dt className="text-content-tertiary">Urgency</dt>
+            <dd className="font-medium capitalize text-content">
               {repair.urgencyLevel}
             </dd>
           </div>
 
-          <div className="border-t border-gray-100 pt-3">
+          <div className="border-t border-border-default pt-3">
             <div className="flex justify-between">
-              <dt className="text-base font-semibold text-gray-900">
+              <dt className="text-base font-semibold text-content">
                 Estimated Cost
               </dt>
-              <dd className="text-base font-bold text-gray-900">
+              <dd className="text-base font-bold text-content">
                 {formatCurrency(repair.estimatedCost)}
               </dd>
             </div>
@@ -174,7 +174,7 @@ export default async function PaymentPage({ params }: PaymentPageProps) {
         hasPendingPayment={!!pendingPayment}
       />
 
-      <p className="mt-4 text-center text-xs text-gray-500">
+      <p className="mt-4 text-center text-xs text-content-tertiary">
         You will be redirected to Polar.sh to complete your payment securely.
       </p>
     </div>

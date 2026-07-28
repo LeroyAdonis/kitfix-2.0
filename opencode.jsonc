@@ -1,0 +1,16 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "code-review-graph": {
+      "type": "local",
+      "command": [
+        "/usr/local/lib/hermes-agent/venv/bin/python",
+        "-m",
+        "code_review_graph",
+        "serve",
+        "--repo",
+        "/root/kitfix-2.0"
+      ]
+    }
+  }
+}
