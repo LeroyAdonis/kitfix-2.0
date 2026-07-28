@@ -1,28 +1,35 @@
 // Minimal type declarations for packages that npm isn't installing correctly.
 // The project compiles fine with skipLibCheck: true — this just silences LSP errors.
+// This file exists because @types/react doesn't install correctly on this VPS.
+
+declare namespace React {
+  type ReactNode = any;
+  type ReactElement = any;
+  type ReactPortal = any;
+  type FC<P = {}> = (props: P) => ReactElement | null;
+  type DetailedHTMLProps<E, T> = { children?: ReactNode; [key: string]: any };
+  type HTMLAttributes<T> = { [key: string]: any };
+  type FormEvent<T = Element> = any;
+  type MouseEvent<T = Element> = any;
+  type Dispatch<T> = (value: T) => void;
+  type SetStateAction<T> = T | ((prev: T) => T);
+
+  function createElement(type: any, props?: any, ...children: any[]): any;
+  function useState<T>(initial: T): [T, Dispatch<SetStateAction<T>>];
+  function useEffect(fn: () => void | (() => void), deps?: any[]): void;
+  function useCallback<T extends Function>(fn: T, deps?: any[]): T;
+  function useMemo<T>(fn: () => T, deps?: any[]): T;
+  function useRef<T>(initial: T): { current: T };
+
+  namespace JSX {
+    interface IntrinsicElements {
+      [elemName: string]: DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>;
+    }
+  }
+}
 
 declare module "react" {
   export = React;
-  export as namespace React;
-  namespace React {
-    type ReactNode = any;
-    type ReactElement = any;
-    type FormEvent<T = Element> = any;
-    type FC<P = {}> = (props: P) => ReactElement | null;
-    type ReactPortal = any;
-    function createElement(type: any, props?: any, ...children: any[]): any;
-    function useState<T>(initial: T): [T, (v: T) => void];
-    function useEffect(fn: () => void | (() => void), deps?: any[]): void;
-    function useCallback<T extends Function>(fn: T, deps?: any[]): T;
-    function useMemo<T>(fn: () => T, deps?: any[]): T;
-    namespace JSX {
-      interface IntrinsicElements {
-        [elemName: string]: any;
-      }
-    }
-  }
-  const React: any;
-  export default React;
 }
 
 declare module "react/jsx-runtime" {
