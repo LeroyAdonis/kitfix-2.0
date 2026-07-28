@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 512">
+  <rect width="1024" height="512" fill="#0A0A0B"/>
+
+  <!-- MONOGRAM GROUP: Interlocking KF -->
+  <g id="monogram" transform="translate(100, 80)">
+    <!-- K - vertical stroke -->
+    <rect x="20" y="20" width="28" height="310" rx="6" fill="#00E859"/>
+    <!-- K - upper arm -->
+    <polygon points="48,48 48,140 200,40 160,20" fill="#00E859"/>
+    <!-- K - lower arm -->
+    <polygon points="48,175 48,300 200,340 160,320" fill="#00E859"/>
+
+    <!-- F - vertical stroke -->
+    <rect x="180" y="20" width="28" height="310" rx="6" fill="#C8A951"/>
+    <!-- F - top bar -->
+    <rect x="208" y="20" width="120" height="28" rx="6" fill="#C8A951"/>
+    <!-- F - middle bar extending into stitch line -->
+    <rect x="208" y="150" width="80" height="22" rx="4" fill="#C8A951"/>
+
+    <!-- Stitch detail: dashed vertical line on the monogram -->
+    <line x1="230" y1="185" x2="230" y2="330" stroke="#00E859" stroke-width="3" stroke-dasharray="8 6" opacity="0.7"/>
+
+    <!-- Small thread spool at bottom of F -->
+    <circle cx="240" cy="300" r="18" fill="none" stroke="#00E859" stroke-width="3"/>
+    <line x1="222" y1="300" x2="258" y2="300" stroke="#C8A951" stroke-width="2"/>
+    <line x1="240" y1="282" x2="240" y2="318" stroke="#C8A951" stroke-width="2"/>
+  </g>
+
+  <!-- WORDMARK GROUP -->
+  <g id="wordmark" transform="translate(420, 140)">
+    <!-- KitFix -->
+    <text x="0" y="0" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="800" fill="#E8E8E3" letter-spacing="4">KitFix</text>
+
+    <!-- Tagline -->
+    <text x="4" y="42" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="600" fill="#00E859" letter-spacing="12">PRECISION REPAIR</text>
+
+    <!-- Decorative underline -->
+    <line x1="0" y1="60" x2="380" y2="60" stroke="#C8A951" stroke-width="1" opacity="0.3"/>
+  </g>
+</svg>

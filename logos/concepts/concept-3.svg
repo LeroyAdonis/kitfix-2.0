@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 512" width="100%" height="100%">
+  <!-- ===== THE LAB BADGE ===== -->
+  <!-- Combination mark: circular badge (left) + wordmark (right) -->
+  <!-- KitFix lab-meets-sports aesthetic, South Africa -->
+
+  <!-- === LEFT: Circular Badge === -->
+  <g id="badge">
+    <!-- Deep badge background -->
+    <circle cx="210" cy="256" r="180" fill="#141414"/>
+    
+    <!-- Gold outer ring -->
+    <circle cx="210" cy="256" r="180" fill="none" stroke="#C8A951" stroke-width="5"/>
+    
+    <!-- Inner gold accent ring -->
+    <circle cx="210" cy="256" r="170" fill="none" stroke="#C8A951" stroke-width="1" opacity="0.35"/>
+
+    <!-- === Magnifying Glass === -->
+    <g id="magnifying-glass">
+      <!-- Lens — solid green circle -->
+      <circle cx="190" cy="215" r="60" fill="#00E859"/>
+
+      <!-- Handle — solid rounded bar extending down-right from lens -->
+      <path d="M236 260 L288 312" stroke="#00E859" stroke-width="15" stroke-linecap="round"/>
+    </g>
+
+    <!-- === Needle & Thread Detail === -->
+    <g id="needle-thread" fill="none" stroke="#E8E8E3" stroke-linecap="round" stroke-linejoin="round">
+      <!-- Needle — diagonal through the lens -->
+      <line x1="148" y1="178" x2="228" y2="278" stroke-width="3"/>
+
+      <!-- Needle eye — small angled ellipse near top-left of needle -->
+      <ellipse cx="160" cy="195" rx="3.5" ry="1.8" transform="rotate(45 160 195)" fill="#E8E8E3" stroke="none"/>
+
+      <!-- Thread — wavy line passing through needle eye, left side -->
+      <path d="M148 175 Q132 184 136 204 Q138 220 126 235" stroke-width="2.5"/>
+
+      <!-- Thread — wavy line continuing past needle point, right side -->
+      <path d="M230 280 Q248 288 243 310 Q238 328 254 342" stroke-width="2.5"/>
+
+      <!-- Stitch punctures — subtle dots along thread path -->
+      <circle cx="136" cy="204" r="1.5" fill="#E8E8E3" stroke="none"/>
+      <circle cx="140" cy="222" r="1.5" fill="#E8E8E3" stroke="none"/>
+      <circle cx="243" cy="310" r="1.5" fill="#E8E8E3" stroke="none"/>
+      <circle cx="240" cy="328" r="1.5" fill="#E8E8E3" stroke="none"/>
+    </g>
+  </g>
+
+  <!-- === RIGHT: Brand Typography === -->
+  <g id="brand-text">
+    <!-- KitFix — large, bold, geometric sans-serif -->
+    <text x="460" y="278"
+          font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+          font-size="102" font-weight="700" fill="#E8E8E3" letter-spacing="-2.5">KitFix</text>
+
+    <!-- LAB — smaller monospaced suffix in brand green -->
+    <text x="460" y="350"
+          font-family="ui-monospace, 'SF Mono', 'Cascadia Code', 'Consolas', 'Courier New', monospace"
+          font-size="34" font-weight="600" fill="#00E859" letter-spacing="4">LAB</text>
+
+    <!-- Thin decorative rule above LAB -->
+    <line x1="460" y1="316" x2="540" y2="316" stroke="#C8A951" stroke-width="1.5" opacity="0.5"/>
+  </g>
+</svg>

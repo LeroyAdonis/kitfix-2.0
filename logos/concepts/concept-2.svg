@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 512" width="1024" height="512">
+  <rect width="1024" height="512" fill="#0A0A0B"/>
+
+  <!-- Shield badge outline -->
+  <path d="M 512 40 
+           L 590 40 
+           Q 655 40, 665 105 
+           L 665 315 
+           Q 665 380, 595 410 
+           L 512 430 
+           L 429 410 
+           Q 359 380, 359 315 
+           L 359 105 
+           Q 359 40, 434 40 Z" 
+        fill="none" stroke="#C8A951" stroke-width="5" stroke-linejoin="round"/>
+
+  <!-- Shield inner border detail -->
+  <path d="M 512 52 
+           L 584 52 
+           Q 643 52, 652 110 
+           L 652 312 
+           Q 652 370, 590 400 
+           L 512 418 
+           L 434 400 
+           Q 372 370, 372 312 
+           L 372 110 
+           Q 372 52, 440 52 Z" 
+        fill="none" stroke="#C8A951" stroke-width="1.5" stroke-linejoin="round" opacity="0.35"/>
+
+  <!-- Jersey icon centered inside shield -->
+  <g transform="translate(512, 235)">
+    <!-- Jersey body -->
+    <path d="M -65 -80 
+             L -35 -105 
+             L -35 -70 
+             L -100 -35 
+             L -115 45 
+             L -60 20 
+             L -60 110 
+             L 60 110 
+             L 60 20 
+             L 115 45 
+             L 100 -35 
+             L 35 -70 
+             L 35 -105 
+             L 65 -80 Z" 
+          fill="#E8E8E3"/>
+
+    <!-- V-neck cutout (matches background) -->
+    <path d="M -35 -105 L 0 -55 L 35 -105 Z" fill="#0A0A0B"/>
+
+    <!-- Collar trim -->
+    <path d="M -35 -105 L 0 -55 L 35 -105" fill="none" stroke="#C8A951" stroke-width="2" stroke-linejoin="round"/>
+
+    <!-- Shoulder/sleeve seam lines -->
+    <line x1="-115" y1="45" x2="-60" y2="20" stroke="#C8A951" stroke-width="1.5"/>
+    <line x1="115" y1="45" x2="60" y2="20" stroke="#C8A951" stroke-width="1.5"/>
+
+    <!-- Hem line -->
+    <line x1="-60" y1="110" x2="60" y2="110" stroke="#C8A951" stroke-width="1.5"/>
+
+    <!-- Vertical repair stitch line (dashed) -->
+    <line x1="0" y1="-40" x2="0" y2="100" stroke="#00E859" stroke-width="3" stroke-dasharray="5,4"/>
+
+    <!-- Cross-stitch repair marks -->
+    <path d="M -10 20 L 10 30 M -10 30 L 10 40 M -10 40 L 10 50 M -10 50 L 10 60" 
+          fill="none" stroke="#00E859" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Brand name -->
+  <text x="512" y="480" text-anchor="middle" font-family="Impact, 'Arial Black', 'Arial Narrow', sans-serif" font-weight="900" font-size="32" fill="#E8E8E3" letter-spacing="3">KitFix</text>
+
+  <!-- Tagline -->
+  <text x="512" y="500" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="600" font-size="9" fill="#C8A951" letter-spacing="2.5">REPAIR • RESTORE • RESPECT</text>
+</svg>
