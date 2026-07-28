@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" fill="#0A0A0B"/>
+  <g id="concentric-stitch">
+    <!-- Concentric rings: lab precision -->
+    <circle cx="50" cy="50" r="36" fill="none" stroke="#00E859" stroke-width="3"/>
+    <circle cx="50" cy="50" r="24" fill="none" stroke="#C8A951" stroke-width="2"/>
+    <!-- Innermost: solid green disc with negative space stitch -->
+    <circle cx="50" cy="50" r="12" fill="#00E859"/>
+    <!-- Stitch cut through the disc -->
+    <path d="M 40 50 L 60 50" stroke="#0A0A0B" stroke-width="3" stroke-linecap="round"/>
+    <path d="M 44 46 L 56 46" stroke="#0A0A0B" stroke-width="2" stroke-linecap="round"/>
+    <path d="M 44 54 L 56 54" stroke="#0A0A0B" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>
