@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import Link from "next/link";
 import { gsap } from "gsap";
 import JerseySVG from "./JerseySVG";
 import { logger } from "@/lib/logger";
@@ -102,14 +103,12 @@ export default function StitchHero() {
               kit&apos;s original thread, weave and wear.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-4">
-              <a
-                href="https://wa.me/27721234567"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/repair/new"
                 className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--color-stitch)] text-[var(--color-ink)] font-bold text-base uppercase tracking-wide hover:brightness-110 transition"
               >
                 Kick Off a Repair
-              </a>
+              </Link>
               <span className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-thread-dim)]">
                 Photos in · quote in 60 min
               </span>

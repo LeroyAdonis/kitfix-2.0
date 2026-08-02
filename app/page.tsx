@@ -1,4 +1,6 @@
+import Link from "next/link";
 import StitchHero from "@/components/hero/StitchHero";
+import Header from "@/components/Header";
 
 const SERVICES = [
   {
@@ -52,31 +54,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-[var(--color-pitch-deep)]">
       {/* Header */}
-      <header className="border-b border-[var(--color-pitch-line)]/40 px-6 py-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-[var(--color-stitch)] flex items-center justify-center">
-              <span className="text-[var(--color-ink)] font-display text-sm">KF</span>
-            </div>
-            <span className="font-display text-lg text-[var(--color-thread)] uppercase tracking-wide">
-              KitFix<span className="text-[var(--color-stitch)]">.</span>
-            </span>
-          </div>
-          <nav className="hidden md:flex items-center gap-8 font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-thread-dim)]">
-            <a href="#services" className="hover:text-[var(--color-stitch)] transition-colors">Services</a>
-            <a href="#process" className="hover:text-[var(--color-stitch)] transition-colors">Process</a>
-            <a href="#pricing" className="hover:text-[var(--color-stitch)] transition-colors">Pricing</a>
-          </nav>
-          <a
-            href="https://wa.me/27721234567"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-5 py-3 bg-[var(--color-stitch)] text-[var(--color-ink)] font-bold text-sm uppercase tracking-wide hover:brightness-110 transition"
-          >
-            WhatsApp Us
-          </a>
-        </div>
-      </header>
+      <Header />
 
       <StitchHero />
 
@@ -210,16 +188,25 @@ export default function HomePage() {
             <br />
             that kit.
           </h2>
-          <a
-            href="https://wa.me/27721234567"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/repair/new"
             className="inline-flex items-center gap-3 px-10 py-5 bg-[var(--color-stitch)] text-[var(--color-ink)] font-bold text-lg uppercase tracking-wide hover:brightness-110 transition"
           >
             Start a Repair →
-          </a>
+          </Link>
           <p className="mt-6 font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-thread-dim)]">
             Photos in, quote in 60 minutes · flat rate from R180
+          </p>
+          <p className="mt-4 font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-thread-dim)]">
+            Prefer WhatsApp?{" "}
+            <a
+              href="https://wa.me/27721234567"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[var(--color-stitch)] hover:underline"
+            >
+              Send photos here
+            </a>
           </p>
         </div>
       </section>
