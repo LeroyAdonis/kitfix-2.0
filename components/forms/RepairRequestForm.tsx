@@ -208,6 +208,17 @@ export function RepairRequestForm() {
           </span>
         </div>
 
+        {photos.length >= 1 && (
+          <p className="flex items-center gap-2 mb-3 font-mono text-xs text-[var(--color-stitch)]">
+            <span className="h-px w-4 bg-[var(--color-stitch)]/60" />
+            {photos.length === 1 && "Just getting off the bench! We need more."}
+            {photos.length === 2 && "Picking up the pace, getting better."}
+            {photos.length === 3 && "Perfect lineup! Spot on."}
+            {photos.length === 4 && "Almost a full squad. One more for the perfect kit!"}
+            {photos.length === 5 && "Full squad out. This kit is ready for the match."}
+          </p>
+        )}
+
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
