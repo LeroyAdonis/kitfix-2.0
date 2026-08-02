@@ -153,6 +153,7 @@ jobs: defineTable({
     }),
   ),
   quote: v.optional(v.number()),          // in Rands
+  quoteStatus: v.optional(v.union(v.literal("estimate"), v.literal("confirmed"))), // estimate → confirmed; admin override resets to estimate
   status: v.union(                        // new → in_repair → ready → done
     v.literal("new"),
     v.literal("in_repair"),

@@ -56,6 +56,34 @@
 - **Revisit trigger:** After ILALI Phase 1 WhatsApp Business API guide is done with George — the same infra can serve KitFix
 - **Effort estimate:** Medium-High
 
+### B008 — Payment / deposit on quote confirmation
+- **Source:** quote-workflow spec (non-goal)
+- **Status:** proposed
+- **Revisit trigger:** When the shop wants to take deposits or prepay — business decision
+- **Effort estimate:** High (payment provider + order flow)
+- **Notes:** Confirm-quote is confirm-only for now; no money moves
+
+### B009 — Notify customer when admin overrides the estimate
+- **Source:** quote-workflow spec (non-goal)
+- **Status:** proposed
+- **Revisit trigger:** When email infra exists (see B002) or customers ask why prices changed
+- **Effort estimate:** Medium (email/SMS + notification infra)
+- **Notes:** Today the customer only sees the new estimate when they visit My Repairs
+
+### B010 — Customer counter-offer / decline flow
+- **Source:** quote-workflow spec (non-goal)
+- **Status:** proposed
+- **Revisit trigger:** When customers push back on estimates more than occasionally
+- **Effort estimate:** Medium (state machine + UI)
+- **Notes:** Confirm-only now; decline + counter-offer is v2
+
+### B011 — Quote history / audit trail
+- **Source:** quote-workflow spec (non-goal)
+- **Status:** proposed
+- **Revisit trigger:** When the shop wants to see how estimates changed over time
+- **Effort estimate:** Low-Medium (adminNotes exists; full history is a new table/array)
+- **Notes:** Every override currently overwrites the quote value — no audit trail
+
 ---
 
 ## Review Log
@@ -64,6 +92,7 @@
 |------|-------------|--------|
 | 2026-08-02 | Ricky (pipeline) | Backlog created from customer-portal spec. B001-B007 captured. No items lost. |
 | 2026-08-02 | Ricky (pipeline) | **Release v20260802-2 sweep.** B001-B006 still proposed (revisit triggers unchanged — portal just shipped, need adoption data). B007 parked (WA Business API with George pending). **Nothing lost, nothing left behind.** |
+| 2026-08-02 | Ricky (pipeline) | **Quote-workflow release sweep.** B008-B011 added (payments, override notification, counter-offer, audit trail — all non-goals of quote-workflow spec). Feature shipped: admin override + customer estimate/confirm. **Nothing lost.** |
 
 ---
 
