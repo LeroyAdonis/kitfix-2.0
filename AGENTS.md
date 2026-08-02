@@ -52,7 +52,7 @@ KitFix is a jersey repair service for South African sports clubs and individuals
 | `/admin/login` | Server | Simple password form → sets `kitfix_admin` cookie |
 | `/admin/jobs/[id]` | Dynamic | Job detail view — incl. AI Assessment panel + customer email/channel |
 | `/api/auth/[...all]` | Route | Better Auth proxy → Convex (sign-up/sign-in/session) |
-| `/api/analyze` | POST | NVIDIA vision (llama-3.2-11b-vision-instruct) → damage type/tier/price |
+| `/api/analyze` | POST | NVIDIA vision (llama-3.2-90b-vision-instruct) → damage type/tier/price |
 | `/api/concierge` | POST | Convex proxy for WhatsApp/Telegram path (legacy) |
 | `/api/admin/login` | POST | Validates password → sets cookie |
 | `/api/admin/logout` | POST | Deletes cookie |

@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 
 const NIM_ENDPOINT = "https://integrate.api.nvidia.com/v1/chat/completions";
-const MODEL = "meta/llama-3.2-11b-vision-instruct";
+// Bake-off 2026-08-02 (6 vision models on NVIDIA NIM): llama-3.2-90b-vision-instruct
+// won — correct damage/tier/price with confidence 0.80 vs 11b's 0.00. See
+// /tmp/vision-bakeoff.py + .specify/specs/customer-portal/plan.md.
+const MODEL = "meta/llama-3.2-90b-vision-instruct";
 
 const DAMAGE_TYPES = ["tear", "hole", "stain", "fading", "logo_damage", "seam_split", "other"];
 const PRICE_BY_TIER: Record<string, number> = {
@@ -128,7 +131,9 @@ export async function POST(req: Request) {
       `Suggested price must be in cents: Basic=15000, Complex=25000, Full Refresh=40000.`;
 
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 8000);
+    // 90b vision can spike to ~8-10s under NVIDIA shared load; 12s keeps
+    // margin while staying under Vercel's 10s default for streaming-less routes.
+    const timer = setTimeout(() => controller.abort(), 12000);
 
     const nimRes = await fetch(NIM_ENDPOINT, {
       method: "POST",
