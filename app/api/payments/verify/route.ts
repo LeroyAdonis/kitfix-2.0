@@ -23,8 +23,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "invalid_request" }, { status: 400 });
     }
     jobData = await res.json();
-  } catch (e) {
-    console.error("verify: convex fetch error", e);
+  } catch {
     return NextResponse.json({ error: "invalid_request" }, { status: 400 });
   }
 
@@ -32,10 +31,44 @@ export async function GET(req: Request) {
   if (typeof rawJob !== "object" || rawJob === null) {
     return NextResponse.json({ error: "invalid_request" }, { status: 400 });
   }
-  const job = rawJob as { paymentStatus?: string; quoteStatus?: string };
+  const job = rawJob as {
+    paymentStatus?: string;
+    quoteStatus?: string;
+    paymentReference?: string;
+  };
 
   if (job.paymentStatus === "paid") {
     return NextResponse.json({ paid: true });
   }
+
+  if (job.paymentReference && job.quoteStatus === "confirmed") {
+    const secretKey = process.env.PAYSTACK_SECRET_KEY;
+    if (secretKey) {
+      try {
+        const res = await fetch(
+          `https://api.paystack.co/transaction/verify/${job.paymentReference}`,
+          { headers: { Authorization: `Bearer ${secretKey}` } },
+        );
+        const data = await res.json();
+        if (data?.data?.status === "success") {
+          await fetch(`${convexUrl}/api/mutation`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              path: "jobs:markPaid",
+              args: { jobId, reference: job.paymentReference },
+            }),
+          });
+          return NextResponse.json({ paid: true, via: "paystack_verify" });
+        }
+        if (data?.data?.status) {
+          return NextResponse.json({ paid: false, status: job.quoteStatus ?? "unknown" });
+        }
+      } catch {
+        return NextResponse.json({ paid: false, status: "unknown" });
+      }
+    }
+  }
+
   return NextResponse.json({ paid: false, status: job.quoteStatus ?? "unknown" });
 }
