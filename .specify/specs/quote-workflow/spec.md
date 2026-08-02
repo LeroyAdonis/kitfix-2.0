@@ -12,9 +12,9 @@
 ## Goals
 
 - Admin can override any job's quote (set a custom R amount) from the job detail page.
-- Customer-facing copy says **"Estimate"** until confirmed, then **"Confirmed"**.
-- Customer can click **"Confirm quote"** on an estimate (one click, sets `quoteStatus: "confirmed"`).
-- Admin override resets `quoteStatus` to `"estimate"` so the customer re-confirms the new number.
+- Admin confirms the quote when they're happy — **the customer never clicks anything**.
+- Customer-facing copy says **"Estimate — admin to confirm"** until the admin confirms, then **"Quote confirmed"**.
+- Admin override resets `quoteStatus` to `"estimate"` so it reads as pending confirmation again.
 - Zero breaking changes to existing jobs (field optional, backfilled "estimate").
 
 ## Non-Goals (backlog)
@@ -43,9 +43,9 @@ quoteStatus: v.optional(
 
 ### Modify `updateQuote` (exists)
 - Args unchanged: `{ id, quote }`.
-- Behavior: patch `{ quote, quoteStatus: "estimate" }` — an admin override always returns the price to estimate status so the customer re-confirms.
+- Behavior: patch `{ quote, quoteStatus: "estimate" }` — an admin override always returns the price to estimate status (pending admin confirmation again).
 
-### New `confirmQuote` mutation
+### New `confirmQuote` mutation (admin-side action)
 ```ts
 export const confirmQuote = mutation({
   args: { id: v.id("jobs") },
@@ -57,35 +57,34 @@ export const confirmQuote = mutation({
   },
 });
 ```
-- No auth gate for now (web jobs are user-linked; admin board is cookie-gated) — consistent with existing mutations. Note in code.
+- Called from the **admin** job detail page (cookie-gated). The customer never calls it.
+- Note in code: no auth gate inside the mutation (consistent with existing mutations); the admin page route group is the gate.
 
 ### `create` / `createWebJob`
 - Set `quoteStatus: "estimate"` alongside the existing `quote`.
 
 ## Admin UI (app/admin/(protected)/jobs/[id]/page.tsx)
 
-In the **Quote panel** (lines ~235-244), add an override control:
+In the **Quote panel** (lines ~235-244), add an override control + confirm action:
 
 - Display current price (existing) + status chip: `ESTIMATE` or `CONFIRMED`.
 - **Override form:** a small input (Rands, e.g. "250") + "Update quote" button.
   - Input `type="number"`, `min="0"`, `step="1"`, `placeholder="e.g. 250"`.
   - On submit: `await updateQuote({ id: job._id, quote: Math.round(Number(value) * 100) })` (Rands → cents).
   - Show transient "Quote updated" confirmation (same pattern as notes save).
+- **Confirm button:** when `quoteStatus !== "confirmed"` and `quote != null`, show a gold "Confirm quote" button → `await confirmQuote({ id: job._id })`. When confirmed, show "Confirmed ✓" instead.
 - Style: match existing panel language — `font-mono text-[10px] uppercase tracking` labels, sharp corners, CSS vars only.
 - Status chip colors: ESTIMATE → `text-[var(--color-stitch)] border-[var(--color-stitch)]/40`; CONFIRMED → `text-[#7fb3d5] border-[#7fb3d5]/40`.
 
 ## Customer UI (app/my-jobs/page.tsx)
 
-In the quote block (lines ~131-140):
+In the quote block (lines ~131-140) — **display-only, NO button**:
 
 - Label logic:
-  - `quoteStatus !== "confirmed"` (incl. undefined): label **"Estimate"**
-  - `quoteStatus === "confirmed"`: label **"Confirmed"** (with a small ✓)
-- If estimate (and quote != null): render a **"Confirm quote"** button next to the price:
-  - Gold outline button (`border border-[var(--color-stitch)] text-[var(--color-stitch)] px-3 py-1.5 font-mono text-xs uppercase tracking-wider hover:bg-[var(--color-stitch)]/10`)
-  - On click: `const confirmQuote = useMutation(api.jobs.confirmQuote)` then `await confirmQuote({ id: job._id })`
-  - After confirm the row re-renders as "Confirmed ✓" (Convex reactive query picks it up automatically).
-- No confirm button when already confirmed.
+  - `quoteStatus !== "confirmed"` (incl. undefined): label **"Estimate — admin to confirm"**
+  - `quoteStatus === "confirmed"`: label **"Quote confirmed ✓"**
+- No confirm button, no interaction. The customer sees the price and its status; the admin drives confirmation.
+- Keep the price display (`R{...}` from cents).
 
 ## Verification
 

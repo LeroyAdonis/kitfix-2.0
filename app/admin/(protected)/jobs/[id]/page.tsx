@@ -19,6 +19,7 @@ export default function JobDetailPage() {
   const updateStatus = useMutation(api.jobs.updateStatus);
   const updateNotes = useMutation(api.jobs.updateNotes);
   const updateQuote = useMutation(api.jobs.updateQuote);
+  const confirmQuote = useMutation(api.jobs.confirmQuote);
   const [notes, setNotes] = useState("");
   const [notesSaved, setNotesSaved] = useState(false);
   const [quoteInput, setQuoteInput] = useState("");
@@ -281,6 +282,18 @@ export default function JobDetailPage() {
                   </button>
                   {quoteSaved && (
                     <span className="text-[var(--color-stitch)] font-mono text-xs">Quote updated</span>
+                  )}
+                </div>
+                <div className="mt-3">
+                  {job.quoteStatus !== "confirmed" && job.quote != null ? (
+                    <button
+                      onClick={() => confirmQuote({ id: job._id })}
+                      className="px-4 py-2 bg-[var(--color-stitch)] text-[var(--color-ink)] font-mono text-xs uppercase tracking-wider hover:brightness-110"
+                    >
+                      Confirm quote
+                    </button>
+                  ) : (
+                    <span className="font-mono text-xs text-[#7fb3d5]">Confirmed ✓</span>
                   )}
                 </div>
               </div>
