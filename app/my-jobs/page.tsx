@@ -92,7 +92,7 @@ export default function MyJobsPage() {
 
   return (
     <div className="min-h-screen bg-[var(--color-pitch-deep)]">
-      <header className="border-b border-[var(--color-pitch-line)]/40 px-6 py-3">
+      <header className="border-b border-[var(--color-pitch-line)]/40 px-4 md:px-6 py-3">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
@@ -108,7 +108,7 @@ export default function MyJobsPage() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto p-6">
+      <main className="max-w-4xl mx-auto p-4 md:p-6">
         <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-stitch)] mb-2">

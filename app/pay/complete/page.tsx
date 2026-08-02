@@ -33,7 +33,7 @@ function PayComplete() {
   }, [check]);
 
   return (
-    <div className="min-h-screen bg-[var(--color-pitch-deep)] flex items-center justify-center px-6">
+    <div className="min-h-screen bg-[var(--color-pitch-deep)] flex items-center justify-center px-4">
       <div className="w-full max-w-md border border-[var(--color-pitch-line)]/50 bg-[var(--color-pitch)]/30 p-8 text-center">
         <div className="flex items-center justify-center gap-2 mb-6">
           <div className="h-px w-8 bg-[var(--color-stitch)]/60" />
