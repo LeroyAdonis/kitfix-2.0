@@ -98,7 +98,10 @@ export function RepairRequestForm() {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ photoStorageIds: photos.map((p) => p.storageId) }),
+        body: JSON.stringify({
+          photoStorageIds: photos.map((p) => p.storageId),
+          description: description.trim(),
+        }),
       });
       if (!res.ok) throw new Error("analysis_failed");
       const data = (await res.json()) as AiAnalysis;

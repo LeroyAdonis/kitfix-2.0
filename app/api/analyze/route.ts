@@ -6,7 +6,7 @@ const NIM_ENDPOINT = "https://integrate.api.nvidia.com/v1/chat/completions";
 // /tmp/vision-bakeoff.py + .specify/specs/customer-portal/plan.md.
 const MODEL = "meta/llama-3.2-90b-vision-instruct";
 
-const DAMAGE_TYPES = ["tear", "hole", "stain", "fading", "logo_damage", "seam_split", "other"];
+const DAMAGE_TYPES = ["tear", "hole", "stain", "fading", "print_damage", "logo_damage", "seam_split", "other"];
 const PRICE_BY_TIER: Record<string, number> = {
   Basic: 15000,
   Complex: 25000,
@@ -41,7 +41,11 @@ function validateAnalysis(input: unknown): Analysis | null {
     ? damageType
     : damageType === "logo damage"
       ? "logo_damage"
-      : "other";
+      : damageType === "peeling" ||
+          damageType === "peeling print" ||
+          damageType === "print peeling"
+        ? "print_damage"
+        : "other";
 
   const tier =
     requestedTier === "Basic" || requestedTier === "Complex" || requestedTier === "Full Refresh"
@@ -70,8 +74,11 @@ function validateAnalysis(input: unknown): Analysis | null {
 
 export async function POST(req: Request) {
   let photoStorageIds: string[];
+  let customerDescription = "";
   try {
     const body = await req.json();
+    customerDescription =
+      typeof body.description === "string" ? body.description.trim() : "";
     if (!Array.isArray(body.photoStorageIds) || body.photoStorageIds.length === 0) {
       return NextResponse.json({ error: "analysis_failed" }, { status: 400 });
     }
@@ -120,15 +127,23 @@ export async function POST(req: Request) {
     const base64 = Buffer.from(arrayBuffer).toString("base64");
     const dataUrl = `data:${contentType};base64,${base64}`;
 
+    const customerHint = customerDescription
+      ? `The customer also wrote: "${customerDescription}". Use this as a strong hint — confirm what they describe is visible in the photo and include it in your analysis. If the photo is unclear but the description is specific, trust the description.\n`
+      : "";
+
     const prompt =
-      `Analyze this photograph of a sports jersey. Identify the damage.\n` +
+      `You are KitFix, a South African sports jersey repair specialist. Analyze the photograph of a sports jersey to identify all damage.\n` +
+      customerHint +
       `Respond with ONLY valid JSON (no markdown, no prose), exactly in this shape:\n` +
-      `{"damageType": "tear"|"hole"|"stain"|"fading"|"logo_damage"|"seam_split"|"other", ` +
+      `{"damageType": "tear"|"hole"|"stain"|"fading"|"print_damage"|"logo_damage"|"seam_split"|"other", ` +
       `"description": "one short sentence describing the damage", ` +
       `"suggestedTier": "Basic"|"Complex"|"Full Refresh", ` +
       `"suggestedPrice": 15000|25000|40000, ` +
       `"confidence": 0.0}` +
-      `Suggested price must be in cents: Basic=15000, Complex=25000, Full Refresh=40000.`;
+      `\nNote: print_damage = peeling/peeling vinyl/peeling print/heat-press damage.` +
+      `\nTier guide — Basic (R150): one small repair (single tear under 5cm, one small stain, minor seam). Complex (R250): larger or multiple issues (peeling vinyl or print, tear over 5cm, several stains, damaged logo). Full Refresh (R400): jersey-wide refresh (faded or peeling print across the kit, multiple damage types, name/number replacement).` +
+      `\nconfidence: 0.0 to 1.0 — be honest; 0.9+ only when the damage is unmistakable, 0.5-0.8 when the photo is moderately clear, below 0.5 when the photo is unclear or ambiguous.` +
+      `\nSuggested price must be in cents: Basic=15000, Complex=25000, Full Refresh=40000.`;
 
     const controller = new AbortController();
     // 90b vision can spike to ~8-10s under NVIDIA shared load; 12s keeps
