@@ -216,6 +216,13 @@ export function RepairRequestForm() {
         >
           {uploading ? "Uploading..." : "Add photos — up to 5"}
         </button>
+
+        {photos.length === 1 && (
+          <p className="flex items-center gap-2 mt-3 font-mono text-[10px] text-[var(--color-thread-dim)]">
+            <span className="h-px w-4 bg-[var(--color-stitch)]/60" />
+            Tip: add a close-up of the damage for a sharper AI quote.
+          </p>
+        )}
         <input
           ref={fileInputRef}
           type="file"
