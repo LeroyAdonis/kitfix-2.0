@@ -30,6 +30,11 @@ export default defineSchema({
       }),
     ),
     quote: v.optional(v.number()),
+    // Quote lifecycle: AI sets an estimate at creation; admin may override
+    // (resets to "estimate"); customer confirms when happy.
+    quoteStatus: v.optional(
+      v.union(v.literal("estimate"), v.literal("confirmed")),
+    ),
     status: v.union(
       v.literal("new"),
       v.literal("in_repair"),

@@ -18,8 +18,11 @@ export default function JobDetailPage() {
   const job = useQuery(api.jobs.get, { id: id as any });
   const updateStatus = useMutation(api.jobs.updateStatus);
   const updateNotes = useMutation(api.jobs.updateNotes);
+  const updateQuote = useMutation(api.jobs.updateQuote);
   const [notes, setNotes] = useState("");
   const [notesSaved, setNotesSaved] = useState(false);
+  const [quoteInput, setQuoteInput] = useState("");
+  const [quoteSaved, setQuoteSaved] = useState(false);
 
   if (job === undefined) {
     return (
@@ -49,6 +52,15 @@ export default function JobDetailPage() {
 
   const handleStatusChange = async (status: typeof job.status) => {
     await updateStatus({ id: job._id, status });
+  };
+
+  const handleOverrideQuote = async () => {
+    const rands = Number(quoteInput);
+    if (!isFinite(rands) || rands <= 0) return;
+    await updateQuote({ id: job._id, quote: Math.round(rands * 100) });
+    setQuoteInput("");
+    setQuoteSaved(true);
+    setTimeout(() => setQuoteSaved(false), 2000);
   };
 
   return (
@@ -234,12 +246,43 @@ export default function JobDetailPage() {
 
             {job.quote && (
               <div className="border border-[var(--color-stitch)]/40 bg-[var(--color-pitch)]/30 p-4">
-                <h3 className="font-mono text-[10px] text-[var(--color-thread-dim)] uppercase tracking-[0.18em] mb-1">
-                  Quote
-                </h3>
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="font-mono text-[10px] text-[var(--color-thread-dim)] uppercase tracking-[0.18em]">
+                    Quote
+                  </h3>
+                  <span
+                    className={`font-mono text-[10px] uppercase px-2 py-0.5 border ${
+                      job.quoteStatus === "confirmed"
+                        ? "text-[#7fb3d5] border-[#7fb3d5]/40"
+                        : "text-[var(--color-stitch)] border-[var(--color-stitch)]/40"
+                    }`}
+                  >
+                    {job.quoteStatus === "confirmed" ? "Confirmed" : "Estimate"}
+                  </span>
+                </div>
                 <p className="font-display text-2xl text-[var(--color-stitch)]">
                   R{(job.quote / 100).toFixed(2)}
                 </p>
+                <div className="flex items-center gap-2 mt-3">
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    placeholder="e.g. 250"
+                    value={quoteInput}
+                    onChange={(e) => setQuoteInput(e.target.value)}
+                    className="bg-[var(--color-pitch-deep)] border border-[var(--color-pitch-line)]/50 text-[var(--color-thread)] px-3 py-2 font-mono text-sm w-32 focus:border-[var(--color-stitch)] outline-none"
+                  />
+                  <button
+                    onClick={handleOverrideQuote}
+                    className="px-4 py-2 bg-[var(--color-stitch)] text-[var(--color-ink)] font-mono text-xs uppercase tracking-wider hover:brightness-110"
+                  >
+                    Update quote
+                  </button>
+                  {quoteSaved && (
+                    <span className="text-[var(--color-stitch)] font-mono text-xs">Quote updated</span>
+                  )}
+                </div>
               </div>
             )}
 

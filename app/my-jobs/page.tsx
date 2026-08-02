@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
@@ -18,6 +18,7 @@ export default function MyJobsPage() {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
   const jobs = useQuery(api.jobs.listByUser);
+  const confirmQuote = useMutation(api.jobs.confirmQuote);
 
   useEffect(() => {
     if (!isPending && !session?.session) {
@@ -129,13 +130,23 @@ export default function MyJobsPage() {
 
                   <div className="flex items-center gap-6 flex-wrap font-mono text-xs text-[var(--color-thread-dim)]">
                     {job.quote != null && (
-                      <div>
-                        <span className="text-[var(--color-thread-dim)]/60 uppercase tracking-[0.16em] mr-2">
-                          Quote
-                        </span>
-                        <span className="font-display text-base text-[var(--color-stitch)]">
-                          R{(job.quote / 100).toFixed(2)}
-                        </span>
+                      <div className="flex items-center gap-3">
+                        <div>
+                          <span className="text-[var(--color-thread-dim)]/60 uppercase tracking-[0.16em] mr-2">
+                            {job.quoteStatus === "confirmed" ? "Confirmed ✓" : "Estimate"}
+                          </span>
+                          <span className="font-display text-base text-[var(--color-stitch)]">
+                            R{(job.quote / 100).toFixed(2)}
+                          </span>
+                        </div>
+                        {job.quoteStatus !== "confirmed" && (
+                          <button
+                            onClick={() => confirmQuote({ id: job._id })}
+                            className="border border-[var(--color-stitch)] text-[var(--color-stitch)] px-3 py-1.5 font-mono text-xs uppercase tracking-wider hover:bg-[var(--color-stitch)]/10"
+                          >
+                            Confirm quote
+                          </button>
+                        )}
                       </div>
                     )}
                     {job.aiAnalysis?.suggestedTier && (

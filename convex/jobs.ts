@@ -108,6 +108,7 @@ export const create = mutation({
       photoUrls: [],
       aiAnalysis: args.aiAnalysis,
       quote: args.aiAnalysis?.suggestedPrice,
+      quoteStatus: "estimate",
       status: "new",
       adminNotes: undefined,
     });
@@ -148,6 +149,7 @@ export const createWebJob = mutation({
       photoUrls: [],
       aiAnalysis: args.aiAnalysis,
       quote: args.aiAnalysis?.suggestedPrice,
+      quoteStatus: "estimate",
       status: "new",
       adminNotes: undefined,
     });
@@ -179,7 +181,20 @@ export const updateNotes = mutation({
 export const updateQuote = mutation({
   args: { id: v.id("jobs"), quote: v.number() },
   handler: async (ctx, args) => {
-    await ctx.db.patch(args.id, { quote: args.quote });
+    // Admin override always returns the price to estimate so the customer re-confirms.
+    await ctx.db.patch(args.id, { quote: args.quote, quoteStatus: "estimate" });
+  },
+});
+
+export const confirmQuote = mutation({
+  args: { id: v.id("jobs") },
+  handler: async (ctx, args) => {
+    // No auth gate for now — consistent with existing mutations (web jobs are
+    // user-linked; admin board is cookie-gated).
+    const job = await ctx.db.get(args.id);
+    if (!job) throw new Error("Job not found");
+    if (job.quote == null) throw new Error("No quote to confirm");
+    await ctx.db.patch(args.id, { quoteStatus: "confirmed" });
   },
 });
 
