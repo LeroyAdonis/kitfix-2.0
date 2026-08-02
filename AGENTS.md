@@ -12,10 +12,10 @@ KitFix is a jersey repair service for South African sports clubs and individuals
 
 | Detail | Value |
 |--------|-------|
-| **URL** | https://kitfix.vercel.app |
+| **URL** | https://kitfix-2-0.vercel.app |
 | **Stack** | Next.js 16.2.9 App Router, React 19.2.3, TypeScript 6.0.3, Tailwind CSS v4 |
 | **Backend** | Convex (real-time DB) — `NEXT_PUBLIC_CONVEX_URL` |
-| **Auth** | Simple cookie-based admin (`ADMIN_PASSWORD` env, 7-day session) |
+| **Auth** | Customer = Better Auth + Convex (email/password); admin = simple cookie auth (`ADMIN_PASSWORD` env, 7-day session) |
 | **Animation** | GSAP 3.15 + ScrollTrigger (hero), Framer Motion (not yet used — planned for UI microinteractions) |
 | **PWA** | Manual service worker (`public/sw.js`) + manifest.json |
 | **Deploy** | Vercel (auto-deploy on push to main) |
@@ -72,7 +72,8 @@ kitfix-2.0/
 │   ├── page.tsx            # Landing page (header, hero, sections, footer)
 │   ├── layout.tsx          # Root layout (dark mode, metadata)
 │   ├── globals.css         # @import "tailwindcss"
-│   ├── admin/              # Admin routes
+│   ├── admin/              # Admin routes (cookie auth)
+│   │   └── (protected)/    # Admin route group: /admin, /admin/jobs/[id]
 │   └── api/                # API routes
 ├── components/
 │   ├── hero/               # GSAP macrophage hero animation
@@ -101,13 +102,24 @@ kitfix-2.0/
 
 ### Data Flow
 
+Two paths into the `jobs` table:
+
+1. **Web customer portal (direct Convex)** — sign-up/sign-in, `/repair/new`, `/my-jobs`,
+   and the admin dashboard connect directly to Convex client-side. Hooks come from
+   `convex/react` (`useQuery`/`useMutation`), wired up through `ConvexBetterAuthProvider`
+   in `components/providers.tsx`.
+2. **WhatsApp/Telegram (legacy, via proxy)** — `WhatsApp/Telegram → /api/concierge → Convex`
+   (server-side proxy).
+
 ```
-WhatsApp/Telegram → /api/concierge → Convex (jobs table) → Admin Dashboard
-                                        ↑
-                              convex/jobs.ts (mutations + queries)
+Web portal + Admin dashboard ──direct──▶ Convex (jobs table)
+                                               ▲
+WhatsApp/Telegram → /api/concierge ────────────┤  (legacy proxy)
+                                     convex/jobs.ts (mutations + queries)
 ```
 
-The app does NOT connect to Convex client-side. All Convex access goes through `/api/concierge` as a server-side proxy. The admin dashboard fetches jobs through this proxy.
+`/api/concierge` is only for the legacy WhatsApp/Telegram path. The web portal and admin
+dashboard talk to Convex directly.
 
 ## Convex Schema
 
@@ -115,11 +127,31 @@ The app does NOT connect to Convex client-side. All Convex access goes through `
 // convex/schema.ts — ONLY table
 jobs: defineTable({
   customerName: v.string(),
-  customerPhone: v.string(),
-  customerChannel: v.union(v.literal("whatsapp"), v.literal("telegram")),
+  customerPhone: v.optional(v.string()),
+  customerEmail: v.optional(v.string()),
+  customerChannel: v.union(
+    v.literal("whatsapp"),
+    v.literal("telegram"),
+    v.literal("web"),
+  ),
+  // Better Auth user id (component users table lives outside main schema)
+  userId: v.optional(v.string()),
   description: v.string(),
   damageType: v.optional(v.string()),
+  // Convex storage IDs; resolve to URLs via ctx.storage.getUrl in queries
+  photoStorageIds: v.array(v.id("_storage")),
+  // Legacy resolved URLs kept for backward compat with existing admin UI
   photoUrls: v.array(v.string()),
+  aiAnalysis: v.optional(
+    v.object({
+      damageType: v.string(),
+      description: v.string(),
+      suggestedTier: v.string(),
+      suggestedPrice: v.number(),
+      confidence: v.number(),
+      model: v.string(),
+    }),
+  ),
   quote: v.optional(v.number()),          // in Rands
   status: v.union(                        // new → in_repair → ready → done
     v.literal("new"),
@@ -131,7 +163,11 @@ jobs: defineTable({
 })
   .index("by_status", ["status"])
   .index("by_phone", ["customerPhone"])
+  .index("by_userId", ["userId"])
 ```
+
+Web jobs carry `customerChannel: "web"` + `userId`; WhatsApp/Telegram legacy jobs set
+`customerChannel` to their channel and may omit `userId`.
 
 ### Concierge API Actions
 
@@ -144,9 +180,13 @@ jobs: defineTable({
 | `get-job` | query | Get single job by ID |
 | `update-status` | mutation | Update job status (new/in_repair/ready/done) |
 
+> **Note:** Web portal jobs bypass `/api/concierge` — they go straight to Convex via the
+> client. Concierge serves only the legacy WhatsApp/Telegram path.
+
 ## Auth
 
-Simple cookie-based admin auth — NOT Better Auth.
+Two auth systems. **Customer auth is Better Auth + Convex** (`convex/auth.ts`, gets
+`getCurrentUser`); **admin auth is simple cookie-based** — NOT Better Auth.
 
 | Detail | Value |
 |--------|-------|
@@ -157,7 +197,7 @@ Simple cookie-based admin auth — NOT Better Auth.
 | Login | `POST /api/admin/login` calls `login(password)` |
 | Logout | `POST /api/admin/logout` calls `logout()` |
 
-> **⚠️ This is MVP auth.** No password hashing, no rate limiting, no 2FA. Upgrade to Better Auth for production.
+> **⚠️ This is MVP auth.** No password hashing, no rate limiting, no 2FA. Upgrade to Better Auth for production. (Applies to the admin cookie auth only.)
 
 ## Design System
 
@@ -167,18 +207,23 @@ Simple cookie-based admin auth — NOT Better Auth.
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| Background | `#0A0A0B` | Page background |
-| Green accent | `#00E859` | Primary CTAs, success, status |
-| Gold accent | `#C8A951` | Badges, premium/status elements |
-| Surface | `bg-surface` | Card backgrounds |
-| Text | `text-content` | Primary text |
-| Borders | `border-white/[0.04]` | Subtle borders |
-| Font | System stack + `font-display` (headings) | |
-| Border radius | `rounded-xl` (cards), `rounded-lg` (buttons) | |
-| Touch target | `h-11` (44px) minimum | |
+| `--color-pitch-deep` | `#17351A` | Page background |
+| `--color-pitch` | `#24572A` | Panels, secondary surfaces |
+| `--color-pitch-line` | `#2E6B35` | Borders, hover-green, "ready" status |
+| `--color-thread` | `#EFE9D8` | Primary text (bone/thread white) |
+| `--color-thread-dim` | `#C4BCA8` | Secondary text, muted labels |
+| `--color-stitch` | `#F2B01E` | Accent — CTAs, signature seam, "new" status |
+| `--color-foul` | `#C8402C` | Errors, destructive (used sparingly) |
+| `--color-ink` | `#0F1C10` | Text on gold (dark green-black) |
+| Font display | `Archivo Black` | Headlines, hero, stat numbers |
+| Font body | `Space Grotesk` | Paragraphs, body copy |
+| Font mono | `IBM Plex Mono` | Labels, refs, data, footer |
 
-### Double Accent (Green + Gold)
-Green = primary actions ("click me"). Gold = status/premium ("this is special"). Intentional, not a mistake.
+### Signature Element — Stitch Seam
+Dashed gold divider (repeating-linear-gradient) used as a through-line section divider. Sharp corners everywhere (no rounded cards/CTAs) — the kit-repair-workshop identity.
+
+### Single Accent (Stitch Gold)
+Gold (`stitch`) is the single accent — CTAs AND status. Red (`foul`) only for errors. Intentional; the old green+gold double-accent was replaced.
 
 ### Motion Stack
 - **GSAP** — scroll-driven hero animation (ScrollTrigger + DrawSVG). CPU-efficient, scroll-linked.
@@ -218,7 +263,7 @@ These `.hermes/tasks/` plans exist but are NOT implemented:
 ## Pitfalls & Quirks
 
 - **No `src/` directory** — everything is flat under `app/`, `components/`, `lib/`, `convex/`
-- **Convex is server-only** — client components do NOT connect to Convex directly. Use `/api/concierge`.
+- **Convex client access** — the web portal + admin dashboard use `convex/react` hooks directly via `ConvexBetterAuthProvider`. `/api/concierge` is only for the legacy WhatsApp/Telegram path.
 - **`ignoreBuildErrors: true`** — type errors won't fail the build, but always run `npx tsc --noEmit` before committing
 - **LightningCSS WASM** — `CSS_TRANSFORMER_WASM=true` required for build. `lightningcss-wasm` is in deps.
 - **Admin auth is plaintext** — `ADMIN_PASSWORD` compared directly. No hashing. Upgrade before real users.
