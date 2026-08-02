@@ -80,7 +80,9 @@ export default function JobDetailPage() {
               {job.customerName}
             </h1>
             <p className="font-mono text-xs text-[var(--color-thread-dim)]">
-              {job.customerPhone} · {job.customerChannel}
+              {job.customerPhone ? `${job.customerPhone} · ` : ""}
+              {job.customerEmail ? `${job.customerEmail} · ` : ""}
+              {job.customerChannel}
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
@@ -167,6 +169,69 @@ export default function JobDetailPage() {
 
           {/* Right: Sidebar */}
           <div className="space-y-4">
+            {job.aiAnalysis && (
+              <div className="border border-[var(--color-stitch)]/40 bg-[var(--color-pitch)]/30 p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="h-px w-5 bg-[var(--color-stitch)]/60" />
+                  <h3 className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--color-stitch)]">
+                    AI Assessment
+                  </h3>
+                </div>
+                <div className="space-y-3">
+                  {job.aiAnalysis.damageType && (
+                    <div>
+                      <p className="font-mono text-[10px] text-[var(--color-thread-dim)] uppercase tracking-[0.16em] mb-0.5">
+                        Damage Type
+                      </p>
+                      <p className="text-sm text-[var(--color-thread)] capitalize">
+                        {job.aiAnalysis.damageType.replace("_", " ")}
+                      </p>
+                    </div>
+                  )}
+                  {job.aiAnalysis.description && (
+                    <div>
+                      <p className="font-mono text-[10px] text-[var(--color-thread-dim)] uppercase tracking-[0.16em] mb-0.5">
+                        Description
+                      </p>
+                      <p className="text-sm text-[var(--color-thread)]">
+                        {job.aiAnalysis.description}
+                      </p>
+                    </div>
+                  )}
+                  {job.aiAnalysis.suggestedTier && (
+                    <div>
+                      <p className="font-mono text-[10px] text-[var(--color-thread-dim)] uppercase tracking-[0.16em] mb-0.5">
+                        Suggested Tier
+                      </p>
+                      <p className="text-sm text-[var(--color-thread)] capitalize">
+                        {job.aiAnalysis.suggestedTier}
+                      </p>
+                    </div>
+                  )}
+                  {job.aiAnalysis.suggestedPrice != null && (
+                    <div>
+                      <p className="font-mono text-[10px] text-[var(--color-thread-dim)] uppercase tracking-[0.16em] mb-0.5">
+                        Suggested Price
+                      </p>
+                      <p className="font-display text-lg text-[var(--color-stitch)]">
+                        R{(job.aiAnalysis.suggestedPrice / 100).toFixed(2)}
+                      </p>
+                    </div>
+                  )}
+                  {job.aiAnalysis.confidence != null && (
+                    <div>
+                      <p className="font-mono text-[10px] text-[var(--color-thread-dim)] uppercase tracking-[0.16em] mb-0.5">
+                        Confidence
+                      </p>
+                      <p className="text-sm text-[var(--color-thread)]">
+                        {Math.round(job.aiAnalysis.confidence * 100)}%
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {job.quote && (
               <div className="border border-[var(--color-stitch)]/40 bg-[var(--color-pitch)]/30 p-4">
                 <h3 className="font-mono text-[10px] text-[var(--color-thread-dim)] uppercase tracking-[0.18em] mb-1">

@@ -70,6 +70,7 @@ declare module "next/headers" {
 declare module "convex/react" {
   export function useQuery(fn: any, args?: any): any;
   export function useMutation(fn: any): any;
+  export function useAction(fn: any): any;
   export const ConvexProvider: any;
   export const ConvexReactClient: any;
 }
