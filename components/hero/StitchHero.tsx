@@ -80,7 +80,7 @@ export default function StitchHero() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center"
+          className="object-cover object-[70%_50%]"
         />
         {/* Gradient overlay: dark on the left for text legibility, fading to transparent right */}
         <div
@@ -100,7 +100,7 @@ export default function StitchHero() {
       </div>
 
       {/* Content */}
-      <div className="relative max-w-6xl mx-auto px-6 pt-28 pb-32 md:pt-40 md:pb-44 min-h-[70vh] flex items-end">
+      <div className="relative max-w-6xl mx-auto px-6 pt-24 pb-28 md:pt-32 md:pb-36 min-h-[60vh] flex items-end">
         <div className="max-w-xl">
           <p className="font-mono text-xs tracking-[0.22em] uppercase text-[var(--color-stitch)] mb-6">
             Job Ref: KF-2026 — Jersey Repair &amp; Refresh
