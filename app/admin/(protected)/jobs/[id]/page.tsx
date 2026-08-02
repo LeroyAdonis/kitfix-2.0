@@ -4,7 +4,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const STATUS_OPTIONS = [
   { value: "new" as const, label: "New", color: "text-[var(--color-stitch)]", active: "border-[var(--color-stitch)]/60 bg-[var(--color-stitch)]/10" },
@@ -20,10 +20,20 @@ export default function JobDetailPage() {
   const updateNotes = useMutation(api.jobs.updateNotes);
   const updateQuote = useMutation(api.jobs.updateQuote);
   const confirmQuote = useMutation(api.jobs.confirmQuote);
+  const archiveJob = useMutation(api.jobs.archiveJob);
+  const restoreJob = useMutation(api.jobs.restoreJob);
   const [notes, setNotes] = useState("");
   const [notesSaved, setNotesSaved] = useState(false);
   const [quoteInput, setQuoteInput] = useState("");
   const [quoteSaved, setQuoteSaved] = useState(false);
+  const [confirmArchive, setConfirmArchive] = useState(false);
+  const archiveResetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (archiveResetTimer.current) clearTimeout(archiveResetTimer.current);
+    };
+  }, []);
 
   if (job === undefined) {
     return (
@@ -53,6 +63,22 @@ export default function JobDetailPage() {
 
   const handleStatusChange = async (status: typeof job.status) => {
     await updateStatus({ id: job._id, status });
+  };
+
+  const handleArchiveClick = async () => {
+    if (!confirmArchive) {
+      setConfirmArchive(true);
+      if (archiveResetTimer.current) clearTimeout(archiveResetTimer.current);
+      archiveResetTimer.current = setTimeout(() => setConfirmArchive(false), 3000);
+      return;
+    }
+    if (archiveResetTimer.current) clearTimeout(archiveResetTimer.current);
+    setConfirmArchive(false);
+    await archiveJob({ id: job._id });
+  };
+
+  const handleRestore = async () => {
+    await restoreJob({ id: job._id });
   };
 
   const handleOverrideQuote = async () => {
@@ -99,6 +125,11 @@ export default function JobDetailPage() {
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
+            {job.archivedAt && (
+              <span className="text-[#C8402C] border-[#C8402C]/40 font-mono text-[10px] uppercase px-2 py-0.5 border">
+                Archived
+              </span>
+            )}
             {STATUS_OPTIONS.map((opt) => {
               const isActive = job.status === opt.value;
               return (
@@ -115,6 +146,25 @@ export default function JobDetailPage() {
                 </button>
               );
             })}
+            {job.archivedAt ? (
+              <button
+                onClick={handleRestore}
+                className="border border-[var(--color-stitch)] text-[var(--color-stitch)] hover:bg-[var(--color-stitch)]/10 font-mono text-xs uppercase tracking-wider px-3 py-1.5"
+              >
+                Restore
+              </button>
+            ) : (
+              <button
+                onClick={handleArchiveClick}
+                className={`font-mono text-xs uppercase tracking-wider px-3 py-1.5 border transition-colors ${
+                  confirmArchive
+                    ? "bg-[#C8402C] text-[var(--color-thread)] border-[#C8402C]"
+                    : "border-[#C8402C] text-[#C8402C] hover:bg-[#C8402C]/10"
+                }`}
+              >
+                {confirmArchive ? "Confirm archive?" : "Archive"}
+              </button>
+            )}
           </div>
         </div>
 

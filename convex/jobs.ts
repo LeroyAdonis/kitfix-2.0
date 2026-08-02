@@ -19,7 +19,8 @@ export const list = query({
   args: {},
   handler: async (ctx) => {
     const jobs = await ctx.db.query("jobs").order("desc").collect();
-    return Promise.all(jobs.map((job) => resolvePhotoUrls(ctx, job)));
+    const active = jobs.filter((j) => !j.archivedAt);
+    return Promise.all(active.map((job) => resolvePhotoUrls(ctx, job)));
   },
 });
 
@@ -38,7 +39,8 @@ export const listByStatus = query({
       .withIndex("by_status", (q) => q.eq("status", args.status))
       .order("desc")
       .collect();
-    return Promise.all(jobs.map((job) => resolvePhotoUrls(ctx, job)));
+    const active = jobs.filter((j) => !j.archivedAt);
+    return Promise.all(active.map((job) => resolvePhotoUrls(ctx, job)));
   },
 });
 
@@ -62,7 +64,8 @@ export const listByUser = query({
       .withIndex("by_userId", (q) => q.eq("userId", user.subject))
       .order("desc")
       .collect();
-    return Promise.all(jobs.map((job) => resolvePhotoUrls(ctx, job)));
+    const active = jobs.filter((j) => !j.archivedAt);
+    return Promise.all(active.map((job) => resolvePhotoUrls(ctx, job)));
   },
 });
 
@@ -195,6 +198,24 @@ export const confirmQuote = mutation({
     if (!job) throw new Error("Job not found");
     if (job.quote == null) throw new Error("No quote to confirm");
     await ctx.db.patch(args.id, { quoteStatus: "confirmed", paymentStatus: "unpaid" });
+  },
+});
+
+export const archiveJob = mutation({
+  args: { id: v.id("jobs") },
+  handler: async (ctx, args) => {
+    const job = await ctx.db.get(args.id);
+    if (!job) throw new Error("Job not found");
+    await ctx.db.patch(args.id, { archivedAt: Date.now() });
+  },
+});
+
+export const restoreJob = mutation({
+  args: { id: v.id("jobs") },
+  handler: async (ctx, args) => {
+    const job = await ctx.db.get(args.id);
+    if (!job) throw new Error("Job not found");
+    await ctx.db.patch(args.id, { archivedAt: undefined });
   },
 });
 

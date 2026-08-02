@@ -47,6 +47,8 @@ export default defineSchema({
       v.literal("done"),
     ),
     adminNotes: v.optional(v.string()),
+    // Epoch ms when archived; absent = active. Soft-delete for admin archive.
+    archivedAt: v.optional(v.number()),
   })
     .index("by_status", ["status"])
     .index("by_phone", ["customerPhone"])

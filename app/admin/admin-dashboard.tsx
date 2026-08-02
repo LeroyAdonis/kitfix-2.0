@@ -41,7 +41,7 @@ const NEXT_STATUS: Record<string, "in_repair" | "ready" | "done"> = {
   ready: "done",
 };
 
-function JobCard({ job }: { job: { _id: string; customerName: string; description: string; status: string; _creationTime: number; quote?: number; customerChannel?: string; customerEmail?: string; paymentStatus?: string } }) {
+function JobCard({ job }: { job: { _id: string; customerName: string; description: string; status: string; _creationTime: number; quote?: number; customerChannel?: string; customerEmail?: string; paymentStatus?: string; archivedAt?: number } }) {
   const updateStatus = useMutation(api.jobs.updateStatus);
   const nextStatus = NEXT_STATUS[job.status];
 
@@ -74,6 +74,11 @@ function JobCard({ job }: { job: { _id: string; customerName: string; descriptio
           >
             {job.customerChannel ?? "whatsapp"}
           </span>
+          {job.archivedAt && (
+            <span className="text-[9px] text-[#C8402C] border-[#C8402C]/40 px-1.5 py-0.5 border font-mono uppercase tracking-widest">
+              Archived
+            </span>
+          )}
           {job.paymentStatus === "paid" && (
             <span className="font-mono text-[10px] uppercase px-2 py-0.5 border text-[#7fb3d5] border-[#7fb3d5]/40">
               PAID
