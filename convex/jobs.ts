@@ -194,7 +194,44 @@ export const confirmQuote = mutation({
     const job = await ctx.db.get(args.id);
     if (!job) throw new Error("Job not found");
     if (job.quote == null) throw new Error("No quote to confirm");
-    await ctx.db.patch(args.id, { quoteStatus: "confirmed" });
+    await ctx.db.patch(args.id, { quoteStatus: "confirmed", paymentStatus: "unpaid" });
+  },
+});
+
+export const markPaid = mutation({
+  args: {
+    jobId: v.id("jobs"),
+    reference: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const job = await ctx.db.get(args.jobId);
+    if (!job) throw new Error("Job not found");
+    if (job.paymentStatus === "paid" && job.paymentReference === args.reference) {
+      return { ok: true, alreadyPaid: true };
+    }
+    await ctx.db.patch(args.jobId, {
+      paymentStatus: "paid",
+      paymentReference: args.reference,
+      paidAt: Date.now(),
+    });
+    return { ok: true, alreadyPaid: false };
+  },
+});
+
+export const setPaymentReference = mutation({
+  args: { id: v.id("jobs"), reference: v.string() },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, { paymentReference: args.reference });
+  },
+});
+
+export const getByPaymentReference = query({
+  args: { reference: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("jobs")
+      .filter((q) => q.eq(q.field("paymentReference"), args.reference))
+      .first();
   },
 });
 

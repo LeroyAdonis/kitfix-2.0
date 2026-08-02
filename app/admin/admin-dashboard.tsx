@@ -41,7 +41,7 @@ const NEXT_STATUS: Record<string, "in_repair" | "ready" | "done"> = {
   ready: "done",
 };
 
-function JobCard({ job }: { job: { _id: string; customerName: string; description: string; status: string; _creationTime: number; quote?: number; customerChannel?: string; customerEmail?: string } }) {
+function JobCard({ job }: { job: { _id: string; customerName: string; description: string; status: string; _creationTime: number; quote?: number; customerChannel?: string; customerEmail?: string; paymentStatus?: string } }) {
   const updateStatus = useMutation(api.jobs.updateStatus);
   const nextStatus = NEXT_STATUS[job.status];
 
@@ -74,8 +74,13 @@ function JobCard({ job }: { job: { _id: string; customerName: string; descriptio
           >
             {job.customerChannel ?? "whatsapp"}
           </span>
+          {job.paymentStatus === "paid" && (
+            <span className="font-mono text-[10px] uppercase px-2 py-0.5 border text-[#7fb3d5] border-[#7fb3d5]/40">
+              PAID
+            </span>
+          )}
           {job.customerEmail && (
-            <span className="text-[10px] text-[var(--color-thread-dim)] truncate font-mono">
+            <span className="text-[10px] text-[var(--color-thread-dim)] truncate max-w-[120px] sm:max-w-none font-mono">
               {job.customerEmail}
             </span>
           )}
@@ -117,7 +122,7 @@ export function AdminDashboard() {
   }
 
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
       {COLUMNS.map((col) => {
         const columnJobs = jobs.filter((j) => j.status === col.id);
         return (

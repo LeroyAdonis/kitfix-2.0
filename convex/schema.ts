@@ -35,6 +35,11 @@ export default defineSchema({
     quoteStatus: v.optional(
       v.union(v.literal("estimate"), v.literal("confirmed")),
     ),
+    paymentStatus: v.optional(
+      v.union(v.literal("unpaid"), v.literal("paid")),
+    ),
+    paymentReference: v.optional(v.string()),
+    paidAt: v.optional(v.number()),
     status: v.union(
       v.literal("new"),
       v.literal("in_repair"),

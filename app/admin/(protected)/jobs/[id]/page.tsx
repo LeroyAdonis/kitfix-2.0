@@ -260,6 +260,17 @@ export default function JobDetailPage() {
                   >
                     {job.quoteStatus === "confirmed" ? "Confirmed" : "Estimate"}
                   </span>
+                  {job.quoteStatus === "confirmed" && (
+                    <span
+                      className={`font-mono text-[10px] uppercase px-2 py-0.5 border ${
+                        job.paymentStatus === "paid"
+                          ? "text-[#7fb3d5] border-[#7fb3d5]/40"
+                          : "text-[var(--color-thread-dim)]/60 border-[var(--color-thread-dim)]/40"
+                      }`}
+                    >
+                      {job.paymentStatus === "paid" ? "PAID" : "UNPAID"}
+                    </span>
+                  )}
                 </div>
                 <p className="font-display text-2xl text-[var(--color-stitch)]">
                   R{(job.quote / 100).toFixed(2)}

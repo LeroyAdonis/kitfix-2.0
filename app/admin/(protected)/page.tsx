@@ -8,7 +8,7 @@ export default async function AdminPage() {
 
   return (
     <div className="min-h-screen bg-[var(--color-pitch-deep)]">
-      <header className="border-b border-[var(--color-pitch-line)]/40 px-6 py-3">
+      <header className="border-b border-[var(--color-pitch-line)]/40 px-4 py-3 md:px-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-[var(--color-stitch)] flex items-center justify-center">
@@ -19,7 +19,7 @@ export default async function AdminPage() {
             </span>
           </div>
           <div className="flex items-center gap-4 font-mono text-xs uppercase tracking-[0.16em]">
-            <span className="text-[var(--color-thread-dim)]">Repair Board</span>
+            <span className="hidden sm:inline text-[var(--color-thread-dim)]">Repair Board</span>
             <form action="/api/admin/logout" method="POST">
               <button className="text-[var(--color-thread-dim)] hover:text-[var(--color-stitch)] transition-colors">
                 Logout
@@ -29,7 +29,7 @@ export default async function AdminPage() {
         </div>
       </header>
 
-      <main className="p-6">
+      <main className="p-4 md:p-6">
         <AdminDashboard />
       </main>
     </div>

@@ -5,7 +5,7 @@ import { api } from "@/convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const STATUS_META: Record<string, { label: string; color: string }> = {
   new: { label: "New", color: "text-[var(--color-stitch)] border-[var(--color-stitch)]/50 bg-[var(--color-stitch)]/10" },
@@ -13,6 +13,47 @@ const STATUS_META: Record<string, { label: string; color: string }> = {
   ready: { label: "Ready", color: "text-[var(--color-pitch-line)] border-[var(--color-pitch-line)]/50 bg-[var(--color-pitch-line)]/10" },
   done: { label: "Done", color: "text-[var(--color-thread-dim)] border-[var(--color-thread-dim)]/50 bg-[var(--color-thread-dim)]/10" },
 };
+
+function PayNowButton({ jobId }: { jobId: string }) {
+  const [paying, setPaying] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handlePay = async () => {
+    setPaying(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/payments/initialize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jobId }),
+      });
+      const data = await res.json();
+      if (res.ok && data?.authorization_url) {
+        window.location.href = data.authorization_url;
+        return;
+      }
+      setError(data?.error ?? "Payment could not be started");
+    } catch {
+      setError("Payment could not be started");
+    }
+    setPaying(false);
+  };
+
+  return (
+    <div>
+      <button
+        onClick={handlePay}
+        disabled={paying}
+        className="px-4 py-2 bg-[var(--color-stitch)] text-[var(--color-ink)] text-sm font-bold uppercase tracking-wide hover:brightness-110 transition-colors disabled:opacity-50"
+      >
+        {paying ? "Redirecting..." : "Pay now"}
+      </button>
+      {error && (
+        <p className="text-[var(--color-foul)] font-mono text-xs mt-2">{error}</p>
+      )}
+    </div>
+  );
+}
 
 export default function MyJobsPage() {
   const router = useRouter();
@@ -136,6 +177,16 @@ export default function MyJobsPage() {
                         <span className="font-display text-base text-[var(--color-stitch)]">
                           R{(job.quote / 100).toFixed(2)}
                         </span>
+                        {job.paymentStatus === "paid" && (
+                          <span className="font-mono text-xs text-[#7fb3d5] ml-2">
+                            Paid ✓
+                          </span>
+                        )}
+                        {job.quoteStatus === "confirmed" && job.paymentStatus !== "paid" && (
+                          <div className="mt-3">
+                            <PayNowButton jobId={job._id} />
+                          </div>
+                        )}
                       </div>
                     )}
                     {job.aiAnalysis?.suggestedTier && (
