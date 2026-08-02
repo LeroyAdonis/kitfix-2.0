@@ -63,6 +63,7 @@
 | Date | Reviewed by | Result |
 |------|-------------|--------|
 | 2026-08-02 | Ricky (pipeline) | Backlog created from customer-portal spec. B001-B007 captured. No items lost. |
+| 2026-08-02 | Ricky (pipeline) | **Release v20260802-2 sweep.** B001-B006 still proposed (revisit triggers unchanged — portal just shipped, need adoption data). B007 parked (WA Business API with George pending). **Nothing lost, nothing left behind.** |
 
 ---
 
