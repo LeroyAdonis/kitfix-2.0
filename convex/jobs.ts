@@ -1,12 +1,25 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, action } from "./_generated/server";
 
 // ── Queries ──
+
+async function resolvePhotoUrls(
+  ctx: { storage: { getUrl: (id: any) => Promise<string | null> } },
+  job: any,
+): Promise<any> {
+  const resolved: string[] = [];
+  for (const id of job.photoStorageIds ?? []) {
+    const url = await ctx.storage.getUrl(id);
+    if (url) resolved.push(url);
+  }
+  return { ...job, photoUrls: resolved };
+}
 
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("jobs").order("desc").collect();
+    const jobs = await ctx.db.query("jobs").order("desc").collect();
+    return Promise.all(jobs.map((job) => resolvePhotoUrls(ctx, job)));
   },
 });
 
@@ -20,18 +33,36 @@ export const listByStatus = query({
     ),
   },
   handler: async (ctx, args) => {
-    return await ctx.db
+    const jobs = await ctx.db
       .query("jobs")
       .withIndex("by_status", (q) => q.eq("status", args.status))
       .order("desc")
       .collect();
+    return Promise.all(jobs.map((job) => resolvePhotoUrls(ctx, job)));
   },
 });
 
 export const get = query({
   args: { id: v.id("jobs") },
   handler: async (ctx, args) => {
-    return await ctx.db.get(args.id);
+    const job = await ctx.db.get(args.id);
+    if (!job) return null;
+    return resolvePhotoUrls(ctx, job);
+  },
+});
+
+// Customer tracking: jobs belonging to the current Better Auth user
+export const listByUser = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await ctx.auth.getUserIdentity?.() ?? null;
+    if (!user) return [];
+    const jobs = await ctx.db
+      .query("jobs")
+      .withIndex("by_userId", (q) => q.eq("userId", user.subject))
+      .order("desc")
+      .collect();
+    return Promise.all(jobs.map((job) => resolvePhotoUrls(ctx, job)));
   },
 });
 
@@ -40,19 +71,75 @@ export const get = query({
 export const create = mutation({
   args: {
     customerName: v.string(),
-    customerPhone: v.string(),
+    customerPhone: v.optional(v.string()),
+    customerEmail: v.optional(v.string()),
     description: v.string(),
-    photoUrls: v.array(v.string()),
+    photoStorageIds: v.array(v.id("_storage")),
+    aiAnalysis: v.optional(
+      v.object({
+        damageType: v.string(),
+        description: v.string(),
+        suggestedTier: v.string(),
+        suggestedPrice: v.number(),
+        confidence: v.number(),
+        model: v.string(),
+      }),
+    ),
   },
   handler: async (ctx, args) => {
+    const user = await ctx.auth.getUserIdentity?.() ?? null;
     return await ctx.db.insert("jobs", {
       customerName: args.customerName,
       customerPhone: args.customerPhone,
-      customerChannel: "whatsapp",
+      customerEmail: args.customerEmail ?? user?.email,
+      customerChannel: "web",
+      userId: user?.subject,
       description: args.description,
-      damageType: undefined,
-      photoUrls: args.photoUrls,
-      quote: undefined,
+      damageType: args.aiAnalysis?.damageType,
+      photoStorageIds: args.photoStorageIds,
+      photoUrls: [],
+      aiAnalysis: args.aiAnalysis,
+      quote: args.aiAnalysis?.suggestedPrice,
+      status: "new",
+      adminNotes: undefined,
+    });
+  },
+});
+
+export const createWebJob = mutation({
+  args: {
+    customerName: v.string(),
+    customerPhone: v.optional(v.string()),
+    description: v.string(),
+    photoStorageIds: v.array(v.id("_storage")),
+    aiAnalysis: v.optional(
+      v.object({
+        damageType: v.string(),
+        description: v.string(),
+        suggestedTier: v.string(),
+        suggestedPrice: v.number(),
+        confidence: v.number(),
+        model: v.string(),
+      }),
+    ),
+  },
+  handler: async (ctx, args) => {
+    // Web jobs require an authenticated user
+    const user = await ctx.auth.getUserIdentity?.();
+    if (!user) throw new Error("Authentication required to submit a web job");
+
+    return await ctx.db.insert("jobs", {
+      customerName: args.customerName,
+      customerPhone: args.customerPhone,
+      customerEmail: user.email,
+      customerChannel: "web",
+      userId: user.subject,
+      description: args.description,
+      damageType: args.aiAnalysis?.damageType,
+      photoStorageIds: args.photoStorageIds,
+      photoUrls: [],
+      aiAnalysis: args.aiAnalysis,
+      quote: args.aiAnalysis?.suggestedPrice,
       status: "new",
       adminNotes: undefined,
     });
@@ -85,5 +172,15 @@ export const updateQuote = mutation({
   args: { id: v.id("jobs"), quote: v.number() },
   handler: async (ctx, args) => {
     await ctx.db.patch(args.id, { quote: args.quote });
+  },
+});
+
+// ── Actions ──
+
+// Client calls this to get a signed upload URL, then PUTs the file directly
+export const generateUploadUrl = action({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.storage.generateUploadUrl();
   },
 });

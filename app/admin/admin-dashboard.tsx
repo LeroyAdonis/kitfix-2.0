@@ -41,7 +41,7 @@ const NEXT_STATUS: Record<string, "in_repair" | "ready" | "done"> = {
   ready: "done",
 };
 
-function JobCard({ job }: { job: { _id: string; customerName: string; description: string; status: string; _creationTime: number; quote?: number } }) {
+function JobCard({ job }: { job: { _id: string; customerName: string; description: string; status: string; _creationTime: number; quote?: number; customerChannel?: string; customerEmail?: string } }) {
   const updateStatus = useMutation(api.jobs.updateStatus);
   const nextStatus = NEXT_STATUS[job.status];
 
@@ -63,6 +63,22 @@ function JobCard({ job }: { job: { _id: string; customerName: string; descriptio
           <span className="text-[10px] text-[var(--color-thread-dim)] whitespace-nowrap ml-2 font-mono">
             {timeAgo()}
           </span>
+        </div>
+        <div className="flex items-center gap-2 mb-1">
+          <span
+            className={`font-mono text-[9px] uppercase tracking-widest px-1.5 py-0.5 border ${
+              job.customerChannel === "web"
+                ? "text-[var(--color-stitch)] border-[var(--color-stitch)]/40"
+                : "text-[var(--color-thread-dim)] border-[var(--color-pitch-line)]/40"
+            }`}
+          >
+            {job.customerChannel ?? "whatsapp"}
+          </span>
+          {job.customerEmail && (
+            <span className="text-[10px] text-[var(--color-thread-dim)] truncate font-mono">
+              {job.customerEmail}
+            </span>
+          )}
         </div>
         <p className="text-xs text-[var(--color-thread-dim)] line-clamp-2 mb-2">{job.description}</p>
         {job.quote && (

@@ -4,11 +4,31 @@ import { v } from "convex/values";
 export default defineSchema({
   jobs: defineTable({
     customerName: v.string(),
-    customerPhone: v.string(),
-    customerChannel: v.union(v.literal("whatsapp"), v.literal("telegram")),
+    customerPhone: v.optional(v.string()),
+    customerEmail: v.optional(v.string()),
+    customerChannel: v.union(
+      v.literal("whatsapp"),
+      v.literal("telegram"),
+      v.literal("web"),
+    ),
+    // Better Auth user id (component users table lives outside main schema)
+    userId: v.optional(v.string()),
     description: v.string(),
     damageType: v.optional(v.string()),
+    // Convex storage IDs; resolve to URLs via ctx.storage.getUrl in queries
+    photoStorageIds: v.array(v.id("_storage")),
+    // Legacy resolved URLs kept for backward compat with existing admin UI
     photoUrls: v.array(v.string()),
+    aiAnalysis: v.optional(
+      v.object({
+        damageType: v.string(),
+        description: v.string(),
+        suggestedTier: v.string(),
+        suggestedPrice: v.number(),
+        confidence: v.number(),
+        model: v.string(),
+      }),
+    ),
     quote: v.optional(v.number()),
     status: v.union(
       v.literal("new"),
@@ -19,5 +39,6 @@ export default defineSchema({
     adminNotes: v.optional(v.string()),
   })
     .index("by_status", ["status"])
-    .index("by_phone", ["customerPhone"]),
+    .index("by_phone", ["customerPhone"])
+    .index("by_userId", ["userId"]),
 });
