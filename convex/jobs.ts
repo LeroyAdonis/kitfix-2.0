@@ -4,9 +4,9 @@ import { mutation, query, action } from "./_generated/server";
 // ── Queries ──
 
 async function resolvePhotoUrls(
-  ctx: { storage: { getUrl: (id: any) => Promise<string | null> } },
-  job: any,
-): Promise<any> {
+  ctx: { storage: { getUrl: (id: string) => Promise<string | null> } },
+  job: { photoStorageIds?: string[]; [key: string]: unknown },
+): Promise<Record<string, unknown>> {
   const resolved: string[] = [];
   for (const id of job.photoStorageIds ?? []) {
     const url = await ctx.storage.getUrl(id);

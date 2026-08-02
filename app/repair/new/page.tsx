@@ -59,7 +59,7 @@ export default function NewRepairPage() {
             Drop your kit on the bench
           </h1>
           <p className="font-mono text-xs text-[var(--color-thread-dim)]">
-            Describe the damage, snap some photos, and we'll read it for you.
+            Describe the damage, snap some photos, and we&apos;ll read it for you.
           </p>
         </div>
 
