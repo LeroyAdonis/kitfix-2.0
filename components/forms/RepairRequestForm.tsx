@@ -59,12 +59,13 @@ export function RepairRequestForm() {
       for (const file of files) {
         const uploadUrl = await generateUploadUrl();
         const putRes = await fetch(uploadUrl, {
-          method: "PUT",
+          method: "POST",
           headers: { "Content-Type": "application/octet-stream" },
           body: file,
         });
         if (!putRes.ok) throw new Error("Upload failed");
-        const storageId = (await putRes.json()) as string;
+        const uploadJson = (await putRes.json()) as { storageId?: string };
+        const storageId = uploadJson.storageId ?? String(uploadJson);
         uploaded.push({
           storageId,
           previewUrl: URL.createObjectURL(file),

@@ -89,7 +89,24 @@ export async function POST(req: Request) {
 
   try {
     const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
-    const storageUrl = `${convexUrl}/api/storage/${photoStorageIds[0]}`;
+
+    // Resolve storage ID → signed URL via Convex query (raw /api/storage/{id} is invalid)
+    const resolveRes = await fetch(`${convexUrl}/api/query`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        path: "jobs:getPhotoUrl",
+        args: { storageId: photoStorageIds[0] },
+      }),
+    });
+    if (!resolveRes.ok) {
+      return NextResponse.json({ error: "analysis_failed" }, { status: 500 });
+    }
+    const resolveData = await resolveRes.json();
+    const storageUrl = resolveData?.value ?? resolveData?.result;
+    if (typeof storageUrl !== "string") {
+      return NextResponse.json({ error: "analysis_failed" }, { status: 500 });
+    }
 
     const imageRes = await fetch(storageUrl, { cache: "no-store" });
     if (!imageRes.ok) {
@@ -163,7 +180,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ ...analysis, model: MODEL });
-  } catch {
+  } catch (e) {
+    console.error("analyze route error:", e);
     return NextResponse.json({ error: "analysis_failed" }, { status: 500 });
   }
 }

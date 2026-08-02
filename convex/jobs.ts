@@ -66,6 +66,14 @@ export const listByUser = query({
   },
 });
 
+// Resolve a storage ID to a signed URL (used by the AI analyze route)
+export const getPhotoUrl = query({
+  args: { storageId: v.id("_storage") },
+  handler: async (ctx, args) => {
+    return await ctx.storage.getUrl(args.storageId);
+  },
+});
+
 // ── Mutations ──
 
 export const create = mutation({
