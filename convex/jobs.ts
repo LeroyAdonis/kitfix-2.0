@@ -53,6 +53,16 @@ export const get = query({
   },
 });
 
+export const listArchived = query({
+  args: {},
+  handler: async (ctx) => {
+    const jobs = await ctx.db.query("jobs").order("desc").collect();
+    const archived = jobs.filter((j) => j.archivedAt);
+    archived.sort((a, b) => (b.archivedAt ?? 0) - (a.archivedAt ?? 0));
+    return Promise.all(archived.map((job) => resolvePhotoUrls(ctx, job)));
+  },
+});
+
 // Customer tracking: jobs belonging to the current Better Auth user
 export const listByUser = query({
   args: {},

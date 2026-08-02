@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import Link from "next/link";
@@ -113,8 +114,11 @@ function JobCard({ job }: { job: { _id: string; customerName: string; descriptio
 }
 
 export function AdminDashboard() {
+  const [tab, setTab] = useState<"board" | "history">("board");
   const jobs = useQuery(api.jobs.list);
   const createJob = useMutation(api.jobs.create);
+  const archivedJobs = useQuery(api.jobs.listArchived);
+  const restoreJob = useMutation(api.jobs.restoreJob);
 
   if (jobs === undefined) {
     return (
@@ -127,32 +131,102 @@ export function AdminDashboard() {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-      {COLUMNS.map((col) => {
-        const columnJobs = jobs.filter((j) => j.status === col.id);
-        return (
-          <div key={col.id} className={`border-t-2 ${col.border} bg-[var(--color-pitch)]/15 p-3`}>
-            <div className="flex items-center justify-between mb-3 px-1">
-              <div className="flex items-baseline gap-2">
-                <h2 className={`text-xs font-semibold uppercase tracking-[0.18em] font-mono ${col.color}`}>
-                  {col.label}
-                </h2>
-                <span className="font-mono text-[10px] text-[var(--color-thread-dim)]">{col.ref}</span>
+    <div>
+      <div className="flex items-center gap-1 mb-6 border-b border-[var(--color-pitch-line)]/40">
+        {(["board", "history"] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            className={`px-4 py-2 font-mono text-xs uppercase tracking-[0.18em] transition-colors border-b-2 -mb-px ${
+              tab === t
+                ? "text-[var(--color-stitch)] border-[var(--color-stitch)]"
+                : "text-[var(--color-thread-dim)] border-transparent hover:text-[var(--color-thread)]"
+            }`}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+
+      {tab === "board" && (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {COLUMNS.map((col) => {
+            const columnJobs = jobs.filter((j) => j.status === col.id);
+            return (
+              <div key={col.id} className={`border-t-2 ${col.border} bg-[var(--color-pitch)]/15 p-3`}>
+                <div className="flex items-center justify-between mb-3 px-1">
+                  <div className="flex items-baseline gap-2">
+                    <h2 className={`text-xs font-semibold uppercase tracking-[0.18em] font-mono ${col.color}`}>
+                      {col.label}
+                    </h2>
+                    <span className="font-mono text-[10px] text-[var(--color-thread-dim)]">{col.ref}</span>
+                  </div>
+                  <span className="text-xs text-[var(--color-thread-dim)] font-mono">{columnJobs.length}</span>
+                </div>
+                <div className="space-y-1">
+                  {columnJobs.length === 0 ? (
+                    <p className="text-xs text-[var(--color-thread-dim)] text-center py-4 font-mono">
+                      No jobs
+                    </p>
+                  ) : (
+                    columnJobs.map((job) => <JobCard key={job._id} job={job} />)
+                  )}
+                </div>
               </div>
-              <span className="text-xs text-[var(--color-thread-dim)] font-mono">{columnJobs.length}</span>
+            );
+          })}
+        </div>
+      )}
+
+      {tab === "history" && (
+        <div>
+          {archivedJobs === undefined ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-thread-dim)]">
+                Loading jobs...
+              </div>
             </div>
-            <div className="space-y-1">
-              {columnJobs.length === 0 ? (
-                <p className="text-xs text-[var(--color-thread-dim)] text-center py-4 font-mono">
-                  No jobs
-                </p>
-              ) : (
-                columnJobs.map((job) => <JobCard key={job._id} job={job} />)
-              )}
+          ) : archivedJobs.length === 0 ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-thread-dim)]">
+                No archived repairs
+              </div>
             </div>
-          </div>
-        );
-      })}
+          ) : (
+            <div className="space-y-3">
+              {archivedJobs.map((job) => (
+                <Link
+                  key={job._id}
+                  href={`/admin/jobs/${job._id}`}
+                  className="block border border-[var(--color-pitch-line)]/50 bg-[var(--color-pitch)]/15 p-4 hover:border-[var(--color-stitch)]/50 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-4 flex-wrap">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-display text-sm text-[var(--color-thread)] uppercase tracking-wide">{job.customerName}</h3>
+                        <span className="font-mono text-[9px] uppercase tracking-widest px-1.5 py-0.5 border text-[var(--color-thread-dim)] border-[var(--color-pitch-line)]/40">{job.customerChannel ?? "whatsapp"}</span>
+                        {job.paymentStatus === "paid" && <span className="font-mono text-[9px] uppercase tracking-widest px-1.5 py-0.5 border text-[#7fb3d5] border-[#7fb3d5]/40">Paid</span>}
+                      </div>
+                      <p className="text-xs text-[var(--color-thread-dim)] line-clamp-2 mt-1">{job.description}</p>
+                      <div className="flex items-center gap-4 mt-2 font-mono text-[10px] text-[var(--color-thread-dim)] uppercase tracking-[0.14em] flex-wrap">
+                        {job.quote ? <span className="text-[var(--color-stitch)]">R{(job.quote / 100).toFixed(2)}</span> : <span>No quote</span>}
+                        <span>Archived {new Date(job.archivedAt ?? Date.now()).toLocaleDateString("en-ZA")}</span>
+                        <span className="text-[#C8402C]">Archived</span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); restoreJob({ id: job._id }); }}
+                      className="border border-[var(--color-stitch)] text-[var(--color-stitch)] px-3 py-1.5 font-mono text-xs uppercase tracking-wider hover:bg-[var(--color-stitch)]/10"
+                    >
+                      Restore
+                    </button>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
