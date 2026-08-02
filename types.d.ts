@@ -104,3 +104,72 @@ declare module "@/convex/_generated/server" {
 declare module "@/convex/_generated/api" {
   export const api: any;
 }
+
+declare module "@/convex/_generated/dataModel" {
+  export type DataModel = any;
+}
+
+declare var process: {
+  env: Record<string, string | undefined>;
+  [key: string]: any;
+};
+
+declare module "better-auth" {
+  const betterAuth: any;
+  export { betterAuth };
+  export default betterAuth;
+}
+
+declare module "better-auth/minimal" {
+  export const betterAuth: any;
+}
+
+declare module "better-auth/react" {
+  export function createAuthClient(opts?: any): any;
+}
+
+declare module "better-auth/client" {
+  export function createAuthClient(opts?: any): any;
+}
+
+declare module "@convex-dev/better-auth" {
+  export function createClient(dataModel: any): any;
+  export type GenericCtx<D> = any;
+}
+
+declare module "@convex-dev/better-auth/convex.config" {
+  const betterAuth: any;
+  export default betterAuth;
+}
+
+declare module "@convex-dev/better-auth/auth-config" {
+  export function getAuthConfigProvider(): any;
+}
+
+declare module "@convex-dev/better-auth/plugins" {
+  export function convex(opts?: any): any;
+}
+
+declare module "@convex-dev/better-auth/react" {
+  export const ConvexBetterAuthProvider: any;
+}
+
+declare module "@convex-dev/better-auth/nextjs" {
+  export function convexBetterAuthNextJs(opts: any): {
+    handler: any;
+    preloadAuthQuery: any;
+    isAuthenticated: any;
+    getToken: any;
+    fetchAuthQuery: any;
+    fetchAuthMutation: any;
+    fetchAuthAction: any;
+  };
+}
+
+declare module "@convex-dev/better-auth/nextjs/client" {
+  export function usePreloadedAuthQuery(query: any): any;
+}
+
+declare module "@convex-dev/better-auth/client/plugins" {
+  export function convexClient(): any;
+}
