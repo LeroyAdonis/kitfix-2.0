@@ -225,6 +225,6 @@ These `.hermes/tasks/` plans exist but are NOT implemented:
 - **No test runner** — no vitest, jest, or playwright configured. Tests need to be set up.
 - **Path alias** — `@/*` maps to `./*` (project root, not `./src/*`)
 - **GSAP is client-only** — all GSAP code must be in `"use client"` components. The hero component is the only user.
-- **Auth pages are placeholder** — `/sign-in`, `/sign-up`, `/forgot-password`, `/verify-email` exist as static pages but are not wired to real auth. Admin uses simple cookie auth instead.
+- **Customer auth is live** — `/sign-in` and `/sign-up` are wired to Better Auth + Convex. Admin uses simple cookie auth instead (`kitfix_admin`).
 - **Component export convention** — named exports (not default) for shared components via `components/providers.tsx`
 - **AGENTS.md was missing** — this file was created 2026-07-31. Agents before this date had no project context.
