@@ -27,32 +27,35 @@ export default function GlobalError({
           justifyContent: "center",
           padding: "1.5rem",
           fontFamily:
-            "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
-          backgroundColor: "var(--bg)",
-          color: "var(--text-primary)",
+            "'Space Grotesk', ui-sans-serif, system-ui, -apple-system, sans-serif",
+          backgroundColor: "#17351a",
+          color: "#efe9d8",
         }}
       >
         <div style={{ maxWidth: "24rem", textAlign: "center" }}>
-          {/* Logo text */}
           <p
             style={{
-              fontSize: "0.875rem",
+              fontSize: "0.75rem",
               fontWeight: 600,
-              letterSpacing: "-0.01em",
-              color: "var(--text-secondary)",
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              fontFamily: "'IBM Plex Mono', ui-monospace, monospace",
+              color: "#f2b01e",
               marginBottom: "2.5rem",
             }}
           >
-            ✂ KitFix
+            ✂ KitFix — Repair Sheet
           </p>
 
           <h1
             style={{
-              fontSize: "1.25rem",
+              fontSize: "1.5rem",
               fontWeight: 700,
-              letterSpacing: "-0.025em",
+              letterSpacing: "0.01em",
+              textTransform: "uppercase",
               margin: 0,
-              color: "var(--text-primary)",
+              color: "#efe9d8",
+              fontFamily: "'Archivo Black', system-ui, sans-serif",
             }}
           >
             Something Went Wrong
@@ -63,7 +66,7 @@ export default function GlobalError({
               style={{
                 marginTop: "0.75rem",
                 fontSize: "0.875rem",
-                color: "var(--text-tertiary)",
+                color: "#c4bca8",
                 lineHeight: 1.6,
               }}
             >
@@ -75,9 +78,9 @@ export default function GlobalError({
               <p
                 style={{
                   marginTop: "0.5rem",
-                  fontFamily: "ui-monospace, monospace",
+                  fontFamily: "'IBM Plex Mono', ui-monospace, monospace",
                   fontSize: "0.6875rem",
-                  color: "var(--text-disabled)",
+                  color: "#c4bca8",
                 }}
               >
                 Ref: {error.digest}
@@ -94,19 +97,30 @@ export default function GlobalError({
               height: "2.5rem",
               alignItems: "center",
               justifyContent: "center",
-              borderRadius: "0.5rem",
-              backgroundColor: "var(--text-primary)",
+              backgroundColor: "#f2b01e",
               paddingLeft: "1.25rem",
               paddingRight: "1.25rem",
               fontSize: "0.875rem",
-              fontWeight: 500,
-              color: "var(--bg)",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              color: "#0f1c10",
               border: "none",
               cursor: "pointer",
             }}
           >
             Try Again
           </button>
+
+          <div
+            style={{
+              marginTop: "2rem",
+              height: "4px",
+              width: "100%",
+              background:
+                "repeating-linear-gradient(90deg, #f2b01e 0 10px, transparent 10px 16px)",
+            }}
+          />
         </div>
       </body>
     </html>

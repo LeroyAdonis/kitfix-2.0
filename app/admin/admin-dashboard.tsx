@@ -5,10 +5,34 @@ import { api } from "@/convex/_generated/api";
 import Link from "next/link";
 
 const COLUMNS = [
-  { id: "new" as const, label: "New", color: "bg-blue-500/10 border-blue-500/30 text-blue-400" },
-  { id: "in_repair" as const, label: "In Repair", color: "bg-yellow-500/10 border-yellow-500/30 text-yellow-400" },
-  { id: "ready" as const, label: "Ready", color: "bg-green-500/10 border-green-500/30 text-green-400" },
-  { id: "done" as const, label: "Done", color: "bg-purple-500/10 border-purple-500/30 text-purple-400" },
+  {
+    id: "new" as const,
+    label: "New",
+    ref: "KF-A",
+    color: "text-[var(--color-stitch)]",
+    border: "border-[var(--color-stitch)]/40",
+  },
+  {
+    id: "in_repair" as const,
+    label: "In Repair",
+    ref: "KF-B",
+    color: "text-[#7fb3d5]",
+    border: "border-[#7fb3d5]/40",
+  },
+  {
+    id: "ready" as const,
+    label: "Ready",
+    ref: "KF-C",
+    color: "text-[var(--color-pitch-line)]",
+    border: "border-[var(--color-pitch-line)]/50",
+  },
+  {
+    id: "done" as const,
+    label: "Done",
+    ref: "KF-D",
+    color: "text-[var(--color-thread-dim)]",
+    border: "border-[var(--color-thread-dim)]/40",
+  },
 ];
 
 const NEXT_STATUS: Record<string, "in_repair" | "ready" | "done"> = {
@@ -31,14 +55,20 @@ function JobCard({ job }: { job: { _id: string; customerName: string; descriptio
 
   return (
     <Link href={`/admin/jobs/${job._id}`} className="block">
-      <div className="bg-[#1a1a2e] rounded-lg p-3 border border-[#2b2b44] hover:border-[#00E859]/30 transition-colors cursor-pointer mb-3">
+      <div className="bg-[var(--color-pitch)]/30 border border-[var(--color-pitch-line)]/40 p-3 hover:border-[var(--color-stitch)]/50 transition-colors cursor-pointer mb-3">
         <div className="flex items-start justify-between mb-1">
-          <h3 className="text-sm font-semibold text-white truncate">{job.customerName}</h3>
-          <span className="text-[10px] text-gray-500 whitespace-nowrap ml-2">{timeAgo()}</span>
+          <h3 className="text-sm font-semibold text-[var(--color-thread)] truncate font-body">
+            {job.customerName}
+          </h3>
+          <span className="text-[10px] text-[var(--color-thread-dim)] whitespace-nowrap ml-2 font-mono">
+            {timeAgo()}
+          </span>
         </div>
-        <p className="text-xs text-gray-400 line-clamp-2 mb-2">{job.description}</p>
+        <p className="text-xs text-[var(--color-thread-dim)] line-clamp-2 mb-2">{job.description}</p>
         {job.quote && (
-          <p className="text-xs text-[#00E859] font-medium mb-2">R{(job.quote / 100).toFixed(2)}</p>
+          <p className="text-xs text-[var(--color-stitch)] font-medium mb-2 font-mono">
+            R{(job.quote / 100).toFixed(2)}
+          </p>
         )}
         {nextStatus && (
           <button
@@ -46,7 +76,7 @@ function JobCard({ job }: { job: { _id: string; customerName: string; descriptio
               e.preventDefault();
               updateStatus({ id: job._id, status: nextStatus });
             }}
-            className="text-xs text-gray-400 hover:text-white transition-colors"
+            className="text-xs text-[var(--color-thread-dim)] hover:text-[var(--color-stitch)] transition-colors font-mono uppercase tracking-wider"
           >
             Move to {nextStatus.replace("_", " ")} →
           </button>
@@ -63,7 +93,9 @@ export function AdminDashboard() {
   if (jobs === undefined) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading jobs...</div>
+        <div className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-thread-dim)]">
+          Loading jobs...
+        </div>
       </div>
     );
   }
@@ -73,14 +105,21 @@ export function AdminDashboard() {
       {COLUMNS.map((col) => {
         const columnJobs = jobs.filter((j) => j.status === col.id);
         return (
-          <div key={col.id} className={`rounded-xl border p-3 ${col.color}`}>
+          <div key={col.id} className={`border-t-2 ${col.border} bg-[var(--color-pitch)]/15 p-3`}>
             <div className="flex items-center justify-between mb-3 px-1">
-              <h2 className="text-sm font-semibold">{col.label}</h2>
-              <span className="text-xs opacity-60">{columnJobs.length}</span>
+              <div className="flex items-baseline gap-2">
+                <h2 className={`text-xs font-semibold uppercase tracking-[0.18em] font-mono ${col.color}`}>
+                  {col.label}
+                </h2>
+                <span className="font-mono text-[10px] text-[var(--color-thread-dim)]">{col.ref}</span>
+              </div>
+              <span className="text-xs text-[var(--color-thread-dim)] font-mono">{columnJobs.length}</span>
             </div>
             <div className="space-y-1">
               {columnJobs.length === 0 ? (
-                <p className="text-xs text-gray-500 text-center py-4">No jobs</p>
+                <p className="text-xs text-[var(--color-thread-dim)] text-center py-4 font-mono">
+                  No jobs
+                </p>
               ) : (
                 columnJobs.map((job) => <JobCard key={job._id} job={job} />)
               )}

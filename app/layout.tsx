@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Archivo_Black, Space_Grotesk, IBM_Plex_Mono } from "next/font/google";
+import { Providers } from "@/components/providers";
 import "./globals.css";
 
 const display = Archivo_Black({
@@ -35,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body
         className={`${display.variable} ${body.variable} ${mono.variable} bg-[var(--color-pitch-deep)] text-[var(--color-thread)] antialiased min-h-screen font-body`}
       >
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

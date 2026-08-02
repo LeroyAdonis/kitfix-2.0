@@ -1,0 +1,205 @@
+"use client";
+
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import { useState } from "react";
+
+const STATUS_OPTIONS = [
+  { value: "new" as const, label: "New", color: "text-[var(--color-stitch)]", active: "border-[var(--color-stitch)]/60 bg-[var(--color-stitch)]/10" },
+  { value: "in_repair" as const, label: "In Repair", color: "text-[#7fb3d5]", active: "border-[#7fb3d5]/60 bg-[#7fb3d5]/10" },
+  { value: "ready" as const, label: "Ready", color: "text-[var(--color-pitch-line)]", active: "border-[var(--color-pitch-line)]/60 bg-[var(--color-pitch-line)]/10" },
+  { value: "done" as const, label: "Done", color: "text-[var(--color-thread-dim)]", active: "border-[var(--color-thread-dim)]/60 bg-[var(--color-thread-dim)]/10" },
+];
+
+export default function JobDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const job = useQuery(api.jobs.get, { id: id as any });
+  const updateStatus = useMutation(api.jobs.updateStatus);
+  const updateNotes = useMutation(api.jobs.updateNotes);
+  const [notes, setNotes] = useState("");
+  const [notesSaved, setNotesSaved] = useState(false);
+
+  if (job === undefined) {
+    return (
+      <div className="min-h-screen bg-[var(--color-pitch-deep)] flex items-center justify-center">
+        <div className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-thread-dim)]">
+          Loading...
+        </div>
+      </div>
+    );
+  }
+
+  if (job === null) {
+    return (
+      <div className="min-h-screen bg-[var(--color-pitch-deep)] flex items-center justify-center">
+        <div className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-thread-dim)]">
+          Job not found
+        </div>
+      </div>
+    );
+  }
+
+  const handleSaveNotes = async () => {
+    await updateNotes({ id: job._id, notes });
+    setNotesSaved(true);
+    setTimeout(() => setNotesSaved(false), 2000);
+  };
+
+  const handleStatusChange = async (status: typeof job.status) => {
+    await updateStatus({ id: job._id, status });
+  };
+
+  return (
+    <div className="min-h-screen bg-[var(--color-pitch-deep)]">
+      <header className="border-b border-[var(--color-pitch-line)]/40 px-6 py-3">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link
+              href="/admin"
+              className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--color-thread-dim)] hover:text-[var(--color-stitch)] transition-colors"
+            >
+              ← Back to Board
+            </Link>
+          </div>
+          <div className="w-8 h-8 bg-[var(--color-stitch)] flex items-center justify-center">
+            <span className="text-[var(--color-ink)] font-display text-xs">KF</span>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-4xl mx-auto p-6">
+        {/* Header */}
+        <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-stitch)] mb-2">
+              Job Ref — {job._id.slice(0, 8).toUpperCase()}
+            </p>
+            <h1 className="font-display text-2xl md:text-3xl text-[var(--color-thread)] uppercase tracking-wide mb-1">
+              {job.customerName}
+            </h1>
+            <p className="font-mono text-xs text-[var(--color-thread-dim)]">
+              {job.customerPhone} · {job.customerChannel}
+            </p>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            {STATUS_OPTIONS.map((opt) => {
+              const isActive = job.status === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  onClick={() => handleStatusChange(opt.value)}
+                  className={`px-3 py-1.5 text-xs font-mono uppercase tracking-wider transition-colors border ${
+                    isActive
+                      ? `${opt.active} ${opt.color} border`
+                      : "border-[var(--color-pitch-line)]/40 text-[var(--color-thread-dim)] hover:border-[var(--color-thread-dim)]"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Two-column layout */}
+        <div className="grid grid-cols-3 gap-6">
+          {/* Left: Job info */}
+          <div className="col-span-2 space-y-6">
+            <section className="border border-[var(--color-pitch-line)]/50 bg-[var(--color-pitch)]/30 p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-px w-5 bg-[var(--color-stitch)]/60" />
+                <h2 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-stitch)]">
+                  Description
+                </h2>
+              </div>
+              <p className="text-[var(--color-thread)]">{job.description}</p>
+            </section>
+
+            {job.photoUrls.length > 0 && (
+              <section className="border border-[var(--color-pitch-line)]/50 bg-[var(--color-pitch)]/30 p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="h-px w-5 bg-[var(--color-stitch)]/60" />
+                  <h2 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-stitch)]">
+                    Photos
+                  </h2>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {job.photoUrls.map((url, i) => (
+                    <img
+                      key={i}
+                      src={url}
+                      alt={`Photo ${i + 1}`}
+                      className="w-full h-48 object-cover bg-[var(--color-pitch-deep)] border border-[var(--color-pitch-line)]/40"
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <section className="border border-[var(--color-pitch-line)]/50 bg-[var(--color-pitch)]/30 p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-px w-5 bg-[var(--color-stitch)]/60" />
+                <h2 className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-stitch)]">
+                  Admin Notes
+                </h2>
+              </div>
+              <textarea
+                defaultValue={job.adminNotes || ""}
+                onChange={(e) => { setNotes(e.target.value); setNotesSaved(false); }}
+                placeholder="Add repair notes..."
+                className="w-full h-32 px-4 py-3 bg-[var(--color-pitch-deep)] text-[var(--color-thread)] border border-[var(--color-pitch-line)]/50 focus:border-[var(--color-stitch)] outline-none resize-none text-sm placeholder:text-[var(--color-thread-dim)]/50 font-body"
+              />
+              <div className="flex items-center justify-end mt-2 gap-2">
+                {notesSaved && (
+                  <span className="font-mono text-xs text-[var(--color-pitch-line)]">Saved!</span>
+                )}
+                <button
+                  onClick={handleSaveNotes}
+                  className="px-4 py-1.5 bg-[var(--color-stitch)] text-[var(--color-ink)] text-sm font-bold uppercase tracking-wide hover:brightness-110 transition-colors"
+                >
+                  Save Notes
+                </button>
+              </div>
+            </section>
+          </div>
+
+          {/* Right: Sidebar */}
+          <div className="space-y-4">
+            {job.quote && (
+              <div className="border border-[var(--color-stitch)]/40 bg-[var(--color-pitch)]/30 p-4">
+                <h3 className="font-mono text-[10px] text-[var(--color-thread-dim)] uppercase tracking-[0.18em] mb-1">
+                  Quote
+                </h3>
+                <p className="font-display text-2xl text-[var(--color-stitch)]">
+                  R{(job.quote / 100).toFixed(2)}
+                </p>
+              </div>
+            )}
+
+            <div className="border border-[var(--color-pitch-line)]/50 bg-[var(--color-pitch)]/30 p-4">
+              <h3 className="font-mono text-[10px] text-[var(--color-thread-dim)] uppercase tracking-[0.18em] mb-1">
+                Created
+              </h3>
+              <p className="text-sm text-[var(--color-thread)]">
+                {new Date(job._creationTime).toLocaleDateString("en-ZA")}
+              </p>
+            </div>
+
+            {job.damageType && (
+              <div className="border border-[var(--color-pitch-line)]/50 bg-[var(--color-pitch)]/30 p-4">
+                <h3 className="font-mono text-[10px] text-[var(--color-thread-dim)] uppercase tracking-[0.18em] mb-1">
+                  Damage Type
+                </h3>
+                <p className="text-sm text-[var(--color-thread)] capitalize">
+                  {job.damageType.replace("_", " ")}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
