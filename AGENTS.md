@@ -43,14 +43,26 @@ KitFix is a jersey repair service for South African sports clubs and individuals
 
 | Route | Type | Purpose |
 |-------|------|---------|
-| `/` | Static | Landing page with macrophage hero + how-it-works + pricing + CTA |
-| `/admin` | Server | Admin dashboard — redirects to `/admin/login` if unauthenticated |
+| `/` | Static | Landing page — repair-sheet hero + services + pricing + CTA |
+| `/sign-in` | Client | Customer email/password sign-in (Better Auth) → `/repair/new` |
+| `/sign-up` | Client | Customer account creation (Better Auth) → `/repair/new` |
+| `/repair/new` | Client | Protected — repair submission: description, optional phone, photo upload (max 5), AI damage analysis, submit |
+| `/my-jobs` | Client | Protected — customer tracking: their jobs + status (new/in_repair/ready/done) |
+| `/admin` | Server | Admin dashboard (kanban) — `(protected)` route group, cookie auth |
 | `/admin/login` | Server | Simple password form → sets `kitfix_admin` cookie |
-| `/admin/jobs/[id]` | Dynamic | Job detail view |
-| `/api/concierge` | POST | Convex proxy — creates/queries/updates jobs |
+| `/admin/jobs/[id]` | Dynamic | Job detail view — incl. AI Assessment panel + customer email/channel |
+| `/api/auth/[...all]` | Route | Better Auth proxy → Convex (sign-up/sign-in/session) |
+| `/api/analyze` | POST | NVIDIA vision (llama-3.2-11b-vision-instruct) → damage type/tier/price |
+| `/api/concierge` | POST | Convex proxy for WhatsApp/Telegram path (legacy) |
 | `/api/admin/login` | POST | Validates password → sets cookie |
 | `/api/admin/logout` | POST | Deletes cookie |
-| `/sign-in`, `/sign-up`, `/forgot-password`, `/verify-email`, `/offline` | Static | Auth pages (placeholder — not wired to real auth) |
+
+### Auth (two systems)
+- **Customer auth:** Better Auth + Convex component (`@convex-dev/better-auth`) — email/password, sessions in Convex. Files: `convex/auth.ts`, `convex/auth.config.ts`, `convex/http.ts`, `lib/auth-client.ts`, `lib/auth-server.ts`. Env: `BETTER_AUTH_SECRET`, `SITE_URL` (per deployment: dev=localhost, prod=vercel URL).
+- **Admin auth:** simple cookie (`kitfix_admin`, `ADMIN_PASSWORD`) — MVP, not Better Auth.
+
+### Photo storage
+Convex file storage. Client calls `jobs.generateUploadUrl` (action) → **POST** (not PUT) the file → gets `{storageId}` → stores IDs in `photoStorageIds`. Queries resolve via `ctx.storage.getUrl`. `jobs.getPhotoUrl` query resolves a single ID for the AI route.
 
 ### Project Structure (flat — no `src/` directory)
 
@@ -70,7 +82,8 @@ kitfix-2.0/
 │   │   └── hero-animations.ts   # Tear zones, swarm paths
 │   └── providers.tsx       # Convex provider wrapper
 ├── convex/                 # Convex backend
-│   ├── schema.ts           # 1 table: jobs (see below)
+│   ├── schema.ts           # Main schema: 1 table (jobs); Better Auth tables live in component
+│   ├── auth.ts             # Better Auth + Convex component instance, getCurrentUser
 │   ├── jobs.ts             # Mutations + queries
 │   └── _generated/         # Auto-generated Convex types
 ├── lib/
