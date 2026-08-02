@@ -1,14 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, useCallback, Suspense } from "react";
+import Header from "@/components/Header";
 
 function PayComplete() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const jobId = searchParams.get("job");
   const [paid, setPaid] = useState<boolean | null>(null);
   const [error, setError] = useState(false);
+
+  useEffect(() => {
+    if (paid !== true) return;
+    const t = setTimeout(() => router.push("/my-jobs"), 4000);
+    return () => clearTimeout(t);
+  }, [paid, router]);
 
   const check = useCallback(async () => {
     if (!jobId) return;
@@ -33,8 +41,10 @@ function PayComplete() {
   }, [check]);
 
   return (
-    <div className="min-h-screen bg-[var(--color-pitch-deep)] flex items-center justify-center px-4">
-      <div className="w-full max-w-md border border-[var(--color-pitch-line)]/50 bg-[var(--color-pitch)]/30 p-8 text-center">
+    <div className="min-h-screen bg-[var(--color-pitch-deep)]">
+      <Header />
+      <div className="min-h-[calc(100vh-57px)] flex items-center justify-center px-4">
+        <div className="w-full max-w-md border border-[var(--color-pitch-line)]/50 bg-[var(--color-pitch)]/30 p-8 text-center">
         <div className="flex items-center justify-center gap-2 mb-6">
           <div className="h-px w-8 bg-[var(--color-stitch)]/60" />
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-stitch)]">
@@ -81,6 +91,9 @@ function PayComplete() {
             >
               Back to My Repairs
             </Link>
+            <p className="font-mono text-[10px] text-[var(--color-thread-dim)] uppercase tracking-[0.16em] mt-4">
+              Redirecting to My Repairs...
+            </p>
           </>
         ) : (
           <>
@@ -98,6 +111,7 @@ function PayComplete() {
             </button>
           </>
         )}
+        </div>
       </div>
     </div>
   );
