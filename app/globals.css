@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+@theme {
+  /* KitFix 2.0 — "Repair Sheet" design language (frontend-design direction) */
+  --color-pitch-deep: #17351a;   /* page background — deep pitch green, not near-black */
+  --color-pitch: #24572a;        /* panels, secondary surfaces */
+  --color-pitch-line: #2e6b35;   /* hover/border-green */
+  --color-thread: #efe9d8;       /* primary text — bone/thread white */
+  --color-thread-dim: #c4bca8;   /* secondary text */
+  --color-stitch: #f2b01e;       /* accent — contrast thread gold */
+  --color-foul: #c8402c;         /* red-card accent, used sparingly */
+  --color-ink: #0f1c10;          /* text on gold */
+
+  --font-display: "Archivo Black", system-ui, sans-serif;
+  --font-body: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
