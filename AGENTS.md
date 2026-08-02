@@ -56,6 +56,10 @@ KitFix is a jersey repair service for South African sports clubs and individuals
 | `/api/concierge` | POST | Convex proxy for WhatsApp/Telegram path (legacy) |
 | `/api/admin/login` | POST | Validates password → sets cookie |
 | `/api/admin/logout` | POST | Deletes cookie |
+| `/api/payments/initialize` | POST | Paystack checkout init (confirmed quote → authorization_url) |
+| `/api/payments/webhook` | POST | Paystack webhook — HMAC-SHA512 verified → marks job paid |
+| `/api/payments/verify` | GET | Payment status helper for `/pay/complete` |
+| `/pay/complete` | Client | Post-payment success/processing page |
 
 ### Auth (two systems)
 - **Customer auth:** Better Auth + Convex component (`@convex-dev/better-auth`) — email/password, sessions in Convex. Files: `convex/auth.ts`, `convex/auth.config.ts`, `convex/http.ts`, `lib/auth-client.ts`, `lib/auth-server.ts`. Env: `BETTER_AUTH_SECRET`, `SITE_URL` (per deployment: dev=localhost, prod=vercel URL).

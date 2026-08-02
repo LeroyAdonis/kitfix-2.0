@@ -58,10 +58,10 @@
 
 ### B008 — Payment / deposit on quote confirmation
 - **Source:** quote-workflow spec (non-goal)
-- **Status:** proposed
-- **Revisit trigger:** When the shop wants to take deposits or prepay — business decision
-- **Effort estimate:** High (payment provider + order flow)
-- **Notes:** Confirm-quote is confirm-only for now; no money moves
+- **Status:** **scheduled → shipped 2026-08-02 (Paystack hosted checkout)**
+- **Revisit trigger:** Go live = switch from test to live Paystack keys (env change only); deposits/partials still future
+- **Effort estimate:** High (payment provider + order flow) — shipped via spec `.specify/specs/paystack-payments/`
+- **Notes:** E2E payment test pending Leroy's `sk_test_...` key; webhook HMAC-verified, idempotent
 
 ### B009 — Notify customer when admin overrides the estimate
 - **Source:** quote-workflow spec (non-goal)
