@@ -67,7 +67,7 @@ export async function POST(req: Request) {
   const callbackUrl = `${process.env.SITE_URL ?? "http://localhost:3000"}/pay/complete?job=${job._id}`;
 
   let paystackRes: Response;
-  let data: any;
+  let data: { data?: { authorization_url?: string } };
   try {
     paystackRes = await fetch("https://api.paystack.co/transaction/initialize", {
       method: "POST",

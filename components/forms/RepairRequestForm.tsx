@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useAction, useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { authClient } from "@/lib/auth-client";
 
 type PhotoUpload = {
@@ -99,7 +100,7 @@ export function RepairRequestForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          photoStorageIds: photos.map((p) => p.storageId),
+          photoStorageIds: photos.map((p) => p.storageId as Id<"_storage">),
           description: description.trim(),
         }),
       });
@@ -133,7 +134,7 @@ export function RepairRequestForm() {
         customerName: session?.user?.name || "Customer",
         customerPhone: phone.trim() || undefined,
         description: description.trim(),
-        photoStorageIds: photos.map((p) => p.storageId),
+        photoStorageIds: photos.map((p) => p.storageId as Id<"_storage">),
         aiAnalysis: analysis
           ? {
               damageType: analysis.damageType,

@@ -18,7 +18,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "invalid signature" }, { status: 401 });
   }
 
-  let event: any;
+  let event: {
+    event?: string;
+    data?: { reference?: string; metadata?: { jobId?: string } };
+  };
   try {
     event = JSON.parse(raw);
   } catch (e) {

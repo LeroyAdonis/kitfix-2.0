@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -15,7 +16,7 @@ const STATUS_OPTIONS = [
 
 export default function JobDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const job = useQuery(api.jobs.get, { id: id as any });
+  const job = useQuery(api.jobs.get, { id: id as Id<"jobs"> });
   const updateStatus = useMutation(api.jobs.updateStatus);
   const updateNotes = useMutation(api.jobs.updateNotes);
   const updateQuote = useMutation(api.jobs.updateQuote);

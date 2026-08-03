@@ -1,12 +1,13 @@
 import { v } from "convex/values";
-import { mutation, query, action } from "./_generated/server";
+import { mutation, query, action, QueryCtx } from "./_generated/server";
+import { Doc } from "./_generated/dataModel";
 
 // ── Queries ──
 
 async function resolvePhotoUrls(
-  ctx: { storage: { getUrl: (id: string) => Promise<string | null> } },
-  job: { photoStorageIds?: string[]; [key: string]: unknown },
-): Promise<Record<string, unknown>> {
+  ctx: QueryCtx,
+  job: Doc<"jobs">,
+): Promise<Doc<"jobs">> {
   const resolved: string[] = [];
   for (const id of job.photoStorageIds ?? []) {
     const url = await ctx.storage.getUrl(id);

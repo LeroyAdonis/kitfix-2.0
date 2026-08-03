@@ -8,9 +8,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  // Type-checking is enabled: `npx tsc --noEmit` is clean.
+  // Previously ignoreBuildErrors was set to mask a broken global types.d.ts
+  // that shadowed @types/react — removed 2026-08-03.
   // PWA is configured via a manual service worker (public/sw.js) and
   // manifest.json rather than next-pwa, which is incompatible with
   // Next.js 16 / Turbopack. The ServiceWorkerRegistrar client component

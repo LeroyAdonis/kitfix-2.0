@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import type { Doc } from "@/convex/_generated/dataModel";
 import Link from "next/link";
 
 const COLUMNS = [
@@ -42,12 +43,20 @@ const NEXT_STATUS: Record<string, "in_repair" | "ready" | "done"> = {
   ready: "done",
 };
 
-function JobCard({ job }: { job: { _id: string; customerName: string; description: string; status: string; _creationTime: number; quote?: number; customerChannel?: string; customerEmail?: string; paymentStatus?: string; archivedAt?: number } }) {
+function JobCard({ job }: { job: Doc<"jobs"> }) {
   const updateStatus = useMutation(api.jobs.updateStatus);
   const nextStatus = NEXT_STATUS[job.status];
+  // Tick once a minute so relative timestamps stay fresh without reading
+  // Date.now() during render (react-hooks/purity).
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 60_000);
+    return () => clearInterval(t);
+  }, []);
 
   const timeAgo = () => {
-    const diff = Date.now() - job._creationTime;
+    const diff = now - job._creationTime;
     const hours = Math.floor(diff / 3600000);
     if (hours < 1) return "Just now";
     if (hours < 24) return `${hours}h ago`;
@@ -210,7 +219,7 @@ export function AdminDashboard() {
                       <p className="text-xs text-[var(--color-thread-dim)] line-clamp-2 mt-1">{job.description}</p>
                       <div className="flex items-center gap-4 mt-2 font-mono text-[10px] text-[var(--color-thread-dim)] uppercase tracking-[0.14em] flex-wrap">
                         {job.quote ? <span className="text-[var(--color-stitch)]">R{(job.quote / 100).toFixed(2)}</span> : <span>No quote</span>}
-                        <span>Archived {new Date(job.archivedAt ?? Date.now()).toLocaleDateString("en-ZA")}</span>
+                        <span>Archived {job.archivedAt ? new Date(job.archivedAt).toLocaleDateString("en-ZA") : ""}</span>
                         <span className="text-[#C8402C]">Archived</span>
                       </div>
                     </div>

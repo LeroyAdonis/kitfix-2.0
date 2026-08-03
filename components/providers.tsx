@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ComponentProps, ReactNode } from "react";
 import { ConvexReactClient } from "convex/react";
 import { authClient } from "@/lib/auth-client";
 import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
@@ -17,7 +17,7 @@ export function Providers({
   return (
     <ConvexBetterAuthProvider
       client={convex}
-      authClient={authClient}
+      authClient={authClient as unknown as ComponentProps<typeof ConvexBetterAuthProvider>["authClient"]}
       initialToken={initialToken}
     >
       {children}

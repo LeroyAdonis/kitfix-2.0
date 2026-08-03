@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 const CONVEX_URL = process.env.NEXT_PUBLIC_CONVEX_URL;
 
-async function convexQuery(fn: string, args: Record<string, any> = {}) {
+async function convexQuery(fn: string, args: Record<string, unknown> = {}) {
   const res = await fetch(`${CONVEX_URL}/api/query`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -15,7 +15,7 @@ async function convexQuery(fn: string, args: Record<string, any> = {}) {
   return res.json();
 }
 
-async function convexMutation(fn: string, args: Record<string, any> = {}) {
+async function convexMutation(fn: string, args: Record<string, unknown> = {}) {
   const res = await fetch(`${CONVEX_URL}/api/mutation`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -72,9 +72,10 @@ export async function POST(req: Request) {
       default:
         return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 });
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Internal error";
     return NextResponse.json(
-      { error: err.message || "Internal error" },
+      { error: message },
       { status: 500 },
     );
   }

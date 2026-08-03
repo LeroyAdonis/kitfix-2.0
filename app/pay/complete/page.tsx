@@ -37,8 +37,28 @@ function PayComplete() {
   }, [jobId]);
 
   useEffect(() => {
-    check();
-  }, [check]);
+    let active = true;
+    (async () => {
+      if (!jobId) return;
+      try {
+        const res = await fetch(`/api/payments/verify?job=${encodeURIComponent(jobId)}`, {
+          cache: "no-store",
+        });
+        const data = await res.json();
+        if (!active) return;
+        if (data?.paid === true) {
+          setPaid(true);
+        } else {
+          setPaid(false);
+        }
+      } catch {
+        if (active) setError(true);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [jobId]);
 
   return (
     <div className="min-h-screen bg-[var(--color-pitch-deep)]">
