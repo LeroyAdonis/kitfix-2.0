@@ -31,10 +31,10 @@
 
 ### B004 — Customer status timeline UI (rich tracking)
 - **Source:** customer-portal spec (basic tracking ships now)
-- **Status:** proposed
-- **Revisit trigger:** After basic tracking ships and customers use it for 2 weeks — add timeline/milestones then
-- **Effort estimate:** Low-Medium (UI-only, statuses already exist)
-- **Notes:** Basic status visibility ships in the portal MVP; this is the visual timeline upgrade
+- **Status:** **shipped 2026-08-09** (release v2.1.0) — 4-step NEW→IN REPAIR→READY→DONE progress line on `/my-jobs` cards
+- **Revisit trigger:** n/a — shipped
+- **Effort estimate:** Low-Medium (UI-only, statuses already exist) — spec `.specify/specs/status-timeline/`
+- **Notes:** Future: per-step timestamps need a `statusHistory` array (recorded in spec)
 
 ### B005 — Public quotes without an account
 - **Source:** customer-portal spec (out of scope)
@@ -79,7 +79,9 @@
 
 ### B011 — Quote history / audit trail
 - **Source:** quote-workflow spec (non-goal)
-- **Status:** proposed
+- **Status:** **shipped 2026-08-09** (release v2.1.0) — `quoteHistory` array on jobs; seeded on create, appended on update/confirm; admin "Quote History" panel on job detail
+- **Revisit trigger:** n/a — shipped; future: record who made the change (admin identity)
+- **Effort estimate:** Low — spec `.specify/specs/quote-audit-trail/`
 - **Revisit trigger:** When the shop wants to see how estimates changed over time
 - **Effort estimate:** Low-Medium (adminNotes exists; full history is a new table/array)
 - **Notes:** Every override currently overwrites the quote value — no audit trail
@@ -93,6 +95,7 @@
 | 2026-08-02 | Ricky (pipeline) | Backlog created from customer-portal spec. B001-B007 captured. No items lost. |
 | 2026-08-02 | Ricky (pipeline) | **Release v20260802-2 sweep.** B001-B006 still proposed (revisit triggers unchanged — portal just shipped, need adoption data). B007 parked (WA Business API with George pending). **Nothing lost, nothing left behind.** |
 | 2026-08-02 | Ricky (pipeline) | **Quote-workflow release sweep.** B008-B011 added (payments, override notification, counter-offer, audit trail — all non-goals of quote-workflow spec). Feature shipped: admin override + customer estimate/confirm. **Nothing lost.** |
+| 2026-08-09 | Ricky (pipeline) | **Release v2.1.0 sweep.** B004 SHIPPED (status timeline on /my-jobs), B011 SHIPPED (quote audit trail + admin panel). B008 payment E2E VERIFIED (test mode, dev Convex). B001/B002/B005/B006/B009/B010 remain proposed (triggers unmet). B007 parked. Also: design pull-through (auth photo panel, stitch seams), analyze route maxDuration fix, CONVEX_SITE_URL env added to prod. **Nothing lost, nothing left behind.** |
 
 ---
 
