@@ -109,6 +109,16 @@ export default function JobDetailPage() {
         </div>
       </header>
 
+      {/* signature stitch seam */}
+      <div
+        aria-hidden="true"
+        className="h-[4px] w-full"
+        style={{
+          background:
+            "repeating-linear-gradient(90deg, var(--color-stitch) 0 10px, transparent 10px 16px)",
+        }}
+      />
+
       <main className="max-w-4xl mx-auto p-4 md:p-6">
         {/* Header */}
         <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
@@ -356,6 +366,51 @@ export default function JobDetailPage() {
                     </button>
                   ) : (
                     <span className="font-mono text-xs text-[#7fb3d5]">Confirmed ✓</span>
+                  )}
+                </div>
+
+                {/* B011 — Quote history audit trail */}
+                <div className="mt-4 pt-4 border-t border-[var(--color-pitch-line)]/40">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="h-px w-5 bg-[var(--color-stitch)]/60" />
+                    <h3 className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--color-stitch)]">
+                      Quote History
+                    </h3>
+                  </div>
+                  {job.quoteHistory && job.quoteHistory.length > 0 ? (
+                    <ol className="space-y-2">
+                      {[...job.quoteHistory]
+                        .sort((a, b) => a.at - b.at)
+                        .map((entry, i) => (
+                          <li
+                            key={i}
+                            className="flex items-center justify-between gap-2 font-mono text-xs"
+                          >
+                            <span className="text-[var(--color-thread)]">
+                              R{(entry.quote / 100).toFixed(2)}
+                            </span>
+                            <span
+                              className={`uppercase text-[10px] px-2 py-0.5 border ${
+                                entry.status === "confirmed"
+                                  ? "text-[#7fb3d5] border-[#7fb3d5]/40"
+                                  : "text-[var(--color-stitch)] border-[var(--color-stitch)]/40"
+                              }`}
+                            >
+                              {entry.status}
+                            </span>
+                            <span className="text-[var(--color-thread-dim)]/70 ml-auto">
+                              {new Date(entry.at).toLocaleDateString("en-ZA", {
+                                day: "numeric",
+                                month: "short",
+                              })}
+                            </span>
+                          </li>
+                        ))}
+                    </ol>
+                  ) : (
+                    <p className="font-mono text-xs text-[var(--color-thread-dim)]">
+                      No quote changes yet
+                    </p>
                   )}
                 </div>
               </div>

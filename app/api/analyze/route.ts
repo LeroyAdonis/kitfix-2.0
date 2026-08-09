@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 
+// Vision calls routinely spike past the default 10s function limit (Vercel
+// Hobby default). Without this, production aborts before NIM can answer.
+export const maxDuration = 60;
+
 const NIM_ENDPOINT = "https://integrate.api.nvidia.com/v1/chat/completions";
 // Bake-off 2026-08-02 (6 vision models on NVIDIA NIM): llama-3.2-90b-vision-instruct
 // won — correct damage/tier/price with confidence 0.80 vs 11b's 0.00. See
@@ -146,9 +150,10 @@ export async function POST(req: Request) {
       `\nSuggested price must be in cents: Basic=15000, Complex=25000, Full Refresh=40000.`;
 
     const controller = new AbortController();
-    // 90b vision can spike to ~8-10s under NVIDIA shared load; 12s keeps
-    // margin while staying under Vercel's 10s default for streaming-less routes.
-    const timer = setTimeout(() => controller.abort(), 12000);
+    // 90b vision routinely spikes past 10s under NVIDIA shared load; 25s gives
+    // margin. Requires `export const maxDuration = 60` (above) so Vercel
+    // doesn't kill the function before the abort fires.
+    const timer = setTimeout(() => controller.abort(), 25000);
 
     const nimRes = await fetch(NIM_ENDPOINT, {
       method: "POST",
