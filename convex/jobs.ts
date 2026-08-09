@@ -123,6 +123,9 @@ export const create = mutation({
       aiAnalysis: args.aiAnalysis,
       quote: args.aiAnalysis?.suggestedPrice,
       quoteStatus: "estimate",
+      quoteHistory: args.aiAnalysis?.suggestedPrice
+        ? [{ quote: args.aiAnalysis.suggestedPrice, status: "estimate", at: Date.now() }]
+        : undefined,
       status: "new",
       adminNotes: undefined,
     });
@@ -164,6 +167,9 @@ export const createWebJob = mutation({
       aiAnalysis: args.aiAnalysis,
       quote: args.aiAnalysis?.suggestedPrice,
       quoteStatus: "estimate",
+      quoteHistory: args.aiAnalysis?.suggestedPrice
+        ? [{ quote: args.aiAnalysis.suggestedPrice, status: "estimate", at: Date.now() }]
+        : undefined,
       status: "new",
       adminNotes: undefined,
     });
@@ -195,8 +201,19 @@ export const updateNotes = mutation({
 export const updateQuote = mutation({
   args: { id: v.id("jobs"), quote: v.number() },
   handler: async (ctx, args) => {
+    const job = await ctx.db.get(args.id);
+    if (!job) throw new Error("Job not found");
     // Admin override always returns the price to estimate so the customer re-confirms.
-    await ctx.db.patch(args.id, { quote: args.quote, quoteStatus: "estimate" });
+    // B011: append to audit trail (oldest → newest).
+    const history = job.quoteHistory ?? [];
+    await ctx.db.patch(args.id, {
+      quote: args.quote,
+      quoteStatus: "estimate",
+      quoteHistory: [
+        ...history,
+        { quote: args.quote, status: "estimate" as const, at: Date.now() },
+      ],
+    });
   },
 });
 
@@ -208,7 +225,15 @@ export const confirmQuote = mutation({
     const job = await ctx.db.get(args.id);
     if (!job) throw new Error("Job not found");
     if (job.quote == null) throw new Error("No quote to confirm");
-    await ctx.db.patch(args.id, { quoteStatus: "confirmed", paymentStatus: "unpaid" });
+    const history = job.quoteHistory ?? [];
+    await ctx.db.patch(args.id, {
+      quoteStatus: "confirmed",
+      paymentStatus: "unpaid",
+      quoteHistory: [
+        ...history,
+        { quote: job.quote, status: "confirmed" as const, at: Date.now() },
+      ],
+    });
   },
 });
 

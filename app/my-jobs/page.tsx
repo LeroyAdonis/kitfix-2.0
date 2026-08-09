@@ -14,6 +14,75 @@ const STATUS_META: Record<string, { label: string; color: string }> = {
   done: { label: "Done", color: "text-[var(--color-thread-dim)] border-[var(--color-thread-dim)]/50 bg-[var(--color-thread-dim)]/10" },
 };
 
+const TIMELINE_ORDER = ["new", "in_repair", "ready", "done"] as const;
+
+const TIMELINE_STEP: Record<
+  (typeof TIMELINE_ORDER)[number],
+  { label: string; fill: string; text: string }
+> = {
+  new: { label: "New", fill: "bg-[var(--color-stitch)]", text: "text-[var(--color-stitch)]" },
+  in_repair: { label: "In Repair", fill: "bg-[#7fb3d5]", text: "text-[#7fb3d5]" },
+  ready: { label: "Ready", fill: "bg-[var(--color-pitch-line)]", text: "text-[var(--color-pitch-line)]" },
+  done: { label: "Done", fill: "bg-[var(--color-thread-dim)]", text: "text-[var(--color-thread-dim)]" },
+};
+
+function timelineCurrentIndex(status: string): number {
+  const idx = TIMELINE_ORDER.indexOf(status as (typeof TIMELINE_ORDER)[number]);
+  return idx === -1 ? 0 : idx;
+}
+
+function JobStatusTimeline({ status }: { status: string }) {
+  const currentIdx = timelineCurrentIndex(status);
+
+  return (
+    <ol
+      role="list"
+      aria-label="Repair progress"
+      className="flex items-start mt-5 pt-5 border-t border-[var(--color-pitch-line)]/40"
+    >
+      {TIMELINE_ORDER.map((key, i) => {
+        const step = TIMELINE_STEP[key];
+        const reached = i <= currentIdx;
+        const current = i === currentIdx;
+        const marker =
+          current
+            ? `${step.fill} w-3 h-3`
+            : reached
+              ? `${step.fill} opacity-60 w-3 h-3`
+              : "border border-[var(--color-thread-dim)]/30 w-3 h-3";
+        const label =
+          current
+            ? `${step.text} font-semibold`
+            : reached
+              ? "text-[var(--color-thread-dim)]"
+              : "text-[var(--color-thread-dim)]/40";
+
+        return (
+          <li
+            key={key}
+            aria-current={current ? "step" : undefined}
+            className="flex items-start flex-1 last:flex-none"
+          >
+            <div className="flex flex-col items-start min-w-0">
+              <span className={`block ${marker}`} />
+              <span
+                className={`mt-2 font-mono text-[10px] uppercase tracking-[0.14em] whitespace-nowrap ${label}`}
+              >
+                {step.label}
+              </span>
+            </div>
+            {i < TIMELINE_ORDER.length - 1 && (
+              <div
+                className={`flex-1 h-px mt-[6px] mx-2 ${i < currentIdx ? step.fill : "bg-[var(--color-thread-dim)]/20"}`}
+              />
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 function PayNowButton({ jobId }: { jobId: string }) {
   const [paying, setPaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -108,6 +177,16 @@ export default function MyJobsPage() {
         </div>
       </header>
 
+      {/* signature stitch seam */}
+      <div
+        aria-hidden="true"
+        className="h-[4px] w-full"
+        style={{
+          background:
+            "repeating-linear-gradient(90deg, var(--color-stitch) 0 10px, transparent 10px 16px)",
+        }}
+      />
+
       <main className="max-w-4xl mx-auto p-4 md:p-6">
         <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
           <div>
@@ -167,6 +246,8 @@ export default function MyJobsPage() {
                   </div>
 
                   <p className="text-[var(--color-thread)] text-sm mb-4">{job.description}</p>
+
+                  <JobStatusTimeline status={job.status} />
 
                   <div className="flex items-center gap-6 flex-wrap font-mono text-xs text-[var(--color-thread-dim)]">
                     {job.quote != null && (

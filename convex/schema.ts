@@ -30,6 +30,17 @@ export default defineSchema({
       }),
     ),
     quote: v.optional(v.number()),
+    // Audit trail of every quote change (B011): oldest → newest.
+    // Each entry: { quote (cents), status ("estimate"|"confirmed"), at (epoch ms) }
+    quoteHistory: v.optional(
+      v.array(
+        v.object({
+          quote: v.number(),
+          status: v.union(v.literal("estimate"), v.literal("confirmed")),
+          at: v.number(),
+        }),
+      ),
+    ),
     // Quote lifecycle: AI sets an estimate at creation; admin may override
     // (resets to "estimate"); customer confirms when happy.
     quoteStatus: v.optional(

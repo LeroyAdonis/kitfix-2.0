@@ -29,6 +29,16 @@ export default async function AdminPage() {
         </div>
       </header>
 
+      {/* signature stitch seam */}
+      <div
+        aria-hidden="true"
+        className="h-[4px] w-full"
+        style={{
+          background:
+            "repeating-linear-gradient(90deg, var(--color-stitch) 0 10px, transparent 10px 16px)",
+        }}
+      />
+
       <main className="p-4 md:p-6">
         <AdminDashboard />
       </main>
