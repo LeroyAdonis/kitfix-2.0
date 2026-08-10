@@ -1,6 +1,6 @@
 # B011 — Quote History / Audit Trail
 
-**Status:** Scheduled (2026-08-09 release `20260809-inner-design-backlog`)
+**Status:** Shipped (2026-08-09 release `20260809-inner-design-backlog`)
 **Source:** `.specify/backlog.md` B011
 
 ## Problem

@@ -1,6 +1,6 @@
 # B004 — Customer Status Timeline UI
 
-**Status:** Scheduled (2026-08-09 release `20260809-inner-design-backlog`)
+**Status:** Shipped (2026-08-09 release `20260809-inner-design-backlog`)
 **Source:** `.specify/backlog.md` B004
 
 ## Problem
