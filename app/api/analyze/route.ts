@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 // Vision calls routinely spike past the default 10s function limit (Vercel
 // Hobby default). Without this, production aborts before NIM can answer.
@@ -77,6 +78,7 @@ function validateAnalysis(input: unknown): Analysis | null {
 }
 
 export async function POST(req: Request) {
+  const started = Date.now();
   let photoStorageIds: string[];
   let customerDescription = "";
   try {
@@ -84,20 +86,24 @@ export async function POST(req: Request) {
     customerDescription =
       typeof body.description === "string" ? body.description.trim() : "";
     if (!Array.isArray(body.photoStorageIds) || body.photoStorageIds.length === 0) {
+      logger.error(`[analyze] failed stage=validate-body status=- latency=${Date.now() - started}ms error=photoStorageIds missing or empty`);
       return NextResponse.json({ error: "analysis_failed" }, { status: 400 });
     }
     photoStorageIds = body.photoStorageIds.filter(
       (s: unknown): s is string => typeof s === "string" && s.length > 0,
     );
     if (photoStorageIds.length === 0) {
+      logger.error(`[analyze] failed stage=validate-body status=- latency=${Date.now() - started}ms error=photoStorageIds all invalid`);
       return NextResponse.json({ error: "analysis_failed" }, { status: 400 });
     }
-  } catch {
+  } catch (e) {
+    logger.error(`[analyze] failed stage=validate-body status=- latency=${Date.now() - started}ms error=${e instanceof Error ? e.message : String(e)}`);
     return NextResponse.json({ error: "analysis_failed" }, { status: 400 });
   }
 
   const apiKey = process.env.NVIDIA_API_KEY;
   if (!apiKey) {
+    logger.error(`[analyze] failed stage=config status=- latency=${Date.now() - started}ms error=NVIDIA_API_KEY not set`);
     return NextResponse.json({ error: "analysis_failed" }, { status: 500 });
   }
 
@@ -114,16 +120,19 @@ export async function POST(req: Request) {
       }),
     });
     if (!resolveRes.ok) {
+      logger.error(`[analyze] failed stage=resolve-photo status=${resolveRes.status} latency=${Date.now() - started}ms error=convex getPhotoUrl returned ${resolveRes.status}`);
       return NextResponse.json({ error: "analysis_failed" }, { status: 500 });
     }
     const resolveData = await resolveRes.json();
     const storageUrl = resolveData?.value ?? resolveData?.result;
     if (typeof storageUrl !== "string") {
+      logger.error(`[analyze] failed stage=resolve-photo status=- latency=${Date.now() - started}ms error=storageUrl not a string`);
       return NextResponse.json({ error: "analysis_failed" }, { status: 500 });
     }
 
     const imageRes = await fetch(storageUrl, { cache: "no-store" });
     if (!imageRes.ok) {
+      logger.error(`[analyze] failed stage=fetch-photo status=${imageRes.status} latency=${Date.now() - started}ms error=image fetch returned ${imageRes.status}`);
       return NextResponse.json({ error: "analysis_failed" }, { status: 500 });
     }
     const contentType = imageRes.headers.get("content-type") || "image/jpeg";
@@ -183,30 +192,36 @@ export async function POST(req: Request) {
     clearTimeout(timer);
 
     if (!nimRes.ok) {
+      logger.error(`[analyze] failed stage=nim status=${nimRes.status} latency=${Date.now() - started}ms error=NIM returned ${nimRes.status}`);
       return NextResponse.json({ error: "analysis_failed" }, { status: 500 });
     }
 
     const nimData = await nimRes.json();
     const content = nimData?.choices?.[0]?.message?.content;
     if (typeof content !== "string") {
+      logger.error(`[analyze] failed stage=nim-parse status=- latency=${Date.now() - started}ms error=NIM response content not a string`);
       return NextResponse.json({ error: "analysis_failed" }, { status: 500 });
     }
 
     let parsed: unknown;
     try {
       parsed = JSON.parse(cleanJson(content));
-    } catch {
+    } catch (e) {
+      logger.error(`[analyze] failed stage=nim-parse status=- latency=${Date.now() - started}ms error=${e instanceof Error ? e.message : String(e)}`);
       return NextResponse.json({ error: "analysis_failed" }, { status: 500 });
     }
 
     const analysis = validateAnalysis(parsed);
     if (!analysis) {
+      logger.error(`[analyze] failed stage=validate-analysis status=- latency=${Date.now() - started}ms error=validateAnalysis returned null`);
       return NextResponse.json({ error: "analysis_failed" }, { status: 500 });
     }
 
+    logger.info(`[analyze] ok model=${MODEL} tier=${analysis.suggestedTier} confidence=${analysis.confidence} latency=${Date.now() - started}ms`);
+
     return NextResponse.json({ ...analysis, model: MODEL });
   } catch (e) {
-    console.error("analyze route error:", e);
+    logger.error(`[analyze] failed stage=unhandled status=- latency=${Date.now() - started}ms error=${e instanceof Error ? e.message : String(e)}`);
     return NextResponse.json({ error: "analysis_failed" }, { status: 500 });
   }
 }
