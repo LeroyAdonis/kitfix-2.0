@@ -9,7 +9,10 @@ const NIM_ENDPOINT = "https://integrate.api.nvidia.com/v1/chat/completions";
 // Bake-off 2026-08-02 (6 vision models on NVIDIA NIM): llama-3.2-90b-vision-instruct
 // won — correct damage/tier/price with confidence 0.80 vs 11b's 0.00. See
 // /tmp/vision-bakeoff.py + .specify/specs/customer-portal/plan.md.
-const MODEL = "meta/llama-3.2-90b-vision-instruct";
+// SWITCH 2026-08-14: 90b routinely times out on NIM shared pool (observed 60s+).
+// 11b vision is 2.4s and reliable — timeout risk >> accuracy delta for this use case.
+// If 90b becomes stable again, re-evaluate.
+const MODEL = "meta/llama-3.2-11b-vision-instruct";
 
 const DAMAGE_TYPES = ["tear", "hole", "stain", "fading", "print_damage", "logo_damage", "seam_split", "other"];
 const PRICE_BY_TIER: Record<string, number> = {
