@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { authClient } from "@/lib/auth-client";
 import { RepairRequestForm } from "@/components/forms/RepairRequestForm";
+import { CustomerNav } from "@/components/CustomerNav";
 
 export default function NewRepairPage() {
   const router = useRouter();
@@ -47,6 +48,7 @@ export default function NewRepairPage() {
               KitFix <span className="text-[var(--color-stitch)]">Repair</span>
             </span>
           </div>
+          <CustomerNav />
         </div>
       </header>
 

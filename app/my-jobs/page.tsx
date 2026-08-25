@@ -5,6 +5,7 @@ import { api } from "@/convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { CustomerNav } from "@/components/CustomerNav";
 import { useEffect, useState } from "react";
 
 const STATUS_META: Record<string, { label: string; color: string }> = {
@@ -171,8 +172,11 @@ export default function MyJobsPage() {
               ← Back to Site
             </Link>
           </div>
-          <div className="w-8 h-8 bg-[var(--color-stitch)] flex items-center justify-center">
-            <span className="text-[var(--color-ink)] font-display text-xs">KF</span>
+          <div className="flex items-center gap-4">
+            <div className="w-8 h-8 bg-[var(--color-stitch)] flex items-center justify-center">
+              <span className="text-[var(--color-ink)] font-display text-xs">KF</span>
+            </div>
+            <CustomerNav />
           </div>
         </div>
       </header>

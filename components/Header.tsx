@@ -56,6 +56,18 @@ export default function Header() {
           <Link href={loggedIn ? "/my-jobs" : "/sign-in"} className={textLink}>
             {loggedIn ? "My Repairs" : "Sign In"}
           </Link>
+          {loggedIn && (
+            <button
+              type="button"
+              onClick={async () => {
+                await authClient.signOut();
+                router.push("/");
+              }}
+              className={`${textLink} cursor-pointer`}
+            >
+              Sign Out
+            </button>
+          )}
           <Link href="/repair/new" className={goldCta}>
             Start a Repair
           </Link>
@@ -86,6 +98,19 @@ export default function Header() {
               {loggedIn ? "My Repairs" : "Sign In"}
             </Link>
           </button>
+          {loggedIn && (
+            <button
+              type="button"
+              onClick={async () => {
+                setOpen(false);
+                await authClient.signOut();
+                router.push("/");
+              }}
+              className={`${textLink} text-left cursor-pointer`}
+            >
+              Sign Out
+            </button>
+          )}
           <Link href="/repair/new" onClick={() => setOpen(false)} className={`${goldCta} text-center`}>
             Start a Repair
           </Link>
