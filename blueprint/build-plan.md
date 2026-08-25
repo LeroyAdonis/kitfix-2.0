@@ -16,7 +16,9 @@
 
 ## Post-MVP (Roadmap)
 
-- [ ] 12. **Admin store** - product/inventory management for the admin dashboard (see `.hermes/tasks/` plans)
+- [x] 12. **Admin store** - product/inventory management for the admin dashboard
+  - [x] 12a. Product/inventory management — shipped (archive: `blueprint/history/features/12a-admin-store.md`)
+  - [ ] 12b. Order management — deferred until checkout feature #13
 - [ ] 13. **Checkout & orders flow** - end-to-end checkout experience for repair services
 - [ ] 14. **Courier integration** - integrate with a SA courier service for kit pickup and delivery
 - [ ] 15. **Ecommerce storefront** - browseable product/service catalog with cart

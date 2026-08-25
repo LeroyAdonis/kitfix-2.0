@@ -1,12 +1,6 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { checkAdmin } from "@/lib/admin-auth";
-import { AdminDashboard } from "../admin-dashboard";
 
-export default async function AdminPage() {
-  const isAdmin = await checkAdmin();
-  if (!isAdmin) redirect("/admin/login");
-
+export default function StoreLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[var(--color-pitch-deep)]">
       <header className="border-b border-[var(--color-pitch-line)]/40 px-4 py-3 md:px-6">
@@ -20,13 +14,13 @@ export default async function AdminPage() {
             </span>
           </div>
           <div className="flex items-center gap-4 font-mono text-xs uppercase tracking-[0.16em]">
-            <span className="hidden sm:inline text-[var(--color-thread-dim)]">Repair Board</span>
             <Link
-              href="/admin/store"
+              href="/admin"
               className="text-[var(--color-thread-dim)] hover:text-[var(--color-stitch)] transition-colors"
             >
-              Store
+              Repair Board
             </Link>
+            <span className="text-[var(--color-stitch)]">Store</span>
             <form action="/api/admin/logout" method="POST">
               <button className="text-[var(--color-thread-dim)] hover:text-[var(--color-stitch)] transition-colors">
                 Logout
@@ -36,7 +30,6 @@ export default async function AdminPage() {
         </div>
       </header>
 
-      {/* signature stitch seam */}
       <div
         aria-hidden="true"
         className="h-[4px] w-full"
@@ -47,7 +40,24 @@ export default async function AdminPage() {
       />
 
       <main className="p-4 md:p-6">
-        <AdminDashboard />
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center gap-1 mb-6 border-b border-[var(--color-pitch-line)]/40">
+            <Link
+              href="/admin/store"
+              className="px-4 py-2 font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-stitch)] border-b-2 border-[var(--color-stitch)] -mb-px"
+            >
+              Products
+            </Link>
+            <span className="px-4 py-2 font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-thread-dim)] opacity-50 cursor-not-allowed">
+              Orders
+              <span className="ml-2 text-[10px] text-[var(--color-thread-dim)]">
+                Coming soon
+              </span>
+            </span>
+          </div>
+
+          {children}
+        </div>
       </main>
     </div>
   );

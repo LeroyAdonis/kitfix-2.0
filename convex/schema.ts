@@ -64,4 +64,37 @@ export default defineSchema({
     .index("by_status", ["status"])
     .index("by_phone", ["customerPhone"])
     .index("by_userId", ["userId"]),
+
+  products: defineTable({
+    name: v.string(),
+    slug: v.string(),
+    description: v.string(),
+    basePrice: v.number(),           // ZAR cents (integer) — matches jobs.quote convention
+    category: v.union(v.literal("jersey"), v.literal("accessory"), v.literal("other")),
+    imageUrl: v.optional(v.string()),
+    isActive: v.boolean(),
+    createdAt: v.number(),           // epoch ms
+    updatedAt: v.number(),           // epoch ms
+  })
+    .index("by_slug", ["slug"])
+    .index("by_category", ["category"]),
+
+  productVariants: defineTable({
+    productId: v.id("products"),
+    size: v.string(),                // "XS" | "S" | "M" | "L" | "XL" | "2XL" | "3XL" | "Kids"
+    stock: v.number(),               // >= 0
+    priceModifier: v.number(),       // ZAR cents added to basePrice (can be negative for discounts)
+    isActive: v.boolean(),
+  })
+    .index("by_productId", ["productId"]),
+
+  personalizationOptions: defineTable({
+    productId: v.id("products"),
+    label: v.string(),               // e.g. "Name", "Number", "Sleeve text"
+    type: v.union(v.literal("text"), v.literal("select")),
+    required: v.boolean(),
+    maxLength: v.optional(v.number()), // for text type
+    options: v.optional(v.array(v.string())), // for select type
+  })
+    .index("by_productId", ["productId"]),
 });
