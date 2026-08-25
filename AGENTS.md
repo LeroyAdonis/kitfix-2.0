@@ -26,7 +26,7 @@ KitFix is a jersey repair service for South African sports clubs and individuals
 | Command | Purpose |
 |---------|---------|
 | `npm run dev` | Dev server (localhost:3000) |
-| `CSS_TRANSFORMER_WASM=true npm run build` | Production build (LightningCSS WASM) |
+| `npm run build` | Production build (LightningCSS WASM, env set in script) |
 | `npm run start` | Serve production build |
 | `npm run lint` | ESLint (flat config: `eslint.config.mjs`) |
 | `npx convex dev` | Start Convex dev server (backend) |
@@ -269,7 +269,7 @@ These `.hermes/tasks/` plans exist but are NOT implemented:
 
 - **No `src/` directory** — everything is flat under `app/`, `components/`, `lib/`, `convex/`
 - **Convex client access** — the web portal + admin dashboard use `convex/react` hooks directly via `ConvexBetterAuthProvider`. `/api/concierge` is only for the legacy WhatsApp/Telegram path.
-- **`ignoreBuildErrors: true`** — type errors won't fail the build, but always run `npx tsc --noEmit` before committing
+- **Type errors** — run `npx tsc --noEmit` before committing (type checking is clean; `ignoreBuildErrors` was removed from next.config.ts)
 - **LightningCSS WASM** — `CSS_TRANSFORMER_WASM=true` required for build. `lightningcss-wasm` is in deps.
 - **Admin auth is plaintext** — `ADMIN_PASSWORD` compared directly. No hashing. Upgrade before real users.
 - **No test runner** — no vitest, jest, or playwright configured. Tests need to be set up.
@@ -278,3 +278,18 @@ These `.hermes/tasks/` plans exist but are NOT implemented:
 - **Customer auth is live** — `/sign-in` and `/sign-up` are wired to Better Auth + Convex. Admin uses simple cookie auth instead (`kitfix_admin`).
 - **Component export convention** — named exports (not default) for shared components via `components/providers.tsx`
 - **AGENTS.md was missing** — this file was created 2026-07-31. Agents before this date had no project context.
+
+## AI Blueprint Workflow (added 2026-08-25)
+
+This project uses **AI Blueprint** — a file-backed, spec-driven workflow with review gates. Run it from OpenCode (or any AGENTS.md-aware agent) by asking the agent to run the matching skill. Skills live in `.agents/skills/<skill>/SKILL.md`.
+
+**State files (read these for full context):**
+- `blueprint/project-plan.md` — the what/why (you own this)
+- `blueprint/build-plan.md` — ordered feature list (you own this)
+- `blueprint/context/project-overview.md` — AI-facing source of truth (generated)
+- `blueprint/context/current-feature.md` — the one active feature/fix/rollback
+- `blueprint/context/findings.md` — audit findings ledger (P0/P1 open findings block /complete)
+
+**Core loop:** `feature` (write spec, stop for review) → `implement` (small reviewed steps) → `check` (prove behavior) → `audit current` (record findings) → `complete` (archive + merge). For bugs: `fix` → `implement` → `check` → `complete`. For existing codebase bootstrap: `adopt`. Read-only helpers: `status`, `brief`, `try`, `doctor`.
+
+**Setup status:** installer ran with `--opencode` adapter + **adopt skill completed** (2026-08-25). Plans + coding standards generated. Next step: run the **overview** skill to generate `blueprint/context/project-overview.md`.
