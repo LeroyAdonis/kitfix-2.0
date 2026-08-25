@@ -1,6 +1,7 @@
 import Link from "next/link";
 import StitchHero from "@/components/hero/StitchHero";
 import Header from "@/components/Header";
+import { Reveal } from "@/components/Reveal";
 
 const SERVICES = [
   {
@@ -64,9 +65,11 @@ export default function HomePage() {
       <section id="services" className="px-6 py-16 md:py-24">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-baseline justify-between mb-10">
-            <h2 className="font-display text-3xl md:text-5xl uppercase text-[var(--color-thread)]">
-              The Repair Sheet
-            </h2>
+            <Reveal>
+              <h2 className="font-display text-3xl md:text-5xl uppercase text-[var(--color-thread)]">
+                The Repair Sheet
+              </h2>
+            </Reveal>
             <span className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-thread-dim)]">
               KF-01 — Services
             </span>
@@ -118,13 +121,15 @@ export default function HomePage() {
       {/* Process */}
       <section id="process" className="px-6 py-16 md:py-24">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-[1fr_1fr] gap-12">
-          <h2 className="font-display text-3xl md:text-5xl uppercase text-[var(--color-thread)] leading-tight">
-            From sideline
-            <br />
-            to service
-            <br />
-            in four touches.
-          </h2>
+          <Reveal>
+            <h2 className="font-display text-3xl md:text-5xl uppercase text-[var(--color-thread)] leading-tight">
+              From sideline
+              <br />
+              to service
+              <br />
+              in four touches.
+            </h2>
+          </Reveal>
           <div className="border-l border-[var(--color-pitch-line)]/50 pl-7">
             {STEPS.map((step) => (
               <div key={step.t} className="py-5 border-b border-dashed border-[var(--color-pitch-line)]/40 last:border-b-0">
@@ -146,9 +151,11 @@ export default function HomePage() {
       <section id="pricing" className="px-6 py-16 md:py-24">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-baseline justify-between mb-10">
-            <h2 className="font-display text-3xl md:text-5xl uppercase text-[var(--color-thread)]">
-              Flat Rates
-            </h2>
+            <Reveal>
+              <h2 className="font-display text-3xl md:text-5xl uppercase text-[var(--color-thread)]">
+                Flat Rates
+              </h2>
+            </Reveal>
             <span className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-thread-dim)]">
               No hidden fees · pay when it&apos;s done
             </span>
@@ -183,11 +190,13 @@ export default function HomePage() {
       {/* CTA */}
       <section className="px-6 py-20 md:py-28 text-center">
         <div className="max-w-3xl mx-auto">
-          <h2 className="font-display text-4xl md:text-6xl uppercase text-[var(--color-thread)] leading-[0.95] mb-8">
-            Don&apos;t bench
-            <br />
-            that kit.
-          </h2>
+          <Reveal>
+            <h2 className="font-display text-4xl md:text-6xl uppercase text-[var(--color-thread)] leading-[0.95] mb-8">
+              Don&apos;t bench
+              <br />
+              that kit.
+            </h2>
+          </Reveal>
           <Link
             href="/repair/new"
             className="inline-flex items-center gap-3 px-10 py-5 bg-[var(--color-stitch)] text-[var(--color-ink)] font-bold text-lg uppercase tracking-wide hover:brightness-110 transition"

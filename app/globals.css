@@ -15,3 +15,15 @@
   --font-body: "Space Grotesk", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 }
+
+/* Smooth anchor scrolling for nav links (respect reduced motion) */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem; /* offset for the sticky header */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
