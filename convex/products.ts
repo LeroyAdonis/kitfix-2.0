@@ -10,7 +10,8 @@ function computeVariantStats(
   let minActiveModifier = Infinity;
 
   for (const v of variants) {
-    totalStock += v.stock;
+    // Only active variants count toward sellable stock (F-02).
+    if (v.isActive) totalStock += v.stock;
     if (v.isActive && v.priceModifier < minActiveModifier) {
       minActiveModifier = v.priceModifier;
     }
@@ -354,6 +355,10 @@ export const update = mutation({
     }
 
     // ── Sync personalization options ──
+    // Intentional asymmetry (F-01): personalization options are lightweight form
+    // metadata with no inventory/order history value, so removed ones are hard-
+    // deleted here while removed variants are soft-deactivated above (variants
+    // preserve stock/order-history integrity). Revisit when orders (12b/13) land.
     const existingOptions = await ctx.db
       .query("personalizationOptions")
       .withIndex("by_productId", (q) => q.eq("productId", args.id))
