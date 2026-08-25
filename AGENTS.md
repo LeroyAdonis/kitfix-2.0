@@ -276,6 +276,7 @@ These `.hermes/tasks/` plans exist but are NOT implemented:
 - **Path alias** — `@/*` maps to `./*` (project root, not `./src/*`)
 - **GSAP is client-only** — all GSAP code must be in `"use client"` components. The hero component is the only user.
 - **Customer auth is live** — `/sign-in` and `/sign-up` are wired to Better Auth + Convex. Admin uses simple cookie auth instead (`kitfix_admin`).
+- **Auth origin validation** — Better Auth `trustedOrigins` in `convex/auth.ts` must include `https://mykitfix.co.za` (production domain), `https://kitfix-2-0.vercel.app` (Vercel alias), and `http://localhost:3000` (dev). Symptom of a missing origin: "✕ Invalid origin" (INVALID_ORIGIN) on login/sign-up. Prod Convex deployment: `frugal-flamingo-105`; dev: `limitless-sheep-299`.
 - **Component export convention** — named exports (not default) for shared components via `components/providers.tsx`
 - **AGENTS.md was missing** — this file was created 2026-07-31. Agents before this date had no project context.
 
