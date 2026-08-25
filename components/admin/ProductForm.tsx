@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 
 const SIZES = ["XS", "S", "M", "L", "XL", "2XL", "3XL", "Kids"] as const;
 const CATEGORIES = ["jersey", "accessory", "other"] as const;
@@ -56,10 +56,6 @@ export default function ProductForm({ mode, initialData }: ProductFormProps) {
 
   const [name, setName] = useState(initialData?.name ?? "");
   const [description, setDescription] = useState(initialData?.description ?? "");
-  const [slug, setSlug] = useState(initialData?.slug ?? "");
-  const [slugManuallyEdited, setSlugManuallyEdited] = useState(
-    mode === "edit",
-  );
   const [category, setCategory] = useState<"jersey" | "accessory" | "other">(
     initialData?.category ?? "jersey",
   );
@@ -76,17 +72,10 @@ export default function ProductForm({ mode, initialData }: ProductFormProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
-  // Auto-generate slug from name
-  useEffect(() => {
-    if (!slugManuallyEdited && name) {
-      setSlug(nameToSlug(name));
-    }
-  }, [name, slugManuallyEdited]);
-
-  const handleSlugChange = useCallback((val: string) => {
-    setSlug(val);
-    setSlugManuallyEdited(true);
-  }, []);
+  // Slug is derived at render time: the Convex mutations auto-generate and
+  // own the slug from the product name (collision-safe), so the form shows a
+  // read-only preview rather than a dead editable field.
+  const derivedSlug = nameToSlug(name) || initialData?.slug || "";
 
   // ── Variants ──
   const addVariant = () => {
@@ -141,11 +130,11 @@ export default function ProductForm({ mode, initialData }: ProductFormProps) {
     if (!basePrice || isNaN(priceCents) || priceCents <= 0) {
       newErrors.basePrice = "Price must be greater than R0";
     }
+    if (!name.trim()) {
+      newErrors.name = "Name is required";
+    }
     if (variants.length === 0) {
       newErrors.variants = "At least one variant is required";
-    }
-    if (!slug.trim()) {
-      newErrors.slug = "Slug is required";
     }
 
     setErrors(newErrors);
@@ -247,14 +236,16 @@ export default function ProductForm({ mode, initialData }: ProductFormProps) {
             />
           </div>
           <div>
-            <label className={labelClasses}>Slug</label>
+            <label className={labelClasses}>Slug (auto-generated)</label>
             <input
               type="text"
-              value={slug}
-              onChange={(e) => handleSlugChange(e.target.value)}
-              className={inputClasses}
+              value={derivedSlug}
+              readOnly
+              className={`${inputClasses} opacity-60 cursor-not-allowed`}
             />
-            {errors.slug && <p className={errorClasses}>{errors.slug}</p>}
+            <p className="font-mono text-[10px] text-[var(--color-thread-dim)] mt-1">
+              Auto-generated from name — set by the server on save.
+            </p>
           </div>
           <div>
             <label className={labelClasses}>Category</label>
