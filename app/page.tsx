@@ -1,5 +1,5 @@
 import Link from "next/link";
-import HeroScrollVideoReveal from "@/components/ui/hero-scroll-video-pin-reveal";
+import StitchHero from "@/components/hero/StitchHero";
 import Header from "@/components/Header";
 
 const SERVICES = [
@@ -56,7 +56,7 @@ export default function HomePage() {
       {/* Header */}
       <Header />
 
-      <HeroScrollVideoReveal videoSrc="https://res.cloudinary.com/dsuwzuaxp/video/upload/856381-hd_1920_1080_30fps_gsq11b.mp4" />
+      <StitchHero />
 
       <StitchRule />
 
