@@ -11,7 +11,20 @@ function formatRands(cents: number): string {
 
 export default function ProductsListPage() {
   const products = useQuery(api.products.list);
-  const toggleActive = useMutation(api.products.toggleActive);
+  const toggleActive = useMutation(api.products.toggleActive).withOptimisticUpdate(
+    (localStore, args) => {
+      const currentProducts = localStore.getQuery(api.products.list);
+      if (currentProducts) {
+        localStore.setQuery(
+          api.products.list,
+          {},
+          currentProducts.map((p) =>
+            p._id === args.id ? { ...p, isActive: !p.isActive } : p,
+          ),
+        );
+      }
+    },
+  );
   const softDelete = useMutation(api.products.softDelete);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -132,22 +145,27 @@ export default function ProductsListPage() {
                     </button>
                     <span className="text-[var(--color-pitch-line)]/40">|</span>
                     {deletingId === product._id ? (
-                      <span className="flex items-center gap-1">
-                        <button
-                          onClick={async () => {
-                            await softDelete({ id: product._id });
-                            setDeletingId(null);
-                          }}
-                          className="text-[var(--color-foul)] hover:underline"
-                        >
-                          Confirm
-                        </button>
-                        <button
-                          onClick={() => setDeletingId(null)}
-                          className="text-[var(--color-thread-dim)] hover:underline"
-                        >
-                          Cancel
-                        </button>
+                      <span className="flex flex-col gap-1">
+                        <span className="text-[10px] text-[var(--color-thread-dim)] whitespace-nowrap">
+                          Delete {product.name}? This hides it from the storefront.
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <button
+                            onClick={async () => {
+                              await softDelete({ id: product._id });
+                              setDeletingId(null);
+                            }}
+                            className="text-[var(--color-foul)] hover:underline"
+                          >
+                            Confirm
+                          </button>
+                          <button
+                            onClick={() => setDeletingId(null)}
+                            className="text-[var(--color-thread-dim)] hover:underline"
+                          >
+                            Cancel
+                          </button>
+                        </span>
                       </span>
                     ) : (
                       <button
