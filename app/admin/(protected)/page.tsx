@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { checkAdmin } from "@/lib/admin-auth";
 import { AdminDashboard } from "../admin-dashboard";
 
@@ -20,6 +21,12 @@ export default async function AdminPage() {
           </div>
           <div className="flex items-center gap-4 font-mono text-xs uppercase tracking-[0.16em]">
             <span className="hidden sm:inline text-[var(--color-thread-dim)]">Repair Board</span>
+            <Link
+              href="/admin/store"
+              className="text-[var(--color-thread-dim)] hover:text-[var(--color-stitch)] transition-colors"
+            >
+              Store
+            </Link>
             <form action="/api/admin/logout" method="POST">
               <button className="text-[var(--color-thread-dim)] hover:text-[var(--color-stitch)] transition-colors">
                 Logout
