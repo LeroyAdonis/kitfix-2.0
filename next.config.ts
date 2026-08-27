@@ -22,6 +22,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.public.blob.vercel-storage.com",
       },
+      {
+        // Testimonial avatars (sports-club/coach portraits) on the landing page.
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
     ],
   },
 

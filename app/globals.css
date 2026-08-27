@@ -14,6 +14,77 @@
   --font-display: "Archivo Black", system-ui, sans-serif;
   --font-body: "Space Grotesk", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* ── Relume component tokens, mapped onto the KitFix "Repair Sheet" system ── */
+  /* scheme-* drives the vendored Relume card/accordion/input primitives */
+  --color-scheme-background: #17351a;  /* page background = pitch-deep */
+  --color-scheme-foreground: #24572a;  /* card surface = pitch */
+  --color-scheme-text: #efe9d8;        /* primary text = thread */
+  --color-scheme-text-muted: #c4bca8;  /* secondary text = thread-dim */
+  --color-scheme-border: #2e6b35;      /* borders = pitch-line */
+  --color-scheme-btn-text: #0f1c10;    /* text on gold = ink */
+
+  /* Relume type ramp (Relume's v4 @theme sizes) */
+  --text-h1: 3.5rem;
+  --text-h1--line-height: 1.2;
+  --text-h1--letter-spacing: -0.01em;
+  --text-h2: 3rem;
+  --text-h2--line-height: 1.2;
+  --text-h2--letter-spacing: -0.01em;
+  --text-h3: 2.5rem;
+  --text-h3--line-height: 1.2;
+  --text-h3--letter-spacing: -0.01em;
+  --text-h4: 2rem;
+  --text-h4--line-height: 1.3;
+  --text-h4--letter-spacing: -0.01em;
+  --text-h5: 1.5rem;
+  --text-h5--line-height: 1.4;
+  --text-h5--letter-spacing: -0.01em;
+  --text-h6: 1.25rem;
+  --text-h6--line-height: 1.4;
+  --text-h6--letter-spacing: -0.01em;
+  --text-large: 1.25rem;
+  --text-large--line-height: 1.5;
+  --text-medium: 1.125rem;
+  --text-medium--line-height: 1.5;
+  --text-regular: 1rem;
+  --text-regular--line-height: 1.5;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+  --text-tiny: 0.75rem;
+  --text-tiny--line-height: 1.5;
+
+  /* Sharp corners everywhere — the kit-repair-workshop identity (DESIGN.md) */
+  --radius-button: 0rem;
+  --radius-card: 0rem;
+  --radius-form: 0rem;
+  --radius-badge: 0rem;
+  --radius-image: 0rem;
+  --radius-checkbox: 0rem;
+  --radius-carousel: 0rem;
+  --radius-dropdown: 0rem;
+
+  /* Radix accordion expand/collapse (Relume accordion primitive) */
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
 }
 
 /* Smooth anchor scrolling for nav links (respect reduced motion) */
