@@ -7,14 +7,13 @@ import { gsap } from "gsap";
 import { logger } from "@/lib/logger";
 
 /**
- * StitchHero — "Repair Sheet" hero for KitFix 2.0 (full-bleed no-crop edition).
+ * StitchHero — "Repair Sheet" hero for KitFix 2.0 (full-bleed, restaurant-height).
  *
- * Technique (css-design-system skill, "Next.js Image fill + object-cover
- * Cropping Trap"): a full-bleed photo hero crops top/bottom on wide screens
- * when the container is wider than the photo's 7:4 ratio. The documented fix:
- * `object-contain` + `object-right` + height clamp — the photo renders at its
- * natural ratio (never cropped) anchored right, and a left-to-right gradient
- * covers the letterbox and carries the headline. Edge-to-edge feel, zero crop.
+ * Height recipe from The Golden Fork landing (header38): the hero is exactly
+ * viewport height (`h-screen` capped at `max-h-[60rem]`), so the headline +
+ * CTA always sit above the fold. At ~100vh the 1344×768 photo (7:4) nearly
+ * matches a 16:9/16:10 container, so `object-cover` crops only a few percent
+ * of dark edge — the story stays intact. Gradient dark-left carries the text.
  *
  * Photo: `public/hero-repair-wide.jpg` (1344×768, FLUX.1-dev on NVIDIA NIM).
  */
@@ -34,12 +33,12 @@ export default function StitchHero() {
       const tl = gsap.timeline({ delay: 0.1 });
       tl.fromTo(
         imgRef.current,
-        { scale: 1.04, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 1.1, ease: "power2.out" }
+        { scale: 1.06, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 1.2, ease: "power2.out" }
       );
       tl.fromTo(
         headlineRef.current,
-        { opacity: 0, y: 24 },
+        { opacity: 0, y: 26 },
         { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" },
         0.25
       );
@@ -63,14 +62,14 @@ export default function StitchHero() {
       );
     }, sectionRef);
 
-    logger.info("StitchHero mounted (full-bleed no-crop edition)");
+    logger.info("StitchHero mounted (full-bleed restaurant-height edition)");
     return () => ctx.revert();
   }, []);
 
   return (
     <section ref={sectionRef} className="relative overflow-hidden bg-[var(--color-pitch-deep)]">
-      {/* Desktop: full-bleed photo, contained at natural ratio, anchored right — never cropped */}
-      <div className="relative hidden md:block md:h-[clamp(320px,44vh,540px)] md:min-h-[480px]">
+      {/* Desktop (lg+): full-bleed photo, viewport height — CTA always above the fold */}
+      <div className="relative hidden lg:block lg:h-screen lg:max-h-[60rem] lg:min-h-[560px]">
         <div ref={imgRef} className="absolute inset-0">
           <Image
             src="/hero-repair-wide.jpg"
@@ -78,20 +77,20 @@ export default function StitchHero() {
             fill
             priority
             sizes="100vw"
-            className="object-contain object-right"
+            className="object-cover object-center"
           />
         </div>
-        {/* Gradient: dark left for text, fades well before the photo's left edge so the photo reads edge-to-edge */}
+        {/* Gradient: dark left for text legibility, fades right */}
         <div
           aria-hidden="true"
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(90deg, var(--color-pitch-deep) 0%, var(--color-pitch-deep) 16%, rgba(23,53,26,0.6) 28%, rgba(23,53,26,0.2) 38%, transparent 48%)",
+              "linear-gradient(90deg, var(--color-pitch-deep) 0%, rgba(23,53,26,0.92) 28%, rgba(23,53,26,0.45) 55%, transparent 78%)",
           }}
         />
 
-        {/* Content overlay */}
+        {/* Content — vertically centered (restaurant hero pattern) */}
         <div className="relative z-10 mx-auto flex h-full max-w-6xl items-center px-6">
           <div className="max-w-xl">
             <p className="mb-4 font-mono text-xs uppercase tracking-[0.22em] text-[var(--color-stitch)]">
@@ -130,8 +129,8 @@ export default function StitchHero() {
         </div>
       </div>
 
-      {/* Mobile: stacked — text, then photo at natural ratio */}
-      <div className="md:hidden">
+      {/* Mobile/tablet (<lg): stacked — text, then photo at natural ratio */}
+      <div className="lg:hidden">
         <div className="mx-auto max-w-6xl px-6 pt-14">
           <p className="mb-4 font-mono text-xs uppercase tracking-[0.22em] text-[var(--color-stitch)]">
             Job Ref: KF-2026 — Jersey Repair &amp; Refresh
