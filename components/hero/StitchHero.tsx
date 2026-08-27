@@ -7,16 +7,15 @@ import { gsap } from "gsap";
 import { logger } from "@/lib/logger";
 
 /**
- * StitchHero — "Repair Sheet" hero for KitFix 2.0 (full-bleed photo edition).
+ * StitchHero — "Repair Sheet" hero for KitFix 2.0 (split edition).
  *
  * Design direction (frontend-design skill + sports-site research):
- * - Trending sport brands (Nike, JD Sports) use full-bleed photography with a
- *   minimal headline overlay + single CTA. Line-art SVG read as "illustration",
- *   not "premium". The hero is now a real photograph: a jersey on the workbench,
- *   tear + golden thread — the repair story told in one image.
- * - The jersey photo was generated with FLUX.1-dev on NVIDIA NIM
- *   (`public/hero-repair-wide.jpg`, 1344×768). Dark left side has negative
- *   space for the headline overlay.
+ * - Trending sport brands (Nike, JD Sports) lead with strong photography. The
+ *   jersey-on-the-workbench photo is the story: tear + golden thread, one image.
+ * - The photo was generated with FLUX.1-dev on NVIDIA NIM
+ *   (`public/hero-repair-wide.jpg`, 1344×768, 7:4). It is shown at its natural
+ *   ratio in a framed panel — NEVER cropped (a full-bleed cover crop cut the
+ *   top/bottom on wide screens; split layout fixes that).
  * - Signature stays: the gold stitch seam runs under the hero.
  * - Motion is deliberate: one orchestrated load moment (image settle, headline
  *   rise, seam draw), reduced-motion safe.
@@ -37,102 +36,105 @@ export default function StitchHero() {
       const tl = gsap.timeline({ delay: 0.1 });
       tl.fromTo(
         imgRef.current,
-        { scale: 1.08, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 1.4, ease: "power2.out" }
+        { scale: 1.04, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 1.1, ease: "power2.out" }
       );
       tl.fromTo(
         headlineRef.current,
-        { opacity: 0, y: 28 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
-        0.3
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" },
+        0.25
       );
       tl.fromTo(
         subRef.current,
-        { opacity: 0, y: 18 },
-        { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" },
-        0.5
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" },
+        0.4
       );
       tl.fromTo(
         ctaRef.current,
-        { opacity: 0, y: 14 },
-        { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
-        0.65
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" },
+        0.52
       );
       tl.fromTo(
         seamRef.current,
         { scaleX: 0 },
-        { scaleX: 1, duration: 0.8, ease: "power2.inOut" },
-        0.7
+        { scaleX: 1, duration: 0.7, ease: "power2.inOut" },
+        0.55
       );
     }, sectionRef);
 
-    logger.info("StitchHero mounted (full-bleed photo)");
+    logger.info("StitchHero mounted (split photo edition)");
     return () => ctx.revert();
   }, []);
 
   return (
     <section ref={sectionRef} className="relative overflow-hidden bg-[var(--color-pitch-deep)]">
-      {/* Full-bleed photo background */}
-      <div ref={imgRef} className="absolute inset-0">
-        <Image
-          src="/hero-repair-wide.jpg"
-          alt="Forest green jersey with a tear, golden thread and needle ready for repair on the workbench"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-[70%_50%]"
-        />
-        {/* Gradient overlay: dark on the left for text legibility, fading to transparent right */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(90deg, rgba(23,53,26,0.94) 0%, rgba(23,53,26,0.82) 28%, rgba(23,53,26,0.35) 55%, rgba(23,53,26,0.05) 100%)",
-          }}
-        />
-        {/* Vertical bottom fade so the seam reads clean */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 h-24"
-          style={{ background: "linear-gradient(0deg, var(--color-pitch-deep) 0%, transparent 100%)" }}
-        />
-      </div>
+      {/* Subtle radial glow behind the panel */}
+      <div
+        aria-hidden="true"
+        className="absolute -right-32 top-0 h-[480px] w-[480px] rounded-full"
+        style={{ background: "radial-gradient(circle, rgba(242,176,30,0.08) 0%, transparent 70%)" }}
+      />
 
-      {/* Content */}
-      <div className="relative max-w-6xl mx-auto px-6 pt-16 pb-20 md:pt-16 md:pb-20 min-h-[50vh] flex items-end">
-        <div className="max-w-xl">
-          <p className="font-mono text-xs tracking-[0.22em] uppercase text-[var(--color-stitch)] mb-4">
-            Job Ref: KF-2026 — Jersey Repair &amp; Refresh
-          </p>
-          <h1
-            ref={headlineRef}
-            className="font-display text-[clamp(2rem,4vw,3.5rem)] leading-[0.95] uppercase tracking-[-0.01em] text-[var(--color-thread)]"
-          >
-            Kit
-            <br />
-            Repaired.
-            <br />
-            <span className="text-[var(--color-stitch)]">Kit</span>
-            <br />
-            Refreshed.
-          </h1>
-          <p ref={subRef} className="mt-6 max-w-[46ch] text-[var(--color-thread-dim)] text-base md:text-lg leading-relaxed">
-            Jersey repairs, renumbers and badge restitches for{" "}
-            <span className="text-[var(--color-thread)] font-medium">SA clubs and schools</span>{" "}
-            — turned around in days, not weeks. Every stitch matches your
-            kit&apos;s original thread, weave and wear.
-          </p>
-          <div ref={ctaRef} className="mt-8 flex flex-wrap items-center gap-4">
-            <Link
-              href="/repair/new"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--color-stitch)] text-[var(--color-ink)] font-bold text-base uppercase tracking-wide hover:brightness-110 transition"
+      <div className="relative mx-auto max-w-6xl px-6 py-16 md:py-20">
+        <div className="grid items-center gap-10 md:grid-cols-[1fr_1.1fr] md:gap-12 lg:gap-16">
+          {/* Text */}
+          <div className="max-w-xl">
+            <p className="mb-4 font-mono text-xs uppercase tracking-[0.22em] text-[var(--color-stitch)]">
+              Job Ref: KF-2026 — Jersey Repair &amp; Refresh
+            </p>
+            <h1
+              ref={headlineRef}
+              className="font-display text-[clamp(2rem,4vw,3.5rem)] leading-[0.95] uppercase tracking-[-0.01em] text-[var(--color-thread)]"
             >
-              Kick Off a Repair
-            </Link>
-            <span className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-thread-dim)]">
-              Photos in · quote in 60 min
-            </span>
+              Kit
+              <br />
+              Repaired.
+              <br />
+              <span className="text-[var(--color-stitch)]">Kit</span>
+              <br />
+              Refreshed.
+            </h1>
+            <p ref={subRef} className="mt-6 max-w-[46ch] text-[var(--color-thread-dim)] text-base md:text-lg leading-relaxed">
+              Jersey repairs, renumbers and badge restitches for{" "}
+              <span className="font-medium text-[var(--color-thread)]">SA clubs and schools</span>{" "}
+              — turned around in days, not weeks. Every stitch matches your
+              kit&apos;s original thread, weave and wear.
+            </p>
+            <div ref={ctaRef} className="mt-8 flex flex-wrap items-center gap-4">
+              <Link
+                href="/repair/new"
+                className="inline-flex items-center gap-2 bg-[var(--color-stitch)] px-8 py-4 text-base font-bold uppercase tracking-wide text-[var(--color-ink)] transition hover:brightness-110"
+              >
+                Kick Off a Repair
+              </Link>
+              <span className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-thread-dim)]">
+                Photos in · quote in 60 min
+              </span>
+            </div>
+          </div>
+
+          {/* Photo — natural 7:4 ratio, never cropped */}
+          <div
+            ref={imgRef}
+            className="relative border border-[var(--color-pitch-line)] border-t-2 border-t-[var(--color-stitch)] bg-[var(--color-pitch)]/30 p-3"
+          >
+            <Image
+              src="/hero-repair-wide.jpg"
+              alt="Forest green jersey with a tear, golden thread and needle ready for repair on the workbench"
+              width={1344}
+              height={768}
+              priority
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="h-auto w-full"
+            />
+            {/* Gold corner stitch detail */}
+            <span
+              aria-hidden="true"
+              className="absolute -bottom-3 left-6 h-6 w-[1px] bg-[var(--color-stitch)]"
+            />
           </div>
         </div>
       </div>
