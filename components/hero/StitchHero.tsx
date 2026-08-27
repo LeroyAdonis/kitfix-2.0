@@ -100,14 +100,14 @@ export default function StitchHero() {
       </div>
 
       {/* Content */}
-      <div className="relative max-w-6xl mx-auto px-6 pt-24 pb-28 md:pt-32 md:pb-36 min-h-[60vh] flex items-end">
+      <div className="relative max-w-6xl mx-auto px-6 pt-16 pb-20 md:pt-16 md:pb-20 min-h-[50vh] flex items-end">
         <div className="max-w-xl">
-          <p className="font-mono text-xs tracking-[0.22em] uppercase text-[var(--color-stitch)] mb-6">
+          <p className="font-mono text-xs tracking-[0.22em] uppercase text-[var(--color-stitch)] mb-4">
             Job Ref: KF-2026 — Jersey Repair &amp; Refresh
           </p>
           <h1
             ref={headlineRef}
-            className="font-display text-[clamp(3rem,8vw,6rem)] leading-[0.92] uppercase tracking-[-0.01em] text-[var(--color-thread)]"
+            className="font-display text-[clamp(2rem,4vw,3.5rem)] leading-[0.95] uppercase tracking-[-0.01em] text-[var(--color-thread)]"
           >
             Kit
             <br />
@@ -117,13 +117,13 @@ export default function StitchHero() {
             <br />
             Refreshed.
           </h1>
-          <p ref={subRef} className="mt-8 max-w-[46ch] text-[var(--color-thread-dim)] text-base md:text-lg leading-relaxed">
+          <p ref={subRef} className="mt-6 max-w-[46ch] text-[var(--color-thread-dim)] text-base md:text-lg leading-relaxed">
             Jersey repairs, renumbers and badge restitches for{" "}
             <span className="text-[var(--color-thread)] font-medium">SA clubs and schools</span>{" "}
             — turned around in days, not weeks. Every stitch matches your
             kit&apos;s original thread, weave and wear.
           </p>
-          <div ref={ctaRef} className="mt-10 flex flex-wrap items-center gap-4">
+          <div ref={ctaRef} className="mt-8 flex flex-wrap items-center gap-4">
             <Link
               href="/repair/new"
               className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--color-stitch)] text-[var(--color-ink)] font-bold text-base uppercase tracking-wide hover:brightness-110 transition"

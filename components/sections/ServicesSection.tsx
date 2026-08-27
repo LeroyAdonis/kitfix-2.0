@@ -53,25 +53,26 @@ export function ServicesSection({ className = "" }: { className?: string }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 items-start gap-y-12 md:grid-cols-3 md:gap-x-8 lg:gap-x-12">
+        <div className="grid grid-cols-1 gap-y-12 md:grid-cols-3 md:gap-x-8 lg:gap-x-12">
           {SERVICES.map((service) => (
-            <div key={service.no} className="flex gap-6">
+            <div
+              key={service.no}
+              className="flex flex-col border border-[var(--color-pitch-line)] bg-[var(--color-pitch)]/30 p-6 md:p-8 border-t-2 border-t-[var(--color-stitch)]"
+            >
               <div
                 aria-hidden="true"
-                className="flex-none border border-[var(--color-stitch)]/50 bg-[var(--color-pitch)]/30 px-3 py-2"
+                className="mb-5 flex-none w-fit border border-[var(--color-stitch)]/50 px-3 py-1.5"
               >
                 <span className="font-mono text-sm tracking-[0.2em] text-[var(--color-stitch)]">
                   {service.no}
                 </span>
               </div>
-              <div>
-                <h3 className="mb-5 font-display text-xl uppercase text-[var(--color-thread)] md:mb-6">
-                  {service.title}
-                </h3>
-                <p className="text-sm text-[var(--color-thread-dim)] leading-relaxed">
-                  {service.description}
-                </p>
-              </div>
+              <h3 className="mb-4 font-display text-xl uppercase text-[var(--color-thread)]">
+                {service.title}
+              </h3>
+              <p className="text-sm text-[var(--color-thread-dim)] leading-relaxed">
+                {service.description}
+              </p>
             </div>
           ))}
         </div>
