@@ -41,7 +41,7 @@ const WHATSAPP_URL = "https://wa.me/27721234567";
 
 export function FaqSection({ className = "" }: { className?: string }) {
   return (
-    <section className={`px-6 py-16 md:py-24 ${className}`}>
+    <section id="faq" className={`px-6 py-16 md:py-24 ${className}`}>
       <div className="max-w-6xl mx-auto grid grid-cols-1 gap-y-12 md:grid-cols-2 md:gap-x-12 lg:grid-cols-[.75fr,1fr] lg:gap-x-20">
         <div>
           <p className="mb-3 font-mono text-xs uppercase tracking-[0.2em] text-[var(--color-stitch)]">

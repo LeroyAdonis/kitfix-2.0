@@ -75,7 +75,7 @@ function Stars() {
 
 export function TestimonialsSection({ className = "" }: { className?: string }) {
   return (
-    <section className={`px-6 py-16 md:py-24 ${className}`}>
+    <section id="testimonials" className={`px-6 py-16 md:py-24 ${className}`}>
       <div className="max-w-6xl mx-auto">
         <div className="mb-12 md:mb-18 lg:mb-20">
           <div className="mx-auto w-full max-w-2xl text-center">

@@ -2,13 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 
 const NAV_LINKS = [
   { label: "Services", href: "#services" },
   { label: "Process", href: "#process" },
   { label: "Pricing", href: "#pricing" },
+  { label: "Reviews", href: "#testimonials" },
+  { label: "FAQ", href: "#faq" },
 ];
 
 const WHATSAPP_URL = "https://wa.me/27721234567";
@@ -21,9 +23,18 @@ const textLink =
 
 export default function Header() {
   const router = useRouter();
+  const pathname = usePathname();
   const { data: session } = authClient.useSession();
   const loggedIn = Boolean(session);
   const [open, setOpen] = useState(false);
+
+  const handleLogoClick = () => {
+    if (pathname === "/") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      router.push("/");
+    }
+  };
 
   return (
     <header className="border-b border-[var(--color-pitch-line)]/40 bg-[var(--color-pitch-deep)] sticky top-0 z-50">
@@ -33,7 +44,7 @@ export default function Header() {
             type="button"
             aria-label="KitFix home"
             className="flex items-center gap-3 text-left"
-            onClick={() => router.push("/")}
+            onClick={handleLogoClick}
           >
             <div className="w-9 h-9 bg-[var(--color-stitch)] flex items-center justify-center">
               <span className="text-[var(--color-ink)] font-display text-sm">KF</span>
