@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { reportAiFailure } from "@/lib/inngest/report-failure";
 
 // Vision calls routinely spike past the default 10s function limit (Vercel
 // Hobby default). Without this, production aborts before NIM can answer.
@@ -107,6 +108,11 @@ export async function POST(req: Request) {
   const apiKey = process.env.NVIDIA_API_KEY;
   if (!apiKey) {
     logger.error(`[analyze] failed stage=config status=- latency=${Date.now() - started}ms error=NVIDIA_API_KEY not set`);
+    await reportAiFailure({
+      feature: "analyze",
+      model: MODEL,
+      errorMessage: "NVIDIA_API_KEY not set — vision analysis cannot run",
+    });
     return NextResponse.json({ error: "analysis_failed" }, { status: 500 });
   }
 
@@ -196,6 +202,11 @@ export async function POST(req: Request) {
 
     if (!nimRes.ok) {
       logger.error(`[analyze] failed stage=nim status=${nimRes.status} latency=${Date.now() - started}ms error=NIM returned ${nimRes.status}`);
+      await reportAiFailure({
+        feature: "analyze",
+        model: MODEL,
+        errorMessage: `NVIDIA vision API returned HTTP ${nimRes.status}`,
+      });
       return NextResponse.json({ error: "analysis_failed" }, { status: 500 });
     }
 
@@ -203,6 +214,11 @@ export async function POST(req: Request) {
     const content = nimData?.choices?.[0]?.message?.content;
     if (typeof content !== "string") {
       logger.error(`[analyze] failed stage=nim-parse status=- latency=${Date.now() - started}ms error=NIM response content not a string`);
+      await reportAiFailure({
+        feature: "analyze",
+        model: MODEL,
+        errorMessage: "NVIDIA response contained no message content",
+      });
       return NextResponse.json({ error: "analysis_failed" }, { status: 500 });
     }
 
@@ -217,6 +233,11 @@ export async function POST(req: Request) {
     const analysis = validateAnalysis(parsed);
     if (!analysis) {
       logger.error(`[analyze] failed stage=validate-analysis status=- latency=${Date.now() - started}ms error=validateAnalysis returned null`);
+      await reportAiFailure({
+        feature: "analyze",
+        model: MODEL,
+        errorMessage: "NVIDIA analysis failed our validation (missing/invalid fields)",
+      });
       return NextResponse.json({ error: "analysis_failed" }, { status: 500 });
     }
 
@@ -225,6 +246,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ ...analysis, model: MODEL });
   } catch (e) {
     logger.error(`[analyze] failed stage=unhandled status=- latency=${Date.now() - started}ms error=${e instanceof Error ? e.message : String(e)}`);
+    await reportAiFailure({
+      feature: "analyze",
+      model: MODEL,
+      errorMessage: e instanceof Error ? e.message : String(e),
+    });
     return NextResponse.json({ error: "analysis_failed" }, { status: 500 });
   }
 }
