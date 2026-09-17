@@ -224,7 +224,7 @@ export default function HomePage() {
       <footer className="border-t border-[var(--color-pitch-line)]/40 px-6 py-8">
         <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4 font-mono text-xs uppercase tracking-[0.16em] text-[var(--color-thread-dim)]">
           <span>KitFix — Johannesburg · Cape Town</span>
-          <span>info@kitfix.co.za · 060 000 0000</span>
+          <span>info@mykitfix.co.za</span>
         </div>
       </footer>
     </div>
