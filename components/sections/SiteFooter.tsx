@@ -30,7 +30,7 @@ const COLUMNS: Column[] = [
 const CONTACTS = [
   { label: "WhatsApp", href: WHATSAPP_URL, external: true, icon: MessageCircle },
   { label: "Phone", href: "tel:+27600000000", external: false, icon: Phone },
-  { label: "Email", href: "mailto:info@kitfix.co.za", external: false, icon: Mail },
+  { label: "Email", href: "mailto:info@mykitfix.co.za", external: false, icon: Mail },
 ];
 
 export function SiteFooter({ className = "" }: { className?: string }) {
@@ -67,7 +67,7 @@ export function SiteFooter({ className = "" }: { className?: string }) {
                 </p>
                 <p className="text-sm text-[var(--color-thread-dim)]">
                   <a href="tel:+27600000000" className="block hover:text-[var(--color-stitch)] transition-colors">060 000 0000</a>
-                  <a href="mailto:info@kitfix.co.za" className="block hover:text-[var(--color-stitch)] transition-colors">info@kitfix.co.za</a>
+                  <a href="mailto:info@mykitfix.co.za" className="block hover:text-[var(--color-stitch)] transition-colors">info@mykitfix.co.za</a>
                 </p>
               </div>
             </div>
