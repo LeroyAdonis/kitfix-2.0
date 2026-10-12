@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="KitFix">
+  <title>KitFix</title>
+  <!-- concept 7: kit silhouette. A bold jersey in gold on ink with the repair seam stitched across the
+       chest. The clearest at a glance about what the business does, and the only one that reads as a
+       garment rather than a symbol. -->
+  <rect width="512" height="512" fill="#0F1C10" />
+  <!-- body -->
+  <path d="M176 122 L336 122 L336 118 Q336 106 348 106 L388 106 Q400 106 400 118 L400 210 Q400 222
+           388 222 L352 222 L352 400 Q352 414 338 414 L174 414 Q160 414 160 400 L160 222 L124 222
+           Q112 222 112 210 L112 118 Q112 106 124 106 L164 106 Q176 106 176 118 Z" fill="#F2B01E" />
+  <!-- neckline -->
+  <path d="M212 122 Q256 168 300 122" fill="none" stroke="#0F1C10" stroke-width="26" stroke-linecap="round" />
+  <!-- the repair seam, stitched across the chest -->
+  <path d="M160 262 L352 262" fill="none" stroke="#EFE9D8" stroke-width="22" stroke-linecap="round"
+        stroke-dasharray="34 22" />
+</svg>

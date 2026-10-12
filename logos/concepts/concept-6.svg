@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="KitFix">
+  <title>KitFix</title>
+  <!-- concept 6: the tile is the patch. Gold ground, an inset stitch border sewn in ink, one cream seam
+       running across the repair. Reads at 16px because every element is a thick shape, and it says
+       "repaired" without drawing a jersey. -->
+  <rect width="512" height="512" fill="#F2B01E" />
+  <rect x="66" y="66" width="380" height="380" fill="none" stroke="#0F1C10" stroke-width="34"
+        stroke-dasharray="112 54" />
+  <path d="M92 424 L420 96" fill="none" stroke="#EFE9D8" stroke-width="46" stroke-linecap="round" />
+  <path d="M92 424 L420 96" fill="none" stroke="#0F1C10" stroke-width="16" stroke-dasharray="52 44"
+        stroke-linecap="round" />
+</svg>

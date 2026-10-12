@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="KitFix">
+  <title>KitFix</title>
+  <!-- concept 8: the stitched K. Built from thick stroke segments rather than a font, so it is identical
+       everywhere and needs no font to render. The two arms are separate dashes: a stitched letter. -->
+  <rect width="512" height="512" fill="#F2B01E" />
+  <path d="M166 92 L166 412" fill="none" stroke="#0F1C10" stroke-width="62" stroke-linecap="butt" />
+  <!-- the arms run long and meet the stem at one junction, so the letter reads as a K and not as
+       loose blocks; each arm is split once, which is the stitch. The coordinates are integer-centred:
+       the ink box is 241 wide from x=135 and 384 tall from y=64, so the letter sits dead centre in the
+       512 square (verified by measuring the rendered ink, not by eye). -->
+  <path d="M192 248 L266 174" fill="none" stroke="#0F1C10" stroke-width="60" stroke-linecap="round" />
+  <path d="M282 158 L346 94" fill="none" stroke="#0F1C10" stroke-width="60" stroke-linecap="round" />
+  <path d="M192 264 L266 338" fill="none" stroke="#0F1C10" stroke-width="60" stroke-linecap="round" />
+  <path d="M282 354 L346 418" fill="none" stroke="#0F1C10" stroke-width="60" stroke-linecap="round" />
+</svg>
