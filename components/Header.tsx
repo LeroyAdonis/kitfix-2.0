@@ -35,9 +35,18 @@ export default function Header() {
             className="flex items-center gap-3 text-left"
             onClick={() => router.push("/")}
           >
-            <div className="w-9 h-9 bg-[var(--color-stitch)] flex items-center justify-center">
-              <span className="text-[var(--color-ink)] font-display text-sm">KF</span>
-            </div>
+            {/* The approved stitched-K mark. It replaced a gold tile holding the letters "KF": the mark
+                says the same thing with a shape, carries the stitch dash that DESIGN.md calls this brand's
+                signature element, and survives being shrunk to a favicon. 36px, sharp corners, no rounding
+                - rounded corners are the one thing the design system rules out. */}
+            <img
+              src="/logo.svg"
+              alt=""
+              aria-hidden="true"
+              width={36}
+              height={36}
+              className="w-9 h-9 shrink-0"
+            />
             <span className="font-display text-lg text-[var(--color-thread)] uppercase tracking-wide">
               KitFix<span className="text-[var(--color-stitch)]">.</span>
             </span>
