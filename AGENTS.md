@@ -38,6 +38,52 @@ KitFix is a jersey repair service for South African sports clubs and individuals
 
 > **⚠️ TypeScript:** `ignoreBuildErrors: true` is set in next.config.ts. Always run `npx tsc --noEmit` manually before committing.
 
+## ⛔ MANDATORY WORK LOOP — every agent, every ticket, no exceptions
+
+Tickets arrive from Paperclip (`DIG-*`). Work them like this and do not improvise a different process:
+
+**1. GOAL FIRST.** Open with one line: the ticket's goal and its acceptance criteria, in your own words.
+A goal is a *result*, not an activity — "the webhook persists the charged amount, proven by a test that
+reads it back", never "update the webhook". If the acceptance criteria are ambiguous or contradict the
+code, stop and write an OPEN CALL instead of guessing. Deciding what "done" means is not your job; it is
+the operator's.
+
+**2. LOOP UNTIL THE GOAL IS MET — using this repo's own skills.** AI Blueprint lives in
+`.agents/skills/`. Use it rather than freelancing:
+
+| Situation | Skills, in order |
+|---|---|
+| New feature | `feature` → `implement` → `check` → `complete` |
+| Bug / defect | `fix` → `implement` → `check` → `complete` |
+| Found while working | `audit` (record the finding, do not silently expand scope) |
+| Read-only questions | `brief`, `status`, `try`, `doctor` |
+
+Read `blueprint/context/current-feature.md` before writing code and keep it current. The loop ends when
+acceptance is proven — not when the code "looks right", and not after one attempt. Re-read your own diff
+against the acceptance criteria and close the gap.
+
+**3. VERIFY, WITH COMMANDS.** Every claim needs the command and its real output behind it:
+`npm test` (one allowed red: `tests/business-placeholders.test.ts`, which is expected to fail until the
+owner supplies real business details — never "fix" it by deleting it), `npx tsc --noEmit`, and
+`CSS_TRANSFORMER_WASM=true npm run build` for anything touching routes. Never report a test result you
+did not run.
+
+**4. END WITH A DECISIONS BLOCK.** INTENT / ACCEPTANCE / DECISIONS ("chose X over Y because Z") /
+REJECTED / OPEN CALLS / EVIDENCE (command + output) / ACCEPTED RISK. The operator reviews decisions
+first and opens code only where a decision points.
+
+**5. COMMIT, NEVER PUSH.** Commit locally on the working branch — that is the handover. Never push,
+merge or run any deploy: `origin/main` auto-deploys to the live site and this repo still contains
+placeholders.
+
+**6. DO NOT CLOSE YOUR OWN TICKET.** Report and stop. The operator verifies independently and closes it.
+"Agents verify, people decide."
+
+**Running on a free lane?** You may be dispatched through `pi-chain`, which tries a free model first and
+falls back to a paid one only when the free lane does no real work. If you find yourself with no repo
+context, no ticket text, or no tools available, say so immediately and stop — do not answer from
+imagination. A cheerful non-answer costs more than a failure, because a failure is visible.
+
 ## Architecture
 
 ### Routes
