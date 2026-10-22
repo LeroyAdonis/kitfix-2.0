@@ -36,7 +36,7 @@ const COLUMNS: Column[] = [
     links: [
       { title: "Cancellation & Refunds", url: "/refund-policy" },
       { title: "Terms of Service", url: "/terms" },
-      { title: "Contact", url: "mailto:info@mykitfix.co.za" },
+      { title: "Contact", url: "/contact" },
     ],
   },
 ];
