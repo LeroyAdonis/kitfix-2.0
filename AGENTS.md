@@ -29,6 +29,7 @@ KitFix is a jersey repair service for South African sports clubs and individuals
 | `npm run build` | Production build (LightningCSS WASM, env set in script) |
 | `npm run start` | Serve production build |
 | `npm run lint` | ESLint (flat config: `eslint.config.mjs`) |
+| `npm test` | Vitest suite (`tests/**/*.test.ts`, no network/credentials needed) |
 | `npx convex dev` | Start Convex dev server (backend) |
 | `npx convex deploy` | Deploy Convex functions to production |
 | `npx tsc --noEmit` | Type-check |
@@ -272,7 +273,9 @@ These `.hermes/tasks/` plans exist but are NOT implemented:
 - **Type errors** — run `npx tsc --noEmit` before committing (type checking is clean; `ignoreBuildErrors` was removed from next.config.ts)
 - **LightningCSS WASM** — `CSS_TRANSFORMER_WASM=true` required for build. `lightningcss-wasm` is in deps.
 - **Admin auth is plaintext** — `ADMIN_PASSWORD` compared directly. No hashing. Upgrade before real users.
-- **No test runner** — no vitest, jest, or playwright configured. Tests need to be set up.
+- **Tests — vitest is configured** (`vitest.config.ts`, `npm test`). Three files cover the money paths: Paystack webhook signature, the confirmed-quote guard on `/api/payments/initialize`, and the `lib/business.ts` placeholder guard. Network calls are stubbed via `vi.stubGlobal("fetch", …)` — tests run offline with no credentials.
+- **⚠️ `npm test` is expected to exit non-zero until the real business details land** — `tests/business-placeholders.test.ts` fails by design and names the 7 missing fields in `lib/business.ts` (phone, phoneE164, whatsapp, address.*). Every other test must pass. Do not "fix" this by deleting the test; fix `lib/business.ts`.
+- **⚠️ Local `npm install` silently skips devDependencies** — this agent environment exports `NODE_ENV=production`, and npm then defaults to `omit=dev`, so `vitest`, `typescript` and `eslint` are never installed and `npm test` / `npx tsc` fail with "command not found". Install with `npm install --include=dev`. Also: `.npmrc` sets `legacy-peer-deps=true`, so vitest's **required** peer `vite` is not auto-installed — it is listed explicitly in devDependencies for that reason.
 - **Path alias** — `@/*` maps to `./*` (project root, not `./src/*`)
 - **GSAP is client-only** — all GSAP code must be in `"use client"` components. The hero component is the only user.
 - **Customer auth is live** — `/sign-in` and `/sign-up` are wired to Better Auth + Convex. Admin uses simple cookie auth instead (`kitfix_admin`).
