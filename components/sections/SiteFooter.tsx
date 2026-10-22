@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { Mail, MessageCircle, Phone } from "lucide-react";
 
-const WHATSAPP_URL = "https://wa.me/27721234567";
+import { BUSINESS, businessAddressLines } from "@/lib/business";
+
+// Was hardcoded `https://wa.me/27721234567` — a placeholder number, like the `060 000 0000` phone
+// below. Paystack's activation review requires real, reachable business contact details, so both now
+// come from lib/business.ts and a missing value is a visible build-time constant, not a fake number.
+const WHATSAPP_URL = `https://wa.me/${BUSINESS.whatsapp}`;
 
 type Column = {
   links: { title: string; url: string }[];
@@ -25,12 +30,21 @@ const COLUMNS: Column[] = [
       { title: "Admin", url: "/admin" },
     ],
   },
+  // Required by the payment provider: business details and the cancellation/refund policy must be
+  // reachable from every page, not buried in a checkout flow.
+  {
+    links: [
+      { title: "Cancellation & Refunds", url: "/refund-policy" },
+      { title: "Terms of Service", url: "/terms" },
+      { title: "Contact", url: "mailto:info@mykitfix.co.za" },
+    ],
+  },
 ];
 
 const CONTACTS = [
   { label: "WhatsApp", href: WHATSAPP_URL, external: true, icon: MessageCircle },
-  { label: "Phone", href: "tel:+27600000000", external: false, icon: Phone },
-  { label: "Email", href: "mailto:info@mykitfix.co.za", external: false, icon: Mail },
+  { label: "Phone", href: `tel:${BUSINESS.phoneE164}`, external: false, icon: Phone },
+  { label: "Email", href: `mailto:${BUSINESS.email}`, external: false, icon: Mail },
 ];
 
 export function SiteFooter({ className = "" }: { className?: string }) {
@@ -56,9 +70,12 @@ export function SiteFooter({ className = "" }: { className?: string }) {
                   Workshop
                 </p>
                 <p className="text-sm text-[var(--color-thread-dim)] leading-relaxed">
-                  Johannesburg · Cape Town
-                  <br />
-                  Door-to-door courier across South Africa
+                  {businessAddressLines().map((line) => (
+                    <span key={line} className="block">
+                      {line}
+                    </span>
+                  ))}
+                  <span className="block mt-1">Door-to-door courier across South Africa</span>
                 </p>
               </div>
               <div>
@@ -66,8 +83,12 @@ export function SiteFooter({ className = "" }: { className?: string }) {
                   Contact
                 </p>
                 <p className="text-sm text-[var(--color-thread-dim)]">
-                  <a href="tel:+27600000000" className="block hover:text-[var(--color-stitch)] transition-colors">060 000 0000</a>
-                  <a href="mailto:info@mykitfix.co.za" className="block hover:text-[var(--color-stitch)] transition-colors">info@mykitfix.co.za</a>
+                  <a href={`tel:${BUSINESS.phoneE164}`} className="block hover:text-[var(--color-stitch)] transition-colors">
+                    {BUSINESS.phone}
+                  </a>
+                  <a href={`mailto:${BUSINESS.email}`} className="block hover:text-[var(--color-stitch)] transition-colors">
+                    {BUSINESS.email}
+                  </a>
                 </p>
               </div>
             </div>
@@ -111,7 +132,10 @@ export function SiteFooter({ className = "" }: { className?: string }) {
 
         <div className="text-small flex flex-col-reverse items-start justify-between pt-6 pb-4 md:flex-row md:items-center md:pt-8 md:pb-0">
           <p className="mt-8 font-mono text-xs uppercase tracking-[0.14em] text-[var(--color-thread-dim)] md:mt-0">
-            © 2026 KitFix — Kit repair &amp; refresh for SA clubs and schools
+            © 2026 {BUSINESS.legalName} · Reg {BUSINESS.registration}
+            <span className="block mt-1 normal-case tracking-normal">
+              {BUSINESS.name} — kit repair &amp; refresh for SA clubs and schools
+            </span>
           </p>
           <ul className="grid grid-flow-row grid-cols-[max-content] justify-center gap-y-4 md:grid-flow-col md:gap-x-8 md:gap-y-0">
             <li>
