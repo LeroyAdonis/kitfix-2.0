@@ -1,9 +1,13 @@
 # DIG-17 — test harness + money-path coverage
 
-**Status:** implemented and committed (`08eb638`, `df9cc21`). Control-plane close pending: the
-heartbeat run that did this work had no source issue, so Paperclip refused every issue write
-(`cross_issue_influence_run_context_required`). The next issue-bound wake should close DIG-17
-and paste this file as the evidence comment.
+**Status:** complete. Implemented and committed (`08eb638`, `df9cc21`), and pasted as the evidence
+comment on DIG-17 (comment `24d0c550`). The first heartbeat that did this work had no source issue,
+so Paperclip refused every issue write (`cross_issue_influence_run_context_required`); the following
+issue-bound wake closed the ticket.
+
+**Commit, never push:** this work is committed locally on `feat/relume-landing` only. `origin/main`
+is the Vercel production deploy and `lib/business.ts` is still placeholders, so nothing was pushed,
+merged, or deployed.
 
 ## What was built
 
