@@ -20,8 +20,45 @@
   - [x] 12a. Product/inventory management — shipped (archive: `blueprint/history/features/12a-admin-store.md`)
   - [ ] 12b. Order management — deferred until checkout feature #13
 - [ ] 13. **Checkout & orders flow** - end-to-end checkout experience for repair services
-- [ ] 14. **Courier integration** - integrate with a SA courier service for kit pickup and delivery
-- [ ] 15. **Ecommerce storefront** - browseable product/service catalog with cart
-- [ ] 16. **Storefront UI pages** - additional pages for the ecommerce storefront
+- [ ] 14. **Courier integration** - integrate with a SA courier service for kit pickup and delivery — **DEFERRED**, see [Scope decisions](#scope-decisions)
+- [x] 15. ~~**Ecommerce storefront** - browseable product/service catalog with cart~~ — **CUT**, see [Scope decisions](#scope-decisions)
+- [x] 16. ~~**Storefront UI pages** - additional pages for the ecommerce storefront~~ — **CUT**, see [Scope decisions](#scope-decisions)
 - [ ] 17. **Design phase 2 pages** - additional page designs beyond the landing page (pricing details, about, contact)
-- [ ] 18. **Repair-flow courier** - end-to-end repair flow including courier pickup/dropoff scheduling
+- [ ] 18. **Repair-flow courier** - end-to-end repair flow including courier pickup/dropoff scheduling — **DEFERRED**, see [Scope decisions](#scope-decisions)
+
+## Scope decisions
+
+Decisions that are settled and should not be re-litigated. Newest first. A cut item may be
+reopened only by a new decision recorded here.
+
+### 2026-10-22 — Cut the ecommerce storefront; defer the courier API (DIG-20)
+
+**CUT — 15. Ecommerce storefront, 16. Storefront UI pages.** KitFix repairs kit for clubs and
+schools; it does not sell products. A product catalogue plus cart is a second business (stock,
+shipping, returns, tax) and none of it is needed to earn the first revenue, which comes from repair
+jobs already flowing through `/repair/new` → quote → Paystack checkout. These items are removed from
+the roadmap, not parked on it. Reopening requires a deliberate decision to start a retail business —
+not a side effect of another feature.
+
+**DEFERRED — 14. Courier integration, 18. Repair-flow courier.** At launch volume the courier is
+booked by hand: the admin already sees every job, its status and its customer contact details, so a
+manual booking is one step in a workflow that already exists. Integrating a courier API before there
+is volume is building for scale we do not have — it fixes an operational bottleneck that has not
+happened yet.
+
+**Reopen trigger (14 and 18):** manual booking has actually become the constraint. Concretely, when
+**either** of these is true:
+
+- sustained volume above ~20 live jobs per week makes hand-booking take longer than the repair work
+  itself, **or**
+- more than a handful of jobs per month are lost or delayed because a pickup could not be arranged
+  fast enough.
+
+Until one of those is measured, 14/18 stay deferred. `repair-flow-courier` stays unbuilt.
+
+**KEEP — 13. Checkout & orders flow,** because the payment webhook does lose information the
+business may need. Evidence and the specific gap are recorded on DIG-20: the webhook persists job →
+paid + Paystack reference + server receipt time, but **not the amount actually charged**, and the
+amount can only be inferred from `jobs.quote`, which admin override can still change. Who paid,
+reference and when are recoverable today. No schema change is made in this decision — it is recorded
+as a follow-up, not implemented here.
