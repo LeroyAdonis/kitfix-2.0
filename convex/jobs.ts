@@ -259,17 +259,55 @@ export const markPaid = mutation({
   args: {
     jobId: v.id("jobs"),
     reference: v.string(),
+    // Minor units (cents) as reported by Paystack. Optional: the verify path
+    // marks a job paid without re-reading the charge, and older callers omit it.
+    amount: v.optional(v.number()),
+    currency: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const job = await ctx.db.get(args.jobId);
     if (!job) throw new Error("Job not found");
+
+    if (
+      args.amount !== undefined &&
+      (!Number.isInteger(args.amount) || args.amount < 0)
+    ) {
+      throw new Error("amount must be a non-negative integer in minor units");
+    }
+
+    const amount = args.amount;
+    const currency =
+      typeof args.currency === "string" && args.currency.trim()
+        ? args.currency.trim().toUpperCase()
+        : undefined;
+
     if (job.paymentStatus === "paid" && job.paymentReference === args.reference) {
+      // Paystack retries charge.success. This is the same charge: never double-write
+      // and never rewrite the amount/paidAt we already recorded. The one thing a
+      // retry may do is backfill amount/currency for a job marked paid by an older
+      // path that did not carry them.
+      const fill: {
+        paymentAmount?: number;
+        paymentCurrency?: string;
+      } = {};
+      if (job.paymentAmount === undefined && amount !== undefined) {
+        fill.paymentAmount = amount;
+      }
+      if (job.paymentCurrency === undefined && currency !== undefined) {
+        fill.paymentCurrency = currency;
+      }
+      if (Object.keys(fill).length > 0) {
+        await ctx.db.patch(args.jobId, fill);
+      }
       return { ok: true, alreadyPaid: true };
     }
+
     await ctx.db.patch(args.jobId, {
       paymentStatus: "paid",
       paymentReference: args.reference,
       paidAt: Date.now(),
+      ...(amount !== undefined ? { paymentAmount: amount } : {}),
+      ...(currency !== undefined ? { paymentCurrency: currency } : {}),
     });
     return { ok: true, alreadyPaid: false };
   },

@@ -51,12 +51,31 @@ export async function GET(req: Request) {
         );
         const data = await res.json();
         if (data?.data?.status === "success") {
+          // Carry the charged amount across too, so the verify path leaves the same
+          // reconciliation record as the webhook path.
+          const charged = data?.data?.amount;
+          const amount =
+            typeof charged === "number" &&
+            Number.isInteger(charged) &&
+            charged >= 0
+              ? charged
+              : undefined;
+          const chargedCurrency = data?.data?.currency;
+          const currency =
+            typeof chargedCurrency === "string" && chargedCurrency.trim()
+              ? chargedCurrency.trim().toUpperCase()
+              : undefined;
           await fetch(`${convexUrl}/api/mutation`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               path: "jobs:markPaid",
-              args: { jobId, reference: job.paymentReference },
+              args: {
+                jobId,
+                reference: job.paymentReference,
+                ...(amount !== undefined ? { amount } : {}),
+                ...(currency !== undefined ? { currency } : {}),
+              },
             }),
           });
           return NextResponse.json({ paid: true, via: "paystack_verify" });

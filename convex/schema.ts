@@ -50,6 +50,12 @@ export default defineSchema({
       v.union(v.literal("unpaid"), v.literal("paid")),
     ),
     paymentReference: v.optional(v.string()),
+    // What Paystack actually charged — our own record, not an assumption from
+    // the quote. Minor units (cents), straight from charge.success data.amount.
+    // Optional + additive: rows paid before this field existed stay valid.
+    paymentAmount: v.optional(v.number()),
+    // ISO currency code from charge.success data.currency (e.g. "ZAR").
+    paymentCurrency: v.optional(v.string()),
     paidAt: v.optional(v.number()),
     status: v.union(
       v.literal("new"),

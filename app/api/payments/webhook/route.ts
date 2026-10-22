@@ -20,7 +20,12 @@ export async function POST(req: Request) {
 
   let event: {
     event?: string;
-    data?: { reference?: string; metadata?: { jobId?: string } };
+    data?: {
+      reference?: string;
+      amount?: unknown;
+      currency?: unknown;
+      metadata?: { jobId?: string };
+    };
   };
   try {
     event = JSON.parse(raw);
@@ -32,6 +37,20 @@ export async function POST(req: Request) {
   if (event?.event === "charge.success") {
     const ref = event.data?.reference;
     const jobId = event.data?.metadata?.jobId;
+    // What Paystack actually charged, in minor units (cents). Filter here so a
+    // malformed amount can never overwrite a good record with NaN/garbage.
+    const rawAmount = event.data?.amount;
+    const amount =
+      typeof rawAmount === "number" &&
+      Number.isInteger(rawAmount) &&
+      rawAmount >= 0
+        ? rawAmount
+        : undefined;
+    const rawCurrency = event.data?.currency;
+    const currency =
+      typeof rawCurrency === "string" && rawCurrency.trim()
+        ? rawCurrency.trim().toUpperCase()
+        : undefined;
     if (ref && jobId) {
       try {
         const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
@@ -41,7 +60,12 @@ export async function POST(req: Request) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               path: "jobs:markPaid",
-              args: { jobId, reference: ref },
+              args: {
+                jobId,
+                reference: ref,
+                ...(amount !== undefined ? { amount } : {}),
+                ...(currency !== undefined ? { currency } : {}),
+              },
             }),
           });
           if (!res.ok) {
