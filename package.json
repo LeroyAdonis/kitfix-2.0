@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "CSS_TRANSFORMER_WASM=true next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@convex-dev/better-auth": "^0.12.5",
@@ -35,6 +37,8 @@
     "eslint": "^9",
     "eslint-config-next": "^16.2.9",
     "tailwindcss": "^4",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "vite": "^7.3.7",
+    "vitest": "^5.0.5"
   }
 }
