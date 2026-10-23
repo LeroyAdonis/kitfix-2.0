@@ -28,6 +28,37 @@ export default function JobDetailPage() {
   const [quoteInput, setQuoteInput] = useState("");
   const [quoteSaved, setQuoteSaved] = useState(false);
   const [confirmArchive, setConfirmArchive] = useState(false);
+  const [quoteEmail, setQuoteEmail] = useState<string | null>(null);
+
+  /**
+   * Confirm the quote, then email it. Convex mutations cannot send SMTP, so the mail is dispatched
+   * from /api/email/quote (admin-cookie protected). A mail failure must never undo the confirmation —
+   * it is reported next to the button instead.
+   */
+  const handleConfirmQuote = async () => {
+    if (!job) return;
+    await confirmQuote({ id: job._id });
+    if (!job.customerEmail) {
+      setQuoteEmail("no customer email on file — quote confirmed, nothing sent");
+      return;
+    }
+    try {
+      const res = await fetch("/api/email/quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: job.customerEmail,
+          name: job.customerName,
+          reference: String(job._id).slice(-8).toUpperCase(),
+          amountRands: job.quote,
+        }),
+      });
+      const data = await res.json();
+      setQuoteEmail(data.sent ? "quote emailed to the customer" : `quote saved; email not sent: ${data.reason}`);
+    } catch {
+      setQuoteEmail("quote saved; email request failed");
+    }
+  };
   const archiveResetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -358,12 +389,17 @@ export default function JobDetailPage() {
                 </div>
                 <div className="mt-3">
                   {job.quoteStatus !== "confirmed" && job.quote != null ? (
-                    <button
-                      onClick={() => confirmQuote({ id: job._id })}
-                      className="px-4 py-2 bg-[var(--color-stitch)] text-[var(--color-ink)] font-mono text-xs uppercase tracking-wider hover:brightness-110"
-                    >
-                      Confirm quote
-                    </button>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <button
+                        onClick={handleConfirmQuote}
+                        className="px-4 py-2 bg-[var(--color-stitch)] text-[var(--color-ink)] font-mono text-xs uppercase tracking-wider hover:brightness-110"
+                      >
+                        Confirm quote &amp; email customer
+                      </button>
+                      {quoteEmail && (
+                        <span className="font-mono text-xs text-[var(--color-thread-dim)]">{quoteEmail}</span>
+                      )}
+                    </div>
                   ) : (
                     <span className="font-mono text-xs text-[#7fb3d5]">Confirmed ✓</span>
                   )}
