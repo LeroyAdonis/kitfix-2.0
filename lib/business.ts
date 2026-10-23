@@ -31,8 +31,16 @@ export const BUSINESS = {
   phone: "076 332 2026",
   /** Same number in E.164 for the tel: link. */
   phoneE164: "+27763322026",
-  /** WhatsApp number in international format without + or spaces — owner confirmed same as phone. */
-  whatsapp: "2763322026",
+  /**
+   * WhatsApp number in international format without + or spaces — owner confirmed same as phone.
+   *
+   * Was "2763322026" (10 digits) until 2026-10-23: the leading 0 was stripped from 0763322026 and a
+   * 27 prefixed, but the 7 of the mobile prefix was lost, so every wa.me link opened a chat request
+   * for a number that does not exist and WhatsApp answered "not a valid phone number".
+   * Derivation that is actually correct: 0**76**3322026 -> drop 0 -> 763322026 -> prefix 27 -> 27763322026.
+   * `tests/business-phone-validity.test.ts` now asserts the structure so this cannot recur.
+   */
+  whatsapp: "27763322026",
 
   /**
    * The business address Paystack will see. Street, suburb, city, postal code.
