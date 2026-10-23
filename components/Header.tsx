@@ -10,7 +10,10 @@ const NAV_LINKS = [
   { label: "Services", href: "#services" },
   { label: "Process", href: "#process" },
   { label: "Pricing", href: "#pricing" },
-  { label: "Reviews", href: "#testimonials" },
+  // "Reviews" was removed 2026-10-23: it pointed at #testimonials, and the TestimonialsSection is
+  // deliberately not rendered (invented quotes and stock portraits on a business with no completed
+  // jobs). A nav link to a section that does not exist is a broken promise, not a placeholder.
+  // Put it back when there are real, attributed customer quotes to link to.
   { label: "FAQ", href: "#faq" },
 ];
 
