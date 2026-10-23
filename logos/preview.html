@@ -1,136 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KitFix Logo — Concepts</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    padding: 2rem;
-    transition: background-color 0.3s, color 0.3s;
-  }
-  body.light { background: #f5f5f5; color: #333; }
-  body.dark { background: #0A0A0B; color: #E8E8E3; }
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-  h1 { font-size: 1.5rem; font-weight: 600; }
-  h1 span { color: #00E859; }
-  .toggle {
-    padding: 0.5rem 1rem;
-    border: 1px solid currentColor;
-    border-radius: 6px;
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
-    font-size: 0.875rem;
-  }
-  .subtitle {
-    width: 100%;
-    font-size: 0.875rem;
-    opacity: 0.6;
-    margin-top: -0.5rem;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
-    gap: 1.5rem;
-  }
-  .card {
-    border: 1px solid rgba(128, 128, 128, 0.3);
-    border-radius: 12px;
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
-  .card:hover {
-    border-color: #00E859;
-  }
-  .card-img {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
-    min-height: 280px;
-  }
-  body.light .card-img { background: #fff; }
-  body.dark .card-img { background: #111; }
-  .card-img img {
-    max-width: 100%;
-    max-height: 240px;
-  }
-  .card-label {
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    border-top: 1px solid rgba(128, 128, 128, 0.3);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  body.light .card-label { background: #fafafa; }
-  body.dark .card-label { background: #1a1a1a; }
-  .badge {
-    font-size: 0.7rem;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-weight: 600;
-  }
-  .badge-green { background: #00E85920; color: #00E859; border: 1px solid #00E85930; }
-  .badge-gold { background: #C8A95120; color: #C8A951; border: 1px solid #C8A95130; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KitFix Logo Concepts Preview</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container { max-width: 1400px; margin: 0 auto; }
+    h1 { text-align: center; margin-bottom: 10px; font-weight: 700; font-size: 2.5rem; }
+    .subtitle { text-align: center; color: #aaa; margin-bottom: 40px; font-size: 1.1rem; }
+    
+    .theme-toggle {
+      display: block;
+      margin: 0 auto 40px;
+      padding: 12px 28px;
+      background: #17351A;
+      color: #F2B01E;
+      border: 2px solid #F2B01E;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .theme-toggle:hover { background: #F2B01E; color: #17351A; }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 30px;
+    }
+    
+    .card {
+      background: #16213e;
+      border-radius: 16px;
+      padding: 30px;
+      border: 1px solid #2a2a4a;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #2a2a4a;
+    }
+    .card h2 { font-size: 1.3rem; font-weight: 700; color: #F2B01E; }
+    .concept-badge {
+      background: #17351A;
+      color: #F2B01E;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    
+    .svg-wrapper {
+      background: #0f0f1a;
+      border-radius: 12px;
+      overflow: hidden;
+      min-height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .svg-wrapper svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+    
+    .card-footer {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #2a2a4a;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+    .btn-primary { background: #17351A; color: #F2B01E; border: 2px solid #F2B01E; }
+    .btn-primary:hover { background: #F2B01E; color: #17351A; }
+    .btn-secondary { background: transparent; color: #aaa; border: 1px solid #333; }
+    .btn-secondary:hover { border-color: #555; color: #eee; }
+    
+    .favicon-strip {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #2a2a4a;
+    }
+    .favicon-strip h4 { font-size: 0.8rem; color: #888; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+    .favicon-sizes { display: flex; gap: 8px; flex-wrap: wrap; }
+    .favicon-item { text-align: center; }
+    .favicon-item img { width: 48px; height: 48px; border-radius: 8px; background: #0f0f1a; }
+    .favicon-item span { display: block; font-size: 0.7rem; color: #666; margin-top: 4px; }
+    
+    /* Light theme */
+    body.light {
+      background: #f5f0e8;
+      color: #1a1a2e;
+    }
+    body.light .card { background: #fff; border-color: #e0d8cc; }
+    body.light .card-header { border-color: #e0d8cc; }
+    body.light .svg-wrapper { background: #faf8f5; }
+    body.light .card-footer { border-color: #e0d8cc; }
+    body.light .btn-secondary { color: #555; border-color: #ddd; }
+    body.light .btn-secondary:hover { border-color: #ccc; color: #111; }
+    body.light .favicon-strip { border-color: #e0d8cc; }
+    body.light .favicon-item img { background: #faf8f5; }
+    body.light .favicon-item span { color: #888; }
+    body.light .theme-toggle { background: #F2B01E; color: #17351A; }
+    body.light .theme-toggle:hover { background: #17351A; color: #F2B01E; }
+  </style>
 </head>
-<body class="dark">
-  <div class="header">
-    <div>
-      <h1>KitFix <span>Logo</span> — Concepts</h1>
-      <p class="subtitle">4 directions · Pick your favourite or mix elements</p>
-    </div>
-    <button class="toggle" onclick="document.body.classList.toggle('dark'); document.body.classList.toggle('light'); this.textContent = document.body.classList.contains('dark') ? '☀️ Light' : '🌙 Dark';">☀️ Light</button>
+<body>
+  <div class="container">
+    <h1>KitFix Logo Concepts</h1>
+    <p class="subtitle">5 distinct directions exploring scissors-as-K + needle/thread-as-i</p>
+    <button class="theme-toggle" onclick="toggleTheme()">Toggle Light/Dark</button>
+    
+    <div class="grid" id="conceptsGrid"></div>
   </div>
-  <div class="grid">
-    <div class="card">
-      <div class="card-img">
-        <img src="concepts/concept-1.svg" alt="The Stitch Mark">
-      </div>
-      <div class="card-label">
-        <span>1 · The Stitch Mark</span>
-        <span class="badge badge-green">Stitching K</span>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-img">
-        <img src="concepts/concept-2.svg" alt="The Shield + Jersey">
-      </div>
-      <div class="card-label">
-        <span>2 · The Shield + Jersey</span>
-        <span class="badge badge-gold">Sports Crest</span>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-img">
-        <img src="concepts/concept-3.svg" alt="The Lab Badge">
-      </div>
-      <div class="card-label">
-        <span>3 · The Lab Badge</span>
-        <span class="badge badge-green">Lab + Thread</span>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-img">
-        <img src="concepts/concept-4.svg" alt="The Monogram">
-      </div>
-      <div class="card-label">
-        <span>4 · The KF Monogram</span>
-        <span class="badge badge-gold">Interlocking</span>
-      </div>
-    </div>
-  </div>
+
+  <script>
+    const concepts = [
+      { id: 1, name: "Integrated Wordmark", desc: "Scissors K + needle-i integrated into wordmark" },
+      { id: 2, name: "Playful Hand-Drawn", desc: "Organic curves, fabric texture, stitching details" },
+      { id: 3, name: "Bold Monogram", desc: "Unified mark + bold wordmark, established feel" },
+      { id: 3, name: "Minimal Geometric", desc: "Pure shapes, negative space, clean & modern" },
+      { id: 5, name: "Badge/Crest", desc: "Trustworthy badge, heritage style, EST. 2024" }
+    ];
+
+    const sizes = [16, 32, 48, 64, 192, 512];
+
+    function loadConcept(id) {
+      return fetch(`concepts/concept-${id}.svg`)
+        .then(r => r.text())
+        .catch(() => `<svg viewBox="0 0 1024 512"><text x="512" y="256" text-anchor="middle" fill="#666" font-size="24">Concept ${id} - SVG not found</text></svg>`);
+    }
+
+    async function renderGrid() {
+      const grid = document.getElementById('conceptsGrid');
+      for (const c of concepts) {
+        const svg = await loadConcept(c.id);
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-header">
+            <h2>${c.name}</h2>
+            <span class="concept-badge">Concept ${c.id}</span>
+          </div>
+          <div class="svg-wrapper">${svg}</div>
+          <div class="card-footer">
+            <button class="btn btn-primary" onclick="selectConcept(${c.id})">Select This</button>
+            <button class="btn btn-secondary" onclick="iterateConcept(${c.id})">Iterate</button>
+          </div>
+          <div class="favicon-strip">
+            <h4>Favicon Legibility Check</h4>
+            <div class="favicon-sizes" id="fav-${c.id}"></div>
+          </div>
+        `;
+        grid.appendChild(card);
+        renderFavicons(c.id, svg);
+      }
+    }
+
+    function renderFavicons(id, svg) {
+      const container = document.getElementById(`fav-${id}`);
+      sizes.forEach(size => {
+        const item = document.createElement('div');
+        item.className = 'favicon-item';
+        item.innerHTML = `<img src="data:image/svg+xml;base64,${btoa(svg)}" alt="${size}px"><span>${size}px</span>`;
+        container.appendChild(item);
+      });
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('light');
+    }
+
+    function selectConcept(id) {
+      alert(`Concept ${id} selected! Next: refine & export.`);
+    }
+
+    function iterateConcept(id) {
+      alert(`Iterate on Concept ${id} — what changes?`);
+    }
+
+    renderGrid();
+  </script>
 </body>
 </html>

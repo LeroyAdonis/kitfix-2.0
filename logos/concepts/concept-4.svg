@@ -1,40 +1,61 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 512">
-  <rect width="1024" height="512" fill="#0A0A0B"/>
+<svg viewBox="0 0 1024 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="greenGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2A5A2A"/>
+      <stop offset="100%" style="stop-color:#17351A"/>
+    </linearGradient>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#F2B01E"/>
+      <stop offset="100%" style="stop-color:#FFD700"/>
+    </linearGradient>
+  </defs>
 
-  <!-- MONOGRAM GROUP: Interlocking KF -->
-  <g id="monogram" transform="translate(100, 80)">
-    <!-- K - vertical stroke -->
-    <rect x="20" y="20" width="28" height="310" rx="6" fill="#00E859"/>
-    <!-- K - upper arm -->
-    <polygon points="48,48 48,140 200,40 160,20" fill="#00E859"/>
-    <!-- K - lower arm -->
-    <polygon points="48,175 48,300 200,340 160,320" fill="#00E859"/>
-
-    <!-- F - vertical stroke -->
-    <rect x="180" y="20" width="28" height="310" rx="6" fill="#C8A951"/>
-    <!-- F - top bar -->
-    <rect x="208" y="20" width="120" height="28" rx="6" fill="#C8A951"/>
-    <!-- F - middle bar extending into stitch line -->
-    <rect x="208" y="150" width="80" height="22" rx="4" fill="#C8A951"/>
-
-    <!-- Stitch detail: dashed vertical line on the monogram -->
-    <line x1="230" y1="185" x2="230" y2="330" stroke="#00E859" stroke-width="3" stroke-dasharray="8 6" opacity="0.7"/>
-
-    <!-- Small thread spool at bottom of F -->
-    <circle cx="240" cy="300" r="18" fill="none" stroke="#00E859" stroke-width="3"/>
-    <line x1="222" y1="300" x2="258" y2="300" stroke="#C8A951" stroke-width="2"/>
-    <line x1="240" y1="282" x2="240" y2="318" stroke="#C8A951" stroke-width="2"/>
+  <!-- Minimal geometric approach - pure shapes, negative space -->
+  <g id="minimal-mark" transform="translate(100, 80)">
+    <!-- Scissor K as pure geometry - two intersecting paths -->
+    <!-- Vertical bar -->
+    <rect x="0" y="0" width="16" height="280" rx="8" fill="url(#greenGradient)"/>
+    <!-- Upper diagonal -->
+    <path d="M8 100 L88 10" fill="none" stroke="url(#greenGradient)" stroke-width="16" stroke-linecap="round"/>
+    <!-- Lower diagonal -->
+    <path d="M8 100 L88 190" fill="none" stroke="url(#greenGradient)" stroke-width="16" stroke-linecap="round"/>
+    <!-- Pivot circle (gold) -->
+    <circle cx="8" cy="100" r="14" fill="url(#goldGradient)"/>
+    <!-- Negative space finger holes (knocked out) -->
+    <circle cx="-16" cy="296" r="16" fill="#EFE9D8"/>
+    <circle cx="32" cy="296" r="16" fill="#EFE9D8"/>
   </g>
 
-  <!-- WORDMARK GROUP -->
-  <g id="wordmark" transform="translate(420, 140)">
-    <!-- KitFix -->
-    <text x="0" y="0" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="800" fill="#E8E8E3" letter-spacing="4">KitFix</text>
-
-    <!-- Tagline -->
-    <text x="4" y="42" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="600" fill="#00E859" letter-spacing="12">PRECISION REPAIR</text>
-
-    <!-- Decorative underline -->
-    <line x1="0" y1="60" x2="380" y2="60" stroke="#C8A951" stroke-width="1" opacity="0.3"/>
+  <!-- Wordmark: "itFix" with needle-i -->
+  <g id="wordmark-minimal" transform="translate(240, 120)">
+    <!-- "it" clean -->
+    <text x="0" y="200" font-family="Helvetica, Arial, sans-serif" font-size="160" font-weight="600" fill="#17351A" letter-spacing="0">it</text>
+    
+    <!-- "F" -->
+    <g transform="translate(100, 0)">
+      <rect x="0" y="0" width="12" height="200" rx="6" fill="#17351A"/>
+      <rect x="0" y="0" width="70" height="12" rx="6" fill="#17351A"/>
+      <rect x="0" y="90" width="50" height="12" rx="6" fill="#17351A"/>
+    </g>
+    
+    <!-- "i" formed by needle - minimal -->
+    <g id="needle-i-minimal" transform="translate(190, -20)">
+      <!-- Needle stem -->
+      <rect x="5" y="0" width="10" height="180" rx="5" fill="url(#greenGradient)"/>
+      <!-- Needle eye (negative space) -->
+      <rect x="3" y="15" width="14" height="10" rx="5" fill="#EFE9D8"/>
+      <!-- Thread dot (gold) -->
+      <ellipse cx="10" cy="50" rx="12" ry="10" fill="url(#goldGradient)"/>
+      <!-- Thread tail -->
+      <path d="M10 60 Q25 75 20 100 Q15 125 25 140" fill="none" stroke="url(#goldGradient)" stroke-width="5" stroke-linecap="round" stroke-dasharray="10,6"/>
+    </g>
+    
+    <!-- "x" -->
+    <g transform="translate(270, 0)">
+      <path d="M0 0 L50 200 M50 0 L0 200" fill="none" stroke="#17351A" stroke-width="14" stroke-linecap="round"/>
+    </g>
   </g>
+
+  <!-- Single gold stitch line -->
+  <path d="M100 350 L924 350" fill="none" stroke="url(#goldGradient)" stroke-width="3" stroke-linecap="round" stroke-dasharray="16,12"/>
 </svg>

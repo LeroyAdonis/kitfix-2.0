@@ -1,75 +1,89 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 512" width="1024" height="512">
-  <rect width="1024" height="512" fill="#0A0A0B"/>
+<svg viewBox="0 0 1024 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="threadGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#F2B01E"/>
+      <stop offset="50%" style="stop-color:#FFD700"/>
+      <stop offset="100%" style="stop-color:#F2B01E"/>
+    </linearGradient>
+    <filter id="fabricTexture" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" stitchTiles="stitch" result="noise"/>
+      <feDiffuseLighting in="noise" lighting-color="#17351A" surfaceScale="3">
+        <feDistantLight azimuth="45" elevation="60"/>
+      </feDiffuseLighting>
+      <feComposite in="SourceGraphic" in2="lighting" operator="arithmetic" k1="0" k2="1" k3="0" k4="0"/>
+    </filter>
+  </defs>
 
-  <!-- Shield badge outline -->
-  <path d="M 512 40 
-           L 590 40 
-           Q 655 40, 665 105 
-           L 665 315 
-           Q 665 380, 595 410 
-           L 512 430 
-           L 429 410 
-           Q 359 380, 359 315 
-           L 359 105 
-           Q 359 40, 434 40 Z" 
-        fill="none" stroke="#C8A951" stroke-width="5" stroke-linejoin="round"/>
+  <!-- Background fabric texture suggestion -->
+  <rect width="1024" height="512" fill="#EFE9D8" filter="url(#fabricTexture)" opacity="0.15"/>
 
-  <!-- Shield inner border detail -->
-  <path d="M 512 52 
-           L 584 52 
-           Q 643 52, 652 110 
-           L 652 312 
-           Q 652 370, 590 400 
-           L 512 418 
-           L 434 400 
-           Q 372 370, 372 312 
-           L 372 110 
-           Q 372 52, 440 52 Z" 
-        fill="none" stroke="#C8A951" stroke-width="1.5" stroke-linejoin="round" opacity="0.35"/>
-
-  <!-- Jersey icon centered inside shield -->
-  <g transform="translate(512, 235)">
-    <!-- Jersey body -->
-    <path d="M -65 -80 
-             L -35 -105 
-             L -35 -70 
-             L -100 -35 
-             L -115 45 
-             L -60 20 
-             L -60 110 
-             L 60 110 
-             L 60 20 
-             L 115 45 
-             L 100 -35 
-             L 35 -70 
-             L 35 -105 
-             L 65 -80 Z" 
-          fill="#E8E8E3"/>
-
-    <!-- V-neck cutout (matches background) -->
-    <path d="M -35 -105 L 0 -55 L 35 -105 Z" fill="#0A0A0B"/>
-
-    <!-- Collar trim -->
-    <path d="M -35 -105 L 0 -55 L 35 -105" fill="none" stroke="#C8A951" stroke-width="2" stroke-linejoin="round"/>
-
-    <!-- Shoulder/sleeve seam lines -->
-    <line x1="-115" y1="45" x2="-60" y2="20" stroke="#C8A951" stroke-width="1.5"/>
-    <line x1="115" y1="45" x2="60" y2="20" stroke="#C8A951" stroke-width="1.5"/>
-
-    <!-- Hem line -->
-    <line x1="-60" y1="110" x2="60" y2="110" stroke="#C8A951" stroke-width="1.5"/>
-
-    <!-- Vertical repair stitch line (dashed) -->
-    <line x1="0" y1="-40" x2="0" y2="100" stroke="#00E859" stroke-width="3" stroke-dasharray="5,4"/>
-
-    <!-- Cross-stitch repair marks -->
-    <path d="M -10 20 L 10 30 M -10 30 L 10 40 M -10 40 L 10 50 M -10 50 L 10 60" 
-          fill="none" stroke="#00E859" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Scissors forming "K" - more stylized, open scissors -->
+  <g id="scissors-K" transform="translate(100, 150)">
+    <!-- Left blade - vertical of K -->
+    <g filter="url(#fabricTexture)">
+      <path d="M0 0 L0 240" fill="none" stroke="#17351A" stroke-width="22" stroke-linecap="round"/>
+      <!-- Blade edge highlight -->
+      <path d="M4 0 L4 240" fill="none" stroke="#2A5A2A" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+    </g>
+    <!-- Upper diagonal of K -->
+    <path d="M0 100 L70 20" fill="none" stroke="#17351A" stroke-width="18" stroke-linecap="round"/>
+    <!-- Lower diagonal of K -->
+    <path d="M0 100 L70 180" fill="none" stroke="#17351A" stroke-width="18" stroke-linecap="round"/>
+    <!-- Pivot -->
+    <circle cx="0" cy="100" r="14" fill="#17351A"/>
+    <circle cx="0" cy="100" r="7" fill="url(#threadGradient)"/>
+    <!-- Finger rings -->
+    <ellipse cx="-35" cy="255" rx="22" ry="18" fill="none" stroke="#17351A" stroke-width="5"/>
+    <ellipse cx="35" cy="255" rx="22" ry="18" fill="none" stroke="#17351A" stroke-width="5"/>
   </g>
 
-  <!-- Brand name -->
-  <text x="512" y="480" text-anchor="middle" font-family="Impact, 'Arial Black', 'Arial Narrow', sans-serif" font-weight="900" font-size="32" fill="#E8E8E3" letter-spacing="3">KitFix</text>
+  <!-- "itFix" with hand-drawn feel -->
+  <g id="wordmark" transform="translate(220, 40)">
+    <!-- Custom hand-drawn style lettering for "itFix" -->
+    <g id="letter-i" transform="translate(0, 0)">
+      <!-- Needle as the "i" stem - playful curved -->
+      <path d="M15 30 Q15 15 25 15 Q35 15 35 30 L35 200 Q35 215 25 215 Q15 215 15 200 Z" fill="#17351A"/>
+      <!-- Needle eye - cut out -->
+      <ellipse cx="25" cy="50" rx="6" ry="3" fill="#EFE9D8"/>
+      <!-- Thread as the dot of "i" - playful loop -->
+      <path d="M25 53 Q45 53 45 73 Q45 93 25 93 Q5 93 5 73 Q5 53 25 53" fill="url(#threadGradient)"/>
+      <!-- Thread tail curling -->
+      <path d="M25 93 Q40 110 30 130 Q20 150 35 170" fill="none" stroke="url(#threadGradient)" stroke-width="5" stroke-linecap="round" stroke-dasharray="10,5"/>
+    </g>
+    
+    <g id="letter-t" transform="translate(60, 0)">
+      <path d="M0 0 L50 0 M25 0 L25 240" fill="none" stroke="#17351A" stroke-width="16" stroke-linecap="round"/>
+    </g>
+    
+    <g id="letter-F" transform="translate(120, 0)">
+      <path d="M0 0 L0 240 M0 0 L70 0 M0 100 L50 100" fill="none" stroke="#17351A" stroke-width="16" stroke-linecap="round"/>
+    </g>
+    
+    <g id="letter-i2" transform="translate(200, 0)">
+      <!-- Second "i" with thread stitching -->
+      <path d="M15 30 L15 200" fill="none" stroke="#17351A" stroke-width="16" stroke-linecap="round"/>
+      <!-- Thread dot -->
+      <path d="M15 30 Q35 30 35 50 Q35 70 15 70 Q-5 70 -5 50 Q-5 30 15 30" fill="url(#threadGradient)"/>
+    </g>
+    
+    <g id="letter-x" transform="translate(270, 0)">
+      <path d="M0 0 L50 240 M50 0 L0 240" fill="none" stroke="#17351A" stroke-width="16" stroke-linecap="round"/>
+    </g>
+  </g>
 
-  <!-- Tagline -->
-  <text x="512" y="500" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="600" font-size="9" fill="#C8A951" letter-spacing="2.5">REPAIR • RESTORE • RESPECT</text>
+  <!-- Stitching line connecting everything - runs under the wordmark -->
+  <path d="M100 330 Q200 310 300 330 Q400 350 500 330 Q600 310 700 330 Q800 350 924 330" 
+        fill="none" stroke="url(#threadGradient)" stroke-width="5" stroke-linecap="round" stroke-dasharray="16,8"/>
+  
+  <!-- Small stitch marks along the line -->
+  <g stroke="url(#threadGradient)" stroke-width="3" stroke-linecap="round">
+    <line x1="150" y1="325" x2="150" y2="335"/>
+    <line x1="250" y1="325" x2="250" y2="335"/>
+    <line x1="350" y1="325" x2="350" y2="335"/>
+    <line x1="450" y1="325" x2="450" y2="335"/>
+    <line x1="550" y1="325" x2="550" y2="335"/>
+    <line x1="650" y1="325" x2="650" y2="335"/>
+    <line x1="750" y1="325" x2="750" y2="335"/>
+    <line x1="850" y1="325" x2="850" y2="335"/>
+  </g>
 </svg>
