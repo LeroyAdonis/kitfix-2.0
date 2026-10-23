@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { BUSINESS } from "@/lib/business";
 
 const NAV_LINKS = [
   { label: "Services", href: "#services" },
@@ -13,7 +14,7 @@ const NAV_LINKS = [
   { label: "FAQ", href: "#faq" },
 ];
 
-const WHATSAPP_URL = "https://wa.me/27721234567";
+const WHATSAPP_URL = `https://wa.me/${BUSINESS.whatsapp}`;
 
 const goldCta =
   "px-5 py-3 bg-[var(--color-stitch)] text-[var(--color-ink)] font-bold text-sm uppercase tracking-wide hover:brightness-110 transition";

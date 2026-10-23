@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";
+import { BUSINESS } from "@/lib/business";
 
 const STEPS = [
   {
@@ -11,7 +12,7 @@ const STEPS = [
     description:
       "WhatsApp or upload a few clear photos of the tear, number or badge. No forms, no fuss.",
     buttonText: "Send photos",
-    href: "https://wa.me/27721234567",
+    href: `https://wa.me/${BUSINESS.whatsapp}`,
     external: true,
   },
   {

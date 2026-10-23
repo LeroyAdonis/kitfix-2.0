@@ -2,8 +2,9 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";
+import { BUSINESS } from "@/lib/business";
 
-const WHATSAPP_URL = "https://wa.me/27721234567";
+const WHATSAPP_URL = `https://wa.me/${BUSINESS.whatsapp}`;
 
 export function CtaBand({ className = "" }: { className?: string }) {
   return (

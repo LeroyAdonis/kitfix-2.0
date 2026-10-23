@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";
+import { BUSINESS } from "@/lib/business";
 
 const QUESTIONS = [
   {
@@ -37,7 +38,7 @@ const QUESTIONS = [
   },
 ];
 
-const WHATSAPP_URL = "https://wa.me/27721234567";
+const WHATSAPP_URL = `https://wa.me/${BUSINESS.whatsapp}`;
 
 export function FaqSection({ className = "" }: { className?: string }) {
   return (

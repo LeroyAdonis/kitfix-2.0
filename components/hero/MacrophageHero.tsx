@@ -7,6 +7,7 @@ import JerseySVG from "./JerseySVG";
 import ParticleSystem from "./ParticleSystem";
 import { TEAR_ZONES, createSwarmPath } from "./hero-animations";
 import { logger } from "@/lib/logger";
+import { BUSINESS } from "@/lib/business";
 
 const MOBILE_BREAKPOINT = 768;
 const MOBILE_PARTICLE_COUNT = 30;
@@ -159,7 +160,7 @@ export default function MacrophageHero() {
 
           <div ref={ctaRef} className="opacity-0">
             <a
-              href="https://wa.me/27721234567"
+              href={`https://wa.me/${BUSINESS.whatsapp}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-bold transition-all hover:scale-105"

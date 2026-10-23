@@ -6,9 +6,14 @@
  * details — address, email and phone — to be published and reachable. The previous footer shipped
  * `060 000 0000` and `wa.me/27721234567`, which are PLACEHOLDERS, and no street address at all.
  *
- * ⛔ DEPLOY BLOCKER: the values marked TODO must be replaced with the real registered details before
- * this site is pushed. Publishing invented contact details to a payment provider is exactly what
- * gets a merchant rejected for "risk and compliance" (NoZar was, 2026-06-05). Do not guess.
+ * ⛔ RULE: never publish an invented value here. Publishing invented contact details to a payment
+ * provider is exactly what gets a merchant rejected for "risk and compliance" (NoZar was,
+ * 2026-06-05). If a value is unknown, leave it as a `TODO-` placeholder — `tests/business-placeholders.test.ts`
+ * fails loudly and names every missing field rather than letting placeholder text reach production.
+ *
+ * Values below were supplied by the owner on 2026-10-22 (DIG-21): public phone 0763322026, WhatsApp
+ * the same number, and the registered address 66 Catherine Road, Fontainebleau, Gauteng, 2032 —
+ * transcribed verbatim from what the owner typed, with no inferred street, suburb or city.
  */
 
 export const BUSINESS = {
@@ -22,19 +27,25 @@ export const BUSINESS = {
   /** Real, monitored mailbox. */
   email: "info@mykitfix.co.za",
 
-  /** TODO-BLOCKING: the public business phone number. */
-  phone: "TODO-PHONE",
-  /** TODO-BLOCKING: same number in E.164 for the tel: link, e.g. +27821234567 */
-  phoneE164: "TODO-PHONE-E164",
-  /** TODO-BLOCKING: WhatsApp number in international format without + or spaces, e.g. 27821234567 */
-  whatsapp: "TODO-WHATSAPP",
+  /** Public business phone number, as supplied by the owner (DIG-21). */
+  phone: "076 332 2026",
+  /** Same number in E.164 for the tel: link. */
+  phoneE164: "+27763322026",
+  /** WhatsApp number in international format without + or spaces — owner confirmed same as phone. */
+  whatsapp: "2763322026",
 
-  /** TODO-BLOCKING: the business address Paystack will see. Street, suburb, city, postal code. */
+  /**
+   * The business address Paystack will see. Street, suburb, city, postal code.
+   *
+   * City confirmed as **Randburg** by the owner on 2026-10-23 after this file first carried
+   * "Gauteng" (the province repeated in the city field, which Paystack's activation form would
+   * reject). Street and suburb are unchanged and literal.
+   */
   address: {
-    street: "TODO-STREET",
-    suburb: "TODO-SUBURB",
-    city: "TODO-CITY",
-    postalCode: "TODO-POSTAL",
+    street: "66 Catherine Road",
+    suburb: "Fontainebleau",
+    city: "Randburg",
+    postalCode: "2032",
     country: "South Africa",
   },
 
