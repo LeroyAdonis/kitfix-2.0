@@ -43,19 +43,27 @@ export const BUSINESS = {
   whatsapp: "27763322026",
 
   /**
-   * The business address Paystack will see. Street, suburb, city, postal code.
+   * The business address Paystack will see — transcribed from the CIPC record on **BizPortal**
+   * (enterprise K2025325036) on 2026-10-23, which lists:
    *
-   * City confirmed as **Randburg** by the owner on 2026-10-23 after this file first carried
-   * "Gauteng" (the province repeated in the city field, which Paystack's activation form would
-   * reject). Street and suburb are unchanged and literal.
+   *   Physical Address: 66 CATHERINE ROAD / FONTAINEBLEAU / FONTAINEBLEAU / GAUTENG / 2032
+   *
+   * The register repeats FONTAINEBLEAU as both suburb and town, so `city` holds that rather than an
+   * inferred "Randburg". Randburg is geographically correct (Fontainebleau sits inside it) and was
+   * published here briefly, but Paystack cross-checks the site against the CIPC record — matching the
+   * REGISTER is what gets a merchant approved, not matching the map. `province` is carried separately
+   * because the register lists it and the address lines would otherwise read "Fontainebleau,
+   * Fontainebleau".
    */
   address: {
     street: "66 Catherine Road",
     suburb: "Fontainebleau",
-    city: "Randburg",
+    city: "Fontainebleau",
+    province: "Gauteng",
     postalCode: "2032",
     country: "South Africa",
   },
+
 
   /** Shown as the "last updated" date on the policy pages. */
   policiesEffective: "22 October 2026",
@@ -64,6 +72,6 @@ export const BUSINESS = {
 export const businessAddressLines = (): string[] => [
   BUSINESS.address.street,
   BUSINESS.address.suburb,
-  `${BUSINESS.address.city}, ${BUSINESS.address.postalCode}`,
+  `${BUSINESS.address.province}, ${BUSINESS.address.postalCode}`,
   BUSINESS.address.country,
 ];

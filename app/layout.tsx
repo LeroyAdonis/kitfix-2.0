@@ -72,8 +72,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               address: {
                 "@type": "PostalAddress",
                 streetAddress: BUSINESS.address.street,
-                addressLocality: BUSINESS.address.suburb,
-                addressRegion: BUSINESS.address.city,
+                addressLocality: BUSINESS.address.city,
+                addressRegion: BUSINESS.address.province,
                 postalCode: BUSINESS.address.postalCode,
                 addressCountry: "ZA",
               },
