@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Archivo_Black, Space_Grotesk, IBM_Plex_Mono } from "next/font/google";
 import { Providers } from "@/components/providers";
 import "./globals.css";
@@ -28,6 +28,22 @@ export const metadata: Metadata = {
   title: "KitFix — Kit Repair & Refresh",
   description:
     "Jersey repairs, renumbers and badge restitches for SA clubs and schools. Snap a photo, get a fixed quote on WhatsApp, and we'll fix it.",
+  // The manifest and the icon set were both present in public/ but neither was declared, so browsers had
+  // no manifest to read and installed the app with no icons of ours. Declaring them is what makes the
+  // mark the app's face, not just the header's.
+  manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/logo.svg", type: "image/svg+xml" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0F1C10",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
