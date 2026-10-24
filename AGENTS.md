@@ -312,6 +312,38 @@ These `.hermes/tasks/` plans exist but are NOT implemented:
 
 **Current state:** Single landing page + admin dashboard + Convex jobs table. That's it.
 
+## Transactional email (added 2026-10-23)
+
+Customers are emailed through **Zoho Mail SMTP** for `info@mykitfix.co.za`. `lib/email.ts` is the only
+send path; templates are `bookingReceived`, `quoteConfirmed` and `repairReady`.
+
+| Env var | Value |
+|---|---|
+| `SMTP_HOST` | `smtp.zoho.com` |
+| `SMTP_PORT` | `465` (implicit TLS) |
+| `SMTP_USER` | `info@mykitfix.co.za` |
+| `SMTP_PASS` | **Zoho app-specific password** (not the mailbox password) |
+| `MAIL_FROM` | `KitFix <info@mykitfix.co.za>` |
+
+**Rules that must not be relaxed:**
+- Email never breaks a booking. An unconfigured or failing SMTP returns `{sent:false, reason}` and logs;
+  it does not throw. A lost repair is worse than a missing acknowledgement.
+- `/api/email/test` and `/api/email/quote` are **admin-cookie protected**. An unauthenticated caller must
+  never be able to make this server send mail.
+- Confirm-quote dispatches mail from the Next route, not the Convex mutation (Convex cannot send SMTP).
+- Rotate the app password rather than sharing the mailbox password: app passwords are revocable one at a
+  time from Zoho Accounts → Security → App passwords.
+
+Verify a deploy can actually send (this exact check caught nothing yet, but the pattern matters — a 200
+from the mail server is not proof of delivery; confirm the message in the mailbox):
+
+```bash
+# admin login, then:
+curl -s -X POST https://mykitfix.co.za/api/email/test \
+  -H 'Content-Type: application/json' -b cookies.txt \
+  -d '{"to":"you@example.com"}'    # expect {"sent":true,"id":"<...@mykitfix.co.za>"}
+```
+
 ## Pitfalls & Quirks
 
 - **No `src/` directory** — everything is flat under `app/`, `components/`, `lib/`, `convex/`
